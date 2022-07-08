@@ -50,7 +50,7 @@ public class LindenWindow: GameWindow
     /// Set state as selected by name
     /// </summary>
     /// <param name="name">State name</param>
-    /// <exception cref="Exception">State with that name is not exists</exception>
+    /// <exception cref="StateNotExistsException">State with that name is not exists</exception>
     public void SelectState(string name)
     {
         LindenWindowState windowState = _states.Find(item => item.Name == name);

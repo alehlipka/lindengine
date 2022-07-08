@@ -45,7 +45,7 @@ public class Window
     /// Set window as selected by name
     /// </summary>
     /// <param name="name">Window name</param>
-    /// <exception cref="Exception">Window with that name is not exists</exception>
+    /// <exception cref="WindowNotExistsException">Window with that name is not exists</exception>
     public void SelectWindow(string name)
     {
         LindenWindow window = _windowsList.Find(window => window.Name == name);
