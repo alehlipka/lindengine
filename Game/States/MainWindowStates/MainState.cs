@@ -1,6 +1,6 @@
 using LindEngine.Core.Windows.States;
 
-namespace LindEngine.Game.Windows.States;
+namespace LindEngine.Game.States.MainWindowStates;
 
 public class MainState : LindenWindowState
 {

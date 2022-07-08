@@ -23,19 +23,18 @@ public class Window
         Type[] typelist = Application.Starter.GetTypesInNamespace("LindEngine.Game.Windows");
         for (int i = 0; i < typelist.Length; i++)
         {
-            string windowClassName = typelist[i].Name;
-            string windowName = windowClassName.Split("Window")[0].ToLower();
-
-            Console.WriteLine($"Window detected: {windowClassName} name: {windowName}");
+            Type type = typelist[i];
+            string windowClassName = type.Name;
+            string windowName = windowClassName.Split("Window")[0];
 
             _windowsList.Add(
                 (LindenWindow)
                 Activator.CreateInstance(
-                    typelist[i],
+                    type,
                     windowName,
                     GameWindowSettings.Default,
                     new NativeWindowSettings() {
-                        Title = $"LindEngine ({windowClassName}) - {windowName}"
+                        Title = $"LindEngine: {windowName} ({windowClassName})"
                     }
                 )
             );
@@ -51,6 +50,11 @@ public class Window
     {
         LindenWindow window = _windowsList.Find(window => window.Name == name);
         _selectedWindow = window ?? throw new WindowNotExistsException($"Window with name {name} is not exists");
+    }
+
+    public void SelectState(string name)
+    {
+        _selectedWindow.SelectState(name);
     }
 
     /// <summary>

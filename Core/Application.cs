@@ -2,7 +2,6 @@ using System;
 using System.Linq;
 using System.Reflection;
 using LindEngine.Core.Managers;
-using OpenTK.Windowing.Desktop;
 
 namespace LindEngine.Core;
 
@@ -16,9 +15,8 @@ public class Application
     /// </summary>
     public void Start()
     {
-        // Window.Manager.AddWindow("main", GameWindowSettings.Default,
-        //     new NativeWindowSettings() { Title = "LindEngine" });
-        Window.Manager.SelectWindow("main");
+        Window.Manager.SelectWindow("Main");
+        Window.Manager.SelectState("Main");
         Window.Manager.Run();
     }
 

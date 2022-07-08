@@ -27,37 +27,23 @@ public class LindenWindow: GameWindow
     {
         Name = name;
         _states = new List<LindenWindowState>();
+
+        AddStates();
     }
 
-    /// <summary>
-    /// Add new state if not exists
-    /// </summary>
-    /// <param name="state">New state</param>
-    public void AddState(LindenWindowState state)
+    private void AddStates()
     {
-        LindenWindowState windowState = _states.Find(item => item == state);
-        if (windowState == null)
+        string stateNamespace = $"LindEngine.Game.States.{Name}WindowStates";
+
+        Type[] typelist = Application.Starter.GetTypesInNamespace(stateNamespace);
+        for (int i = 0; i < typelist.Length; i++)
         {
-            _states.Add(state);
+            Type type = typelist[i];
+            string stateClassName = type.Name;
+            string stateName = stateClassName.Split("State")[0];
+
+            _states.Add((LindenWindowState)Activator.CreateInstance(type, stateName));
         }
-    }
-
-    /// <summary>
-    /// Remove state by name
-    /// </summary>
-    /// <param name="name">State name</param>
-    /// <exception cref="Exception">Selected state can't be removed</exception>
-    public void RemoveState(string name)
-    {
-        LindenWindowState windowState = _states.Find(item => item.Name == name);
-        if (windowState == null) return;
-
-        if (_selectedState == windowState)
-        {
-            throw new RemoveStateException("Selected state can't be removed");
-        }
-
-        _states.Remove(windowState);
     }
 
     /// <summary>
