@@ -19,44 +19,24 @@ public class Window
     private Window()
     {
         _windowsList = new List<LindenWindow>();
-    }
 
-    /// <summary>
-    /// Add new window if not exists.
-    /// If this is a first window it will be selected as current
-    /// </summary>
-    /// <param name="name">Window name</param>
-    /// <param name="gameWindowSettings"><see cref="T:OpenTK.Windowing.Desktop.GameWindow" /> settings</param>
-    /// <param name="nativeWindowSettings"><see cref="T:OpenTK.Windowing.Desktop.NativeWindow" /> settings</param>
-    public void AddWindow(string name, GameWindowSettings gameWindowSettings, NativeWindowSettings nativeWindowSettings)
-    {
-        if (_windowsList.Find(window => window.Name == name) == null)
+        Type[] typelist = Application.Starter.GetTypesInNamespace("LindEngine.Game.Windows");
+        for (int i = 0; i < typelist.Length; i++)
         {
-            _windowsList.Add(new LindenWindow(name, gameWindowSettings, nativeWindowSettings));
-        }
-        
-        if (_selectedWindow == null)
-        {
-            SelectWindow(name);
-        }
-    }
+            Console.WriteLine("Window detected: " + typelist[i].FullName);
 
-    /// <summary>
-    /// Remove window by name
-    /// </summary>
-    /// <param name="name">Window name</param>
-    /// <exception cref="Exception">Selected window can't be removed</exception>
-    public void RemoveWindow(string name)
-    {
-        LindenWindow window = _windowsList.Find(window => window.Name == name);
-        if (window == null) return;
-        
-        if (_selectedWindow == window)
-        {
-            throw new RemoveWindowException("Selected window can't be removed");
+            _windowsList.Add(
+                (LindenWindow)
+                Activator.CreateInstance(
+                    typelist[i],
+                    "main",
+                    GameWindowSettings.Default,
+                    new NativeWindowSettings() {
+                        Title = "LindEngine"
+                    }
+                )
+            );
         }
-            
-        _windowsList.Remove(window);
     }
 
     /// <summary>
