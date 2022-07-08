@@ -9,11 +9,13 @@ public class LindenWindowState
     /// </summary>
     public readonly string Name;
     private bool _isLoaded;
+    private LindenWindow _window;
 
-    public LindenWindowState(string name)
+    public LindenWindowState(string name, LindenWindow window)
     {
         Name = name;
         _isLoaded = false;
+        _window = window;
     }
 
     /// <summary>

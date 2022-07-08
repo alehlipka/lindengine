@@ -1,3 +1,4 @@
+using LindEngine.Core.Windows;
 using LindEngine.Core.Windows.States;
 using OpenTK.Windowing.Common;
 
@@ -5,9 +6,8 @@ namespace LindEngine.Game.States.MainWindowStates;
 
 public class MainState : LindenWindowState
 {
-    public MainState(string name) : base(name)
+    public MainState(string name, LindenWindow window) : base(name, window)
     {
-        
     }
 
     public override void OnLoad()

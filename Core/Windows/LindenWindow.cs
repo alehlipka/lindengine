@@ -42,7 +42,7 @@ public class LindenWindow: GameWindow
             string stateClassName = type.Name;
             string stateName = stateClassName.Split("State")[0];
 
-            _states.Add((LindenWindowState)Activator.CreateInstance(type, stateName));
+            _states.Add((LindenWindowState)Activator.CreateInstance(type, stateName, this));
         }
     }
 
