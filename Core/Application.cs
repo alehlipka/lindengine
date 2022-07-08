@@ -16,8 +16,8 @@ public class Application
     public void Start()
     {
         Window.Manager.SelectWindow("Main");
-        Window.Manager.SelectState("Main");
-        Window.Manager.Run();
+        Window.Manager.SelectedWindow.SelectState("Main");
+        Window.Manager.SelectedWindow.Run();
     }
 
     public Type[] GetTypesInNamespace(string nameSpace)

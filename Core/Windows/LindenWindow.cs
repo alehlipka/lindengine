@@ -20,7 +20,7 @@ public class LindenWindow: GameWindow
     public readonly string Name;
     
     private List<LindenWindowState> _states;
-    private LindenWindowState _selectedState;
+    public LindenWindowState SelectedState { get; private set; }
 
     public LindenWindow(string name, GameWindowSettings gameWindowSettings, NativeWindowSettings nativeWindowSettings)
         : base(gameWindowSettings, nativeWindowSettings)
@@ -54,7 +54,15 @@ public class LindenWindow: GameWindow
     public void SelectState(string name)
     {
         LindenWindowState windowState = _states.Find(item => item.Name == name);
-        _selectedState = windowState ?? throw new StateNotExistsException($"State with name {name} is not exists");
+        SelectedState = windowState ?? throw new StateNotExistsException($"State with name {name} is not exists");
+    }
+
+    public List<string> GetStatesNames()
+    {
+        List<string> names = new List<string>();
+        _states.ForEach(state => { names.Add(state.Name); });
+
+        return names;
     }
 
     protected override void OnLoad()
@@ -67,7 +75,7 @@ public class LindenWindow: GameWindow
         
         GL.ClearColor(Color4.Black);
 
-        _selectedState?.OnLoad();
+        SelectedState?.OnLoad();
     }
 
     protected override void OnResize(ResizeEventArgs e)
@@ -75,7 +83,7 @@ public class LindenWindow: GameWindow
         base.OnResize(e);
         GL.Viewport(0, 0, ClientSize.X, ClientSize.Y);
         
-        _selectedState?.OnResize(e);
+        SelectedState?.OnResize(e);
     }
 
     protected override void OnUpdateFrame(FrameEventArgs args)
@@ -83,7 +91,7 @@ public class LindenWindow: GameWindow
         base.OnUpdateFrame(args);
         if (!IsFocused) return;
         
-        _selectedState?.OnUpdate(args);
+        SelectedState?.OnUpdate(args);
     }
 
     protected override void OnRenderFrame(FrameEventArgs args)
@@ -91,7 +99,7 @@ public class LindenWindow: GameWindow
         base.OnRenderFrame(args);
         GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
         
-        _selectedState?.OnRender(args);
+        SelectedState?.OnRender(args);
         
         SwapBuffers();
     }

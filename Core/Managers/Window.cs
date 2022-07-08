@@ -14,12 +14,17 @@ public class Window
     public static Window Manager { get; } = new();
 
     private readonly List<LindenWindow> _windowsList;
-    private LindenWindow _selectedWindow;
+    public LindenWindow SelectedWindow { get; private set; }
 
     private Window()
     {
         _windowsList = new List<LindenWindow>();
 
+        AddWindows();
+    }
+
+    private void AddWindows()
+    {
         Type[] typelist = Application.Starter.GetTypesInNamespace("LindEngine.Game.Windows");
         for (int i = 0; i < typelist.Length; i++)
         {
@@ -41,6 +46,14 @@ public class Window
         }
     }
 
+    public List<string> GetWindowsNames()
+    {
+        List<string> names = new List<string>();
+        _windowsList.ForEach(window => { names.Add(window.Name); });
+
+        return names;
+    }
+
     /// <summary>
     /// Set window as selected by name
     /// </summary>
@@ -49,27 +62,6 @@ public class Window
     public void SelectWindow(string name)
     {
         LindenWindow window = _windowsList.Find(window => window.Name == name);
-        _selectedWindow = window ?? throw new WindowNotExistsException($"Window with name {name} is not exists");
-    }
-
-    public void SelectState(string name)
-    {
-        _selectedWindow.SelectState(name);
-    }
-
-    /// <summary>
-    /// Run selected window
-    /// </summary>
-    public void Run()
-    {
-        _selectedWindow.Run();
-    }
-
-    /// <summary>
-    /// Close selected window
-    /// </summary>
-    public void Close()
-    {
-        _selectedWindow.Close();
+        SelectedWindow = window ?? throw new WindowNotExistsException($"Window with name {name} is not exists");
     }
 }
