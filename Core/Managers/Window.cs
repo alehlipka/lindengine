@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using LindEngine.Core.Windows;
+using LindEngine.Core.Windows.Exceptions;
 using OpenTK.Windowing.Desktop;
 
 namespace LindEngine.Core.Managers;
@@ -52,7 +53,7 @@ public class Window
         
         if (_selectedWindow == window)
         {
-            throw new Exception("Selected window can't be removed");
+            throw new RemoveWindowException("Selected window can't be removed");
         }
             
         _windowsList.Remove(window);
@@ -66,7 +67,7 @@ public class Window
     public void SelectWindow(string name)
     {
         LindenWindow window = _windowsList.Find(window => window.Name == name);
-        _selectedWindow = window ?? throw new Exception($"Window with name {name} is not exists");
+        _selectedWindow = window ?? throw new WindowNotExistsException($"Window with name {name} is not exists");
     }
 
     /// <summary>
