@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using LindEngine.Core.Windows.States;
+using LindEngine.Core.Windows.States.Exceptions;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
@@ -53,7 +54,7 @@ public class LindenWindow: GameWindow
 
         if (_selectedState == windowState)
         {
-            throw new Exception("Selected state can't be removed");
+            throw new RemoveStateException("Selected state can't be removed");
         }
 
         _states.Remove(windowState);
@@ -67,7 +68,7 @@ public class LindenWindow: GameWindow
     public void SelectState(string name)
     {
         LindenWindowState windowState = _states.Find(item => item.Name == name);
-        _selectedState = windowState ?? throw new Exception($"State with name {name} is not exists");
+        _selectedState = windowState ?? throw new StateNotExistsException($"State with name {name} is not exists");
     }
 
     protected override void OnLoad()
