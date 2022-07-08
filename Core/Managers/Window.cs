@@ -23,16 +23,19 @@ public class Window
         Type[] typelist = Application.Starter.GetTypesInNamespace("LindEngine.Game.Windows");
         for (int i = 0; i < typelist.Length; i++)
         {
-            Console.WriteLine("Window detected: " + typelist[i].FullName);
+            string windowClassName = typelist[i].Name;
+            string windowName = windowClassName.Split("Window")[0].ToLower();
+
+            Console.WriteLine($"Window detected: {windowClassName} name: {windowName}");
 
             _windowsList.Add(
                 (LindenWindow)
                 Activator.CreateInstance(
                     typelist[i],
-                    "main",
+                    windowName,
                     GameWindowSettings.Default,
                     new NativeWindowSettings() {
-                        Title = "LindEngine"
+                        Title = $"LindEngine ({windowClassName}) - {windowName}"
                     }
                 )
             );
