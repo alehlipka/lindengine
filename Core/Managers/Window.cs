@@ -45,14 +45,15 @@ public class Window
                     new NativeWindowSettings() {
                         APIVersion = new Version(4, 6),
                         API = ContextAPI.OpenGL,
+                        Profile = ContextProfile.Core,
                         StartFocused = true,
                         StartVisible = true,
                         IsEventDriven = false,
                         NumberOfSamples = 16,
                         Title = $"LindEngine: {windowName} ({windowClassName})",
                         WindowState = WindowState.Normal,
-                        Size = new Vector2i(800, 600),
-                        Location = new Vector2i(50, 50)
+                        Size = new Vector2i(1024, 768),
+                        Location = new Vector2i(50, 50),
                     }
                 )
             );
