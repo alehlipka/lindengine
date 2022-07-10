@@ -6,6 +6,7 @@ using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
+using OpenTK.Windowing.GraphicsLibraryFramework;
 
 namespace LindEngine.Core.Windows;
 
@@ -18,8 +19,9 @@ public class LindenWindow: GameWindow
     /// Window name
     /// </summary>
     public readonly string Name;
+    protected readonly string BaseTitle;
     
-    private List<LindenWindowState> _states;
+    private readonly List<LindenWindowState> _states;
     public LindenWindowState SelectedState { get; private set; }
 
     protected LindenWindow(string name, GameWindowSettings gameWindowSettings, NativeWindowSettings nativeWindowSettings)
@@ -29,6 +31,7 @@ public class LindenWindow: GameWindow
         _states = new List<LindenWindowState>();
 
         Title += $" OpenGL version: {GL.GetString(StringName.Version)}";
+        BaseTitle = Title;
 
         Console.WriteLine($"Window created: {Name}");
         
@@ -98,13 +101,20 @@ public class LindenWindow: GameWindow
     {
         base.OnUpdateFrame(args);
         if (!IsFocused) return;
-        
+
         SelectedState?.OnUpdate(args);
     }
 
     protected override void OnRenderFrame(FrameEventArgs args)
     {
         base.OnRenderFrame(args);
+
+        FpsCounter.Calculate(args.Time);
+
+        if (FpsCounter.IsChanged) {
+            Title = BaseTitle + $" FPS: {FpsCounter.FPS} Max: { FpsCounter.Max } Min: { FpsCounter.Min }";
+        }
+        
         GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
         
         SelectedState?.OnRender(args);

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using LindEngine.Core.Windows;
 using LindEngine.Core.Windows.Exceptions;
+using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 
@@ -44,8 +45,14 @@ public class Window
                     new NativeWindowSettings() {
                         APIVersion = new Version(4, 6),
                         API = ContextAPI.OpenGL,
+                        StartFocused = true,
+                        StartVisible = true,
+                        IsEventDriven = false,
+                        NumberOfSamples = 16,
                         Title = $"LindEngine: {windowName} ({windowClassName})",
-                        WindowState = WindowState.Maximized
+                        WindowState = WindowState.Normal,
+                        Size = new Vector2i(800, 600),
+                        Location = new Vector2i(50, 50)
                     }
                 )
             );

@@ -9,13 +9,13 @@ public class LindenWindowState
     /// State name
     /// </summary>
     public readonly string Name;
-    private bool _isLoaded;
+    protected bool IsLoaded;
     protected readonly LindenWindow Window;
 
     protected LindenWindowState(string name, LindenWindow window)
     {
         Name = name;
-        _isLoaded = false;
+        IsLoaded = false;
         Window = window;
         
         Console.WriteLine($"State created: {Name} ({window.Name} window)");
@@ -26,7 +26,7 @@ public class LindenWindowState
     /// </summary>
     public virtual void OnLoad()
     {
-        _isLoaded = true;
+        IsLoaded = true;
     }
 
     /// <summary>
@@ -35,7 +35,7 @@ public class LindenWindowState
     /// <param name="args">A <see cref="T:OpenTK.Windowing.Common.ResizeEventArgs" /> that contains the event data</param>
     public virtual void OnResize(ResizeEventArgs args)
     {
-        if (!_isLoaded) return;
+        if (!IsLoaded) return;
     }
 
     /// <summary>
@@ -44,7 +44,7 @@ public class LindenWindowState
     /// <param name="args">The <see cref="T:OpenTK.Windowing.Common.FrameEventArgs" /> for this frame</param>
     public virtual void OnUpdate(FrameEventArgs args)
     {
-        if (!_isLoaded) return;
+        if (!IsLoaded) return;
     }
     
     /// <summary>
@@ -53,6 +53,6 @@ public class LindenWindowState
     /// <param name="args">The <see cref="T:OpenTK.Windowing.Common.FrameEventArgs" /> for this frame</param>
     public virtual void OnRender(FrameEventArgs args)
     {
-        if (!_isLoaded) return;
+        if (!IsLoaded) return;
     }
 }

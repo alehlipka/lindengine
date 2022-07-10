@@ -31,9 +31,8 @@ public class MainState : LindenWindowState
     {
         base.OnUpdate(args);
 
-        if (Window.IsKeyPressed(Keys.Escape))
-        {
-            Application.Starter.Exit();
-        }
+        if (!Window.IsKeyPressed(Keys.Escape)) return;
+        IsLoaded = false;
+        Application.Starter.Exit();
     }
 }
