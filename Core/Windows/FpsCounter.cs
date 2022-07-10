@@ -7,8 +7,6 @@ public static class FpsCounter
     private static double _time;
     private static double _frames;
     private static int _oldFps;
-    private static int _oldMax;
-    private static int _oldMin;
 
     public static int FPS { get; private set; }
     public static int Max { get; private set; } = int.MinValue;
@@ -17,28 +15,25 @@ public static class FpsCounter
 
     public static void Calculate(double time)
     {
-        
-
         _time += time;
         if (_time < 1.0)
         {
             _frames++;
+            return;
         }
-        else
-        {
-            IsChanged = false;
-            FPS = (int)Math.Ceiling(_frames);
 
-            _time = 0.0;
-            _frames = 0.0;
+        IsChanged = false;
+        FPS = (int)Math.Ceiling(_frames);
 
-            if (FPS > Max) Max = FPS;
-            if (FPS < Min) Min = FPS;
+        _time = 0.0;
+        _frames = 0.0;
 
-            if (_oldFps != FPS) {
-                _oldFps = FPS;
-                IsChanged = true;
-            }
+        if (FPS > Max) Max = FPS;
+        if (FPS < Min) Min = FPS;
+
+        if (_oldFps != FPS) {
+            _oldFps = FPS;
+            IsChanged = true;
         }
     }
 }
