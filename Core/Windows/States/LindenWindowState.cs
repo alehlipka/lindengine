@@ -1,3 +1,4 @@
+using System;
 using OpenTK.Windowing.Common;
 
 namespace LindEngine.Core.Windows.States;
@@ -11,11 +12,13 @@ public class LindenWindowState
     private bool _isLoaded;
     private LindenWindow _window;
 
-    public LindenWindowState(string name, LindenWindow window)
+    protected LindenWindowState(string name, LindenWindow window)
     {
         Name = name;
         _isLoaded = false;
         _window = window;
+        
+        Console.WriteLine($"State created: {Name} ({window.Name} window)");
     }
 
     /// <summary>

@@ -22,12 +22,14 @@ public class LindenWindow: GameWindow
     private List<LindenWindowState> _states;
     public LindenWindowState SelectedState { get; private set; }
 
-    public LindenWindow(string name, GameWindowSettings gameWindowSettings, NativeWindowSettings nativeWindowSettings)
+    protected LindenWindow(string name, GameWindowSettings gameWindowSettings, NativeWindowSettings nativeWindowSettings)
         : base(gameWindowSettings, nativeWindowSettings)
     {
         Name = name;
         _states = new List<LindenWindowState>();
 
+        Console.WriteLine($"Window created: {Name}");
+        
         AddStates();
     }
 
@@ -43,6 +45,8 @@ public class LindenWindow: GameWindow
             string stateName = stateClassName.Split("State")[0];
 
             _states.Add((LindenWindowState)Activator.CreateInstance(type, stateName, this));
+            
+            Console.WriteLine($"Window {Name}: state '{stateName}' added");
         }
     }
 
@@ -55,6 +59,8 @@ public class LindenWindow: GameWindow
     {
         LindenWindowState windowState = _states.Find(item => item.Name == name);
         SelectedState = windowState ?? throw new StateNotExistsException($"State with name {name} is not exists");
+        
+        Console.WriteLine($"Window '{Name}': state '{windowState.Name}' selected");
     }
 
     public List<string> GetStatesNames()

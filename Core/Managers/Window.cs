@@ -19,6 +19,8 @@ public class Window
     private Window()
     {
         _windowsList = new List<LindenWindow>();
+        
+        Console.WriteLine("Window manager created");
 
         AddWindows();
     }
@@ -43,6 +45,8 @@ public class Window
                     }
                 )
             );
+            
+            Console.WriteLine($"Window manager: window '{windowName}' added");
         }
     }
 
@@ -63,5 +67,7 @@ public class Window
     {
         LindenWindow window = _windowsList.Find(window => window.Name == name);
         SelectedWindow = window ?? throw new WindowNotExistsException($"Window with name {name} is not exists");
+        
+        Console.WriteLine($"Window manager: window '{window.Name}' selected");
     }
 }
