@@ -1,6 +1,8 @@
+using LindEngine.Core;
 using LindEngine.Core.Windows;
 using LindEngine.Core.Windows.States;
 using OpenTK.Windowing.Common;
+using OpenTK.Windowing.GraphicsLibraryFramework;
 
 namespace LindEngine.Game.States.MainWindowStates;
 
@@ -28,5 +30,10 @@ public class MainState : LindenWindowState
     public override void OnUpdate(FrameEventArgs args)
     {
         base.OnUpdate(args);
+
+        if (Window.IsKeyPressed(Keys.Escape))
+        {
+            Application.Starter.Exit();
+        }
     }
 }

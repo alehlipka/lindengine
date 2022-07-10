@@ -10,13 +10,13 @@ public class LindenWindowState
     /// </summary>
     public readonly string Name;
     private bool _isLoaded;
-    private LindenWindow _window;
+    protected readonly LindenWindow Window;
 
     protected LindenWindowState(string name, LindenWindow window)
     {
         Name = name;
         _isLoaded = false;
-        _window = window;
+        Window = window;
         
         Console.WriteLine($"State created: {Name} ({window.Name} window)");
     }

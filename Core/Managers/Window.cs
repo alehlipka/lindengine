@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using LindEngine.Core.Windows;
 using LindEngine.Core.Windows.Exceptions;
+using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 
 namespace LindEngine.Core.Managers;
@@ -41,7 +42,10 @@ public class Window
                     windowName,
                     GameWindowSettings.Default,
                     new NativeWindowSettings() {
-                        Title = $"LindEngine: {windowName} ({windowClassName})"
+                        APIVersion = new Version(4, 6),
+                        API = ContextAPI.OpenGL,
+                        Title = $"LindEngine: {windowName} ({windowClassName})",
+                        WindowState = WindowState.Maximized
                     }
                 )
             );

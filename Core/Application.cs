@@ -20,6 +20,11 @@ public class Application
         Window.Manager.SelectedWindow.Run();
     }
 
+    public void Exit()
+    {
+        Environment.Exit(0);
+    }
+
     public Type[] GetTypesInNamespace(string nameSpace)
     {
         return Assembly.GetExecutingAssembly()

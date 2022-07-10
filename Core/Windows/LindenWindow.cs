@@ -28,6 +28,8 @@ public class LindenWindow: GameWindow
         Name = name;
         _states = new List<LindenWindowState>();
 
+        Title += $" OpenGL version: {GL.GetString(StringName.Version)}";
+
         Console.WriteLine($"Window created: {Name}");
         
         AddStates();
