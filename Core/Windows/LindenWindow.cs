@@ -115,7 +115,7 @@ public class LindenWindow: GameWindow
             Title = BaseTitle + $" FPS: {FpsCounter.FPS} Max: { FpsCounter.Max } Min: { FpsCounter.Min }";
         }
         
-        GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+        GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit);
         
         SelectedState?.OnRender(args);
         
