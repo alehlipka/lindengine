@@ -459,53 +459,6 @@ namespace Dear_ImGui_Sample
             return false;
         }
 
-        public static int CreateProgram(string name, string vertexSource, string fragmentSoruce)
-        {
-            int program = GL.CreateProgram();
-            LabelObject(ObjectLabelIdentifier.Program, program, $"Program: {name}");
-
-            int vertex = CompileShader(name, ShaderType.VertexShader, vertexSource);
-            int fragment = CompileShader(name, ShaderType.FragmentShader, fragmentSoruce);
-
-            GL.AttachShader(program, vertex);
-            GL.AttachShader(program, fragment);
-
-            GL.LinkProgram(program);
-
-            GL.GetProgram(program, GetProgramParameterName.LinkStatus, out int success);
-            if (success == 0)
-            {
-                string info = GL.GetProgramInfoLog(program);
-                Debug.WriteLine($"GL.LinkProgram had info log [{name}]:\n{info}");
-            }
-
-            GL.DetachShader(program, vertex);
-            GL.DetachShader(program, fragment);
-
-            GL.DeleteShader(vertex);
-            GL.DeleteShader(fragment);
-
-            return program;
-        }
-
-        private static int CompileShader(string name, ShaderType type, string source)
-        {
-            int shader = GL.CreateShader(type);
-            LabelObject(ObjectLabelIdentifier.Shader, shader, $"Shader: {name}");
-
-            GL.ShaderSource(shader, source);
-            GL.CompileShader(shader);
-
-            GL.GetShader(shader, ShaderParameter.CompileStatus, out int success);
-            if (success == 0)
-            {
-                string info = GL.GetShaderInfoLog(shader);
-                Debug.WriteLine($"GL.CompileShader for shader '{name}' [{type}] had info log:\n{info}");
-            }
-
-            return shader;
-        }
-
         public static void CheckGLError(string title)
         {
             ErrorCode error;
