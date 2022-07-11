@@ -8,12 +8,12 @@ using OpenTK.Windowing.GraphicsLibraryFramework;
 
 namespace LindEngine.Game.States.MainWindowStates;
 
-public class MainState : LindenWindowState
+public class MainMenuState : LindenWindowState
 {
     private ImGuiController _controller;
-    private bool isNeetExit = false;
+    private bool _isNeetExit = false;
 
-    public MainState(string name, LindenWindow window) : base(name, window)
+    public MainMenuState(string name, LindenWindow window) : base(name, window)
     {
         Window.MouseWheel += WindowOnMouseWheel;
         Window.TextInput += WindowOnTextInput;
@@ -46,33 +46,31 @@ public class MainState : LindenWindowState
     private void DrawExitPopup()
     {
         ImGui.OpenPopup("Exit");
-        ImGui.SetNextWindowSize(new System.Numerics.Vector2(300, 92));
-        ImGui.SetNextWindowPos(new System.Numerics.Vector2((Window.ClientSize.X - 300) / 2, (Window.ClientSize.Y - 92) / 2));
+        ImGui.SetNextWindowSize(new(300, 92));
+        ImGui.SetNextWindowPos(new((Window.ClientSize.X - 300) / 2, (Window.ClientSize.Y - 92) / 2));
         bool open = true;
         if (ImGui.BeginPopupModal("Exit", ref open))
         {
             ImGui.Text("Did you realy want to exit?");
-            if (ImGui.Button("Yes", new System.Numerics.Vector2(176, 40))) {
+            if (ImGui.Button("Yes", new(176, 40))) {
                 IsLoaded = false;
                 Application.Starter.Exit();
             }
             ImGui.SameLine();
-            if (ImGui.Button("No", new System.Numerics.Vector2(100, 40))) {
+            if (ImGui.Button("No", new(100, 40))) {
                 open = false;
             }
             ImGui.EndPopup();
         }
 
-        isNeetExit = open;
+        _isNeetExit = open;
     }
 
     public override void OnRender(FrameEventArgs args)
     {
         base.OnRender(args);
 
-        if (isNeetExit) DrawExitPopup();
-
-        ImGui.ShowDemoWindow();
+        if (_isNeetExit) DrawExitPopup();
 
         _controller.Render();
 
@@ -85,6 +83,6 @@ public class MainState : LindenWindowState
 
         _controller.Update(Window, (float)args.Time);
 
-        if (Window.IsKeyPressed(Keys.Escape)) isNeetExit = true;
+        if (Window.IsKeyPressed(Keys.Escape)) _isNeetExit = true;
     }
 }

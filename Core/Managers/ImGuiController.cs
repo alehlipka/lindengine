@@ -8,6 +8,7 @@ using OpenTK.Windowing.Common.Input;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using System.Diagnostics;
+using LindEngine.Core.Managers;
 using ErrorCode = OpenTK.Graphics.OpenGL4.ErrorCode;
 
 namespace Dear_ImGui_Sample
@@ -26,10 +27,6 @@ namespace Dear_ImGui_Sample
 
         private int _fontTexture;
 
-        private int _shader;
-        private int _shaderFontTextureLocation;
-        private int _shaderProjectionMatrixLocation;
-        
         private int _windowWidth;
         private int _windowHeight;
 
@@ -100,41 +97,6 @@ namespace Dear_ImGui_Sample
             GL.BufferData(BufferTarget.ElementArrayBuffer, _indexBufferSize, IntPtr.Zero, BufferUsageHint.DynamicDraw);
 
             RecreateFontDeviceTexture();
-
-            string VertexSource = @"#version 330 core
-
-uniform mat4 projection_matrix;
-
-layout(location = 0) in vec2 in_position;
-layout(location = 1) in vec2 in_texCoord;
-layout(location = 2) in vec4 in_color;
-
-out vec4 color;
-out vec2 texCoord;
-
-void main()
-{
-    gl_Position = projection_matrix * vec4(in_position, 0, 1);
-    color = in_color;
-    texCoord = in_texCoord;
-}";
-            string FragmentSource = @"#version 330 core
-
-uniform sampler2D in_fontTexture;
-
-in vec4 color;
-in vec2 texCoord;
-
-out vec4 outputColor;
-
-void main()
-{
-    outputColor = color * texture(in_fontTexture, texCoord);
-}";
-
-            _shader = CreateProgram("ImGui", VertexSource, FragmentSource);
-            _shaderProjectionMatrixLocation = GL.GetUniformLocation(_shader, "projection_matrix");
-            _shaderFontTextureLocation = GL.GetUniformLocation(_shader, "in_fontTexture");
 
             int stride = Unsafe.SizeOf<ImDrawVert>();
             GL.VertexAttribPointer(0, 2, VertexAttribPointerType.Float, false, stride, 0);
@@ -383,10 +345,12 @@ void main()
                 0.0f,
                 -1.0f,
                 1.0f);
-
-            GL.UseProgram(_shader);
-            GL.UniformMatrix4(_shaderProjectionMatrixLocation, false, ref mvp);
-            GL.Uniform1(_shaderFontTextureLocation, 0);
+            
+            Shader.Manager.SelectShader("ImGui");
+            Shader.Manager.SelectedShader.Use();
+            Shader.Manager.SelectedShader.SetMatrix4Raw("projection_matrix", mvp);
+            Shader.Manager.SelectedShader.SetFloat("in_fontTexture", 0);
+            
             CheckGLError("Projection");
 
             GL.BindVertexArray(_vertexArray);
@@ -475,7 +439,6 @@ void main()
             GL.DeleteBuffer(_indexBuffer);
 
             GL.DeleteTexture(_fontTexture);
-            GL.DeleteProgram(_shader);
         }
 
         public static void LabelObject(ObjectLabelIdentifier objLabelIdent, int glObject, string name)

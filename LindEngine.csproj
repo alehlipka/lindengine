@@ -7,6 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Include="Data\**\*.*">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <PackageReference Include="ImGui.NET" Version="1.87.3" />
     <PackageReference Include="OpenTK" Version="4.7.4" />
   </ItemGroup>
