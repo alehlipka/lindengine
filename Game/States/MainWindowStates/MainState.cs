@@ -1,4 +1,3 @@
-using System;
 using Dear_ImGui_Sample;
 using ImGuiNET;
 using LindEngine.Core;
@@ -11,8 +10,9 @@ namespace LindEngine.Game.States.MainWindowStates;
 
 public class MainState : LindenWindowState
 {
-    ImGuiController _controller;
-    
+    private ImGuiController _controller;
+    private bool isNeetExit = false;
+
     public MainState(string name, LindenWindow window) : base(name, window)
     {
         Window.MouseWheel += WindowOnMouseWheel;
@@ -39,58 +39,38 @@ public class MainState : LindenWindowState
     public override void OnResize(ResizeEventArgs args)
     {
         base.OnResize(args);
-        Console.WriteLine(Window.ClientSize.X + " " + Window.ClientSize.Y);
 
         _controller.WindowResized(Window.ClientSize.X, Window.ClientSize.Y);
+    }
+
+    private void DrawExitPopup()
+    {
+        ImGui.OpenPopup("Exit");
+        ImGui.SetNextWindowSize(new System.Numerics.Vector2(300, 92));
+        ImGui.SetNextWindowPos(new System.Numerics.Vector2((Window.ClientSize.X - 300) / 2, (Window.ClientSize.Y - 92) / 2));
+        bool open = true;
+        if (ImGui.BeginPopupModal("Exit", ref open))
+        {
+            ImGui.Text("Did you realy want to exit?");
+            if (ImGui.Button("Yes", new System.Numerics.Vector2(176, 40))) {
+                IsLoaded = false;
+                Application.Starter.Exit();
+            }
+            ImGui.SameLine();
+            if (ImGui.Button("No", new System.Numerics.Vector2(100, 40))) {
+                open = false;
+            }
+            ImGui.EndPopup();
+        }
+
+        isNeetExit = open;
     }
 
     public override void OnRender(FrameEventArgs args)
     {
         base.OnRender(args);
 
-        ImGui.Begin("LindEngine Left",
-            ImGuiWindowFlags.Modal |
-            ImGuiWindowFlags.NoCollapse |
-            ImGuiWindowFlags.NoMove |
-            ImGuiWindowFlags.NoResize
-        );
-        ImGui.SetWindowSize(new System.Numerics.Vector2(200, Window.ClientSize.Y));
-        ImGui.SetWindowPos(new System.Numerics.Vector2(0, 0));
-        ImGui.Text("Hello!");
-        ImGui.End();
-
-        ImGui.Begin("LindEngine Right",
-            ImGuiWindowFlags.Modal |
-            ImGuiWindowFlags.NoCollapse |
-            ImGuiWindowFlags.NoMove |
-            ImGuiWindowFlags.NoResize
-        );
-        ImGui.SetWindowSize(new System.Numerics.Vector2(200, Window.ClientSize.Y));
-        ImGui.SetWindowPos(new System.Numerics.Vector2(Window.ClientSize.X - 200, 0));
-        ImGui.Text("Hello!");
-        ImGui.End();
-
-        ImGui.Begin("LindEngine Top",
-            ImGuiWindowFlags.Modal |
-            ImGuiWindowFlags.NoCollapse |
-            ImGuiWindowFlags.NoMove |
-            ImGuiWindowFlags.NoResize
-        );
-        ImGui.SetWindowSize(new System.Numerics.Vector2(Window.ClientSize.X - 400, 50));
-        ImGui.SetWindowPos(new System.Numerics.Vector2(200, 0));
-        ImGui.Text("Hello!");
-        ImGui.End();
-
-        ImGui.Begin("LindEngine Bottom",
-            ImGuiWindowFlags.Modal |
-            ImGuiWindowFlags.NoCollapse |
-            ImGuiWindowFlags.NoMove |
-            ImGuiWindowFlags.NoResize
-        );
-        ImGui.SetWindowSize(new System.Numerics.Vector2(Window.ClientSize.X - 400, 50));
-        ImGui.SetWindowPos(new System.Numerics.Vector2(200, Window.ClientSize.Y - 50));
-        ImGui.Text("Hello!");
-        ImGui.End();
+        if (isNeetExit) DrawExitPopup();
 
         ImGui.ShowDemoWindow();
 
@@ -102,11 +82,9 @@ public class MainState : LindenWindowState
     public override void OnUpdate(FrameEventArgs args)
     {
         base.OnUpdate(args);
-        
+
         _controller.Update(Window, (float)args.Time);
 
-        if (!Window.IsKeyPressed(Keys.Escape)) return;
-        IsLoaded = false;
-        Application.Starter.Exit();
+        if (Window.IsKeyPressed(Keys.Escape)) isNeetExit = true;
     }
 }
