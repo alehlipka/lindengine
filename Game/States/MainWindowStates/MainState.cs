@@ -48,6 +48,50 @@ public class MainState : LindenWindowState
     {
         base.OnRender(args);
 
+        ImGui.Begin("LindEngine Left",
+            ImGuiWindowFlags.Modal |
+            ImGuiWindowFlags.NoCollapse |
+            ImGuiWindowFlags.NoMove |
+            ImGuiWindowFlags.NoResize
+        );
+        ImGui.SetWindowSize(new System.Numerics.Vector2(200, Window.ClientSize.Y));
+        ImGui.SetWindowPos(new System.Numerics.Vector2(0, 0));
+        ImGui.Text("Hello!");
+        ImGui.End();
+
+        ImGui.Begin("LindEngine Right",
+            ImGuiWindowFlags.Modal |
+            ImGuiWindowFlags.NoCollapse |
+            ImGuiWindowFlags.NoMove |
+            ImGuiWindowFlags.NoResize
+        );
+        ImGui.SetWindowSize(new System.Numerics.Vector2(200, Window.ClientSize.Y));
+        ImGui.SetWindowPos(new System.Numerics.Vector2(Window.ClientSize.X - 200, 0));
+        ImGui.Text("Hello!");
+        ImGui.End();
+
+        ImGui.Begin("LindEngine Top",
+            ImGuiWindowFlags.Modal |
+            ImGuiWindowFlags.NoCollapse |
+            ImGuiWindowFlags.NoMove |
+            ImGuiWindowFlags.NoResize
+        );
+        ImGui.SetWindowSize(new System.Numerics.Vector2(Window.ClientSize.X - 400, 50));
+        ImGui.SetWindowPos(new System.Numerics.Vector2(200, 0));
+        ImGui.Text("Hello!");
+        ImGui.End();
+
+        ImGui.Begin("LindEngine Bottom",
+            ImGuiWindowFlags.Modal |
+            ImGuiWindowFlags.NoCollapse |
+            ImGuiWindowFlags.NoMove |
+            ImGuiWindowFlags.NoResize
+        );
+        ImGui.SetWindowSize(new System.Numerics.Vector2(Window.ClientSize.X - 400, 50));
+        ImGui.SetWindowPos(new System.Numerics.Vector2(200, Window.ClientSize.Y - 50));
+        ImGui.Text("Hello!");
+        ImGui.End();
+
         ImGui.ShowDemoWindow();
 
         _controller.Render();
