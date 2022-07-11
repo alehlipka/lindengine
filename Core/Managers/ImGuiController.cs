@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
-using OpenTK.Windowing.Common.Input;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using System.Diagnostics;
@@ -16,23 +15,17 @@ namespace Dear_ImGui_Sample
     public class ImGuiController : IDisposable
     {
         private bool _frameBegun;
-
         private int _vertexArray;
         private int _vertexBuffer;
         private int _vertexBufferSize;
         private int _indexBuffer;
         private int _indexBufferSize;
-
-        //private Texture _fontTexture;
-
         private int _fontTexture;
-
         private int _windowWidth;
         private int _windowHeight;
-
-        private System.Numerics.Vector2 _scaleFactor = System.Numerics.Vector2.One;
-
-        private static bool KHRDebugAvailable = false;
+        private readonly System.Numerics.Vector2 _scaleFactor = System.Numerics.Vector2.One;
+        private readonly List<char> _pressedChars = new();
+        private static bool _khrDebugAvailable;
 
         /// <summary>
         /// Constructs a new ImGuiController.
@@ -45,7 +38,7 @@ namespace Dear_ImGui_Sample
             int major = GL.GetInteger(GetPName.MajorVersion);
             int minor = GL.GetInteger(GetPName.MinorVersion);
 
-            KHRDebugAvailable = (major == 4 && minor >= 3) || IsExtensionSupported("KHR_debug");
+            _khrDebugAvailable = (major == 4 && minor >= 3) || IsExtensionSupported("KHR_debug");
 
             IntPtr context = ImGui.CreateContext();
             ImGui.SetCurrentContext(context);
@@ -197,8 +190,6 @@ namespace Dear_ImGui_Sample
             io.DeltaTime = deltaSeconds; // DeltaTime is in seconds.
         }
 
-        readonly List<char> PressedChars = new List<char>();
-
         private void UpdateImGuiInput(GameWindow wnd)
         {
             ImGuiIOPtr io = ImGui.GetIO();
@@ -223,11 +214,11 @@ namespace Dear_ImGui_Sample
                 io.KeysDown[(int)key] = KeyboardState.IsKeyDown(key);
             }
 
-            foreach (var c in PressedChars)
+            foreach (var c in _pressedChars)
             {
                 io.AddInputCharacter(c);
             }
-            PressedChars.Clear();
+            _pressedChars.Clear();
 
             io.KeyCtrl = KeyboardState.IsKeyDown(Keys.LeftControl) || KeyboardState.IsKeyDown(Keys.RightControl);
             io.KeyAlt = KeyboardState.IsKeyDown(Keys.LeftAlt) || KeyboardState.IsKeyDown(Keys.RightAlt);
@@ -237,7 +228,7 @@ namespace Dear_ImGui_Sample
 
         internal void PressChar(char keyChar)
         {
-            PressedChars.Add(keyChar);
+            _pressedChars.Add(keyChar);
         }
 
         internal void MouseScroll(Vector2 offset)
@@ -443,7 +434,7 @@ namespace Dear_ImGui_Sample
 
         public static void LabelObject(ObjectLabelIdentifier objLabelIdent, int glObject, string name)
         {
-            if (KHRDebugAvailable)
+            if (_khrDebugAvailable)
                 GL.ObjectLabel(objLabelIdent, glObject, name.Length, name);
         }
 
