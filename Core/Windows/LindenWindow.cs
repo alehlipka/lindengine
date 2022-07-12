@@ -26,6 +26,7 @@ public class LindenWindow: GameWindow
     protected LindenWindow(string name, GameWindowSettings gameWindowSettings, NativeWindowSettings nativeWindowSettings)
         : base(gameWindowSettings, nativeWindowSettings)
     {
+        VSync = VSyncMode.Off;
         Name = name;
         _states = new List<LindenWindowState>();
 
