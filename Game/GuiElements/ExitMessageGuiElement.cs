@@ -9,15 +9,21 @@ public class ExitMessageGuiElement: GuiElement
 {
     public ExitMessageGuiElement(string name) : base(name)
     {
+        Result.Add("IsOpen", false);
     }
 
     public override void Draw(LindenWindowState state)
     {
+        int modalWidth = 300;
+        int modalHeight = 92;
+        int xCenter = (state.Window.ClientSize.X - modalWidth) / 2;
+        int yCenter = (state.Window.ClientSize.Y - modalHeight) / 2;
+        
         ImGui.OpenPopup("Exit");
-        ImGui.SetNextWindowSize(new(300, 92));
-        ImGui.SetNextWindowPos(new((state.Window.ClientSize.X - 300) / 2, (state.Window.ClientSize.Y - 92) / 2));
+        ImGui.SetNextWindowSize(new(modalWidth, modalHeight));
+        ImGui.SetNextWindowPos(new(xCenter, yCenter));
         bool open = true;
-        if (ImGui.BeginPopupModal("Exit", ref open))
+        if (ImGui.BeginPopupModal("Exit", ref open, ImGuiWindowFlags.NoResize))
         {
             ImGui.Text("Did you realy want to exit?");
             if (ImGui.Button("Yes", new(176, 40))) {
@@ -29,5 +35,7 @@ public class ExitMessageGuiElement: GuiElement
             }
             ImGui.EndPopup();
         }
+
+        Result["IsOpen"] = open;
     }
 }
