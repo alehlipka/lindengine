@@ -77,6 +77,8 @@ public class Window
     /// <exception cref="WindowNotExistsException">Window with that name is not exists</exception>
     public void SelectWindow(string name)
     {
+        if (SelectedWindow?.Name == name) return;
+        
         LindenWindow window = _windowsList.Find(window => window.Name == name);
         SelectedWindow = window ?? throw new WindowNotExistsException($"Window with name {name} is not exists");
         

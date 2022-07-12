@@ -61,6 +61,8 @@ public class LindenWindow: GameWindow
     /// <exception cref="StateNotExistsException">State with that name is not exists</exception>
     public void SelectState(string name)
     {
+        if (SelectedState?.Name == name) return;
+        
         LindenWindowState windowState = _states.Find(item => item.Name == name);
         SelectedState = windowState ?? throw new StateNotExistsException($"State with name {name} is not exists");
         

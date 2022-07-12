@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using ImGuiNET;
+using LindEngine.Core.Exceptions;
+using LindEngine.Core.GuiElements;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Desktop;
@@ -24,7 +26,10 @@ public class Gui
     private int _fontTexture;
     private bool _frameBegun;
     private readonly List<char> _pressedChars = new();
-    
+    private readonly List<GuiElement> _guiElements;
+
+    public GuiElement SelectedElement { get; private set; }
+
     public static Gui Manager { get; } = new();
 
     private Gui()
@@ -41,8 +46,36 @@ public class Gui
         
         ImGui.NewFrame();
         _frameBegun = true;
+
+        _guiElements = new List<GuiElement>();
         
         Console.WriteLine("ImGui manager created");
+        
+        AddElements();
+    }
+
+    private void AddElements()
+    {
+        Type[] typeList = Application.Starter.GetTypesInNamespace("LindEngine.Game.GuiElements");
+        foreach (Type type in typeList)
+        {
+            string guiClassName = type.Name;
+            string guiName = guiClassName.Split("GuiElement")[0];
+
+            _guiElements.Add((GuiElement)Activator.CreateInstance(type, guiName));
+            
+            Console.WriteLine($"Gui manager: gui element '{guiName}' added");
+        }
+    }
+
+    public void SelectElement(string name)
+    {
+        if (SelectedElement?.Name == name) return;
+        
+        GuiElement element = _guiElements.Find(elem => elem.Name == name);
+        SelectedElement = element ?? throw new GuiElementNotExistsException($"Gui element with name {name} is not exists");
+        
+        Console.WriteLine($"Gui manager: element '{element.Name}' selected");
     }
 
     public void Resize(int width, int height)
@@ -61,7 +94,7 @@ public class Gui
         ImDrawDataPtr drawData = ImGui.GetDrawData();
         if (drawData.CmdListsCount == 0) return;
         
-        // Get intial state.
+        // Get initial state.
         int prevVao = GL.GetInteger(GetPName.VertexArrayBinding);
         int prevArrayBuffer = GL.GetInteger(GetPName.ArrayBufferBinding);
         int prevProgram = GL.GetInteger(GetPName.CurrentProgram);
