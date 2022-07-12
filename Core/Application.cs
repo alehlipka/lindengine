@@ -15,7 +15,7 @@ public class Application
     /// </summary>
     public void Start()
     {
-        Window.Manager.SelectWindow("Main");
+        Window.Manager.Select("Main");
         Window.Manager.SelectedWindow.SelectState("MainMenu");
         Window.Manager.SelectedWindow.Run();
     }

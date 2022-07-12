@@ -9,7 +9,7 @@ namespace LindEngine.Core.Managers;
 /// <summary>
 /// Shaders manager class
 /// </summary>
-public class Shader
+public class Shader : LindenManager
 {
     public static Shader Manager { get; } = new();
 
@@ -22,10 +22,10 @@ public class Shader
 
         Console.WriteLine("Shader manager created");
 
-        AddShaders();
+        AddItems();
     }
 
-    private void AddShaders()
+    protected sealed override void AddItems()
     {
         string shadersDirectory = @"Data/Shaders";
         string[] directories = Directory.GetDirectories(shadersDirectory);
@@ -37,7 +37,7 @@ public class Shader
         }
     }
 
-    public List<string> GetShadersNames()
+    public override List<string> GetNames()
     {
         List<string> names = new List<string>();
         _shadersList.ForEach(shader => { names.Add(shader.Name); });
@@ -45,7 +45,7 @@ public class Shader
         return names;
     }
 
-    public void SelectShader(string name)
+    public override void Select(string name)
     {
         if (SelectedShader?.Name == name) return;
 

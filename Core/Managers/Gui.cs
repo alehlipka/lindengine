@@ -14,7 +14,7 @@ namespace LindEngine.Core.Managers;
 /// <summary>
 /// Shaders manager class
 /// </summary>
-public class Gui
+public class Gui : LindenManager
 {
     private int _vertexBufferSize;
     private int _indexBufferSize;
@@ -51,10 +51,10 @@ public class Gui
         
         Console.WriteLine("ImGui manager created");
         
-        AddElements();
+        AddItems();
     }
 
-    private void AddElements()
+    protected sealed override void AddItems()
     {
         Type[] typeList = Application.Starter.GetTypesInNamespace("LindEngine.Game.GuiElements");
         foreach (Type type in typeList)
@@ -68,7 +68,7 @@ public class Gui
         }
     }
 
-    public void SelectElement(string name)
+    public override void Select(string name)
     {
         if (SelectedElement?.Name == name) return;
         
@@ -76,6 +76,14 @@ public class Gui
         SelectedElement = element ?? throw new GuiElementNotExistsException($"Gui element with name {name} is not exists");
         
         Console.WriteLine($"Gui manager: element '{element.Name}' selected");
+    }
+
+    public override List<string> GetNames()
+    {
+        List<string> names = new List<string>();
+        _guiElements.ForEach(gui => { names.Add(gui.Name); });
+
+        return names;
     }
 
     public void Resize(int width, int height)
@@ -161,7 +169,7 @@ public class Gui
             -1.0f,
             1.0f);
         
-        Shader.Manager.SelectShader("ImGui");
+        Shader.Manager.Select("ImGui");
         Shader.Manager.SelectedShader.Use();
         Shader.Manager.SelectedShader.SetMatrix4Raw("projection_matrix", mvp);
         Shader.Manager.SelectedShader.SetFloat("in_fontTexture", 0);

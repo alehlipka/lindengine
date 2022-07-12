@@ -15,7 +15,7 @@ public class MainMenuState : LindenWindowState
     {
         base.OnRender(args);
 
-        Gui.Manager.SelectElement("ExitMessage");
+        Gui.Manager.Select("ExitMessage");
         Gui.Manager.SelectedElement.Draw(this);
 
         Gui.Manager.Render();
