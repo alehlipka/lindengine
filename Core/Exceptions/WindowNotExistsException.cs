@@ -1,6 +1,6 @@
 using System;
 
-namespace LindEngine.Core.Windows.Exceptions;
+namespace LindEngine.Core.Exceptions;
 
 public class WindowNotExistsException : Exception
 {

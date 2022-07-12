@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
+using LindEngine.Core.Exceptions;
 using LindEngine.Core.Windows;
-using LindEngine.Core.Windows.Exceptions;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;

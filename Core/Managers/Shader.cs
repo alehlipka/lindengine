@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using LindEngine.Core.Exceptions;
 using LindEngine.Core.Shaders;
-using LindEngine.Core.Shaders.Exceptions;
 
 namespace LindEngine.Core.Managers;
 

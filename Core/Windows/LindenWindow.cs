@@ -1,12 +1,11 @@
 using System;
 using System.Collections.Generic;
+using LindEngine.Core.Exceptions;
 using LindEngine.Core.Windows.States;
-using LindEngine.Core.Windows.States.Exceptions;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
-using OpenTK.Windowing.GraphicsLibraryFramework;
 
 namespace LindEngine.Core.Windows;
 

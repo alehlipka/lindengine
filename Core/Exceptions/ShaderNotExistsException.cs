@@ -1,6 +1,6 @@
 using System;
 
-namespace LindEngine.Core.Shaders.Exceptions;
+namespace LindEngine.Core.Exceptions;
 
 public class ShaderNotExistsException : Exception
 {

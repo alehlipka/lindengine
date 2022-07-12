@@ -1,6 +1,6 @@
 using System;
 
-namespace LindEngine.Core.Windows.States.Exceptions;
+namespace LindEngine.Core.Exceptions;
 
 public class StateNotExistsException : Exception
 {
