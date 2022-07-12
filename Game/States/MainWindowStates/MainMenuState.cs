@@ -1,6 +1,6 @@
-using Dear_ImGui_Sample;
 using ImGuiNET;
 using LindEngine.Core;
+using LindEngine.Core.Managers;
 using LindEngine.Core.Windows;
 using LindEngine.Core.Windows.States;
 using OpenTK.Windowing.Common;
@@ -10,37 +10,10 @@ namespace LindEngine.Game.States.MainWindowStates;
 
 public class MainMenuState : LindenWindowState
 {
-    private ImGuiController _controller;
-    private bool _isNeetExit = false;
+    private bool _isExitTriggered = false;
 
     public MainMenuState(string name, LindenWindow window) : base(name, window)
     {
-        Window.MouseWheel += WindowOnMouseWheel;
-        Window.TextInput += WindowOnTextInput;
-    }
-
-    private void WindowOnTextInput(TextInputEventArgs obj)
-    {
-        _controller.PressChar((char)obj.Unicode);
-    }
-
-    private void WindowOnMouseWheel(MouseWheelEventArgs obj)
-    {
-        _controller.MouseScroll(obj.Offset);
-    }
-
-    public override void OnLoad()
-    {
-        base.OnLoad();
-
-        _controller = new ImGuiController(Window.ClientSize.X, Window.ClientSize.Y);
-    }
-
-    public override void OnResize(ResizeEventArgs args)
-    {
-        base.OnResize(args);
-
-        _controller.WindowResized(Window.ClientSize.X, Window.ClientSize.Y);
     }
 
     private void DrawExitPopup()
@@ -63,26 +36,24 @@ public class MainMenuState : LindenWindowState
             ImGui.EndPopup();
         }
 
-        _isNeetExit = open;
+        _isExitTriggered = open;
     }
 
     public override void OnRender(FrameEventArgs args)
     {
         base.OnRender(args);
 
-        if (_isNeetExit) DrawExitPopup();
+        if (_isExitTriggered) DrawExitPopup();
 
-        _controller.Render();
-
-        ImGuiController.CheckGLError("End of frame");
+        Gui.Manager.Render();
     }
 
     public override void OnUpdate(FrameEventArgs args)
     {
         base.OnUpdate(args);
 
-        _controller.Update(Window, (float)args.Time);
+        Gui.Manager.Update(Window, (float)args.Time);
 
-        if (Window.IsKeyPressed(Keys.Escape)) _isNeetExit = true;
+        if (Window.IsKeyPressed(Keys.Escape)) _isExitTriggered = true;
     }
 }

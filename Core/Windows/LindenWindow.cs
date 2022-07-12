@@ -121,4 +121,18 @@ public class LindenWindow: GameWindow
         
         SwapBuffers();
     }
+
+    protected override void OnMouseWheel(MouseWheelEventArgs e)
+    {
+        base.OnMouseWheel(e);
+        
+        SelectedState?.OnMouseWheel(e);
+    }
+
+    protected override void OnTextInput(TextInputEventArgs e)
+    {
+        base.OnTextInput(e);
+        
+        SelectedState?.OnTextInput(e);
+    }
 }

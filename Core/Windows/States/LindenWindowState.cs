@@ -1,4 +1,5 @@
 using System;
+using LindEngine.Core.Managers;
 using OpenTK.Windowing.Common;
 
 namespace LindEngine.Core.Windows.States;
@@ -27,6 +28,8 @@ public class LindenWindowState
     public virtual void OnLoad()
     {
         IsLoaded = true;
+        
+        Gui.Manager.Resize(Window.ClientSize.X, Window.ClientSize.Y);
     }
 
     /// <summary>
@@ -36,6 +39,8 @@ public class LindenWindowState
     public virtual void OnResize(ResizeEventArgs args)
     {
         if (!IsLoaded) return;
+        
+        Gui.Manager.Resize(Window.ClientSize.X, Window.ClientSize.Y);
     }
 
     /// <summary>
@@ -54,5 +59,19 @@ public class LindenWindowState
     public virtual void OnRender(FrameEventArgs args)
     {
         if (!IsLoaded) return;
+    }
+
+    public virtual void OnMouseWheel(MouseWheelEventArgs e)
+    {
+        if (!IsLoaded) return;
+        
+        Gui.Manager.MouseScroll(e.Offset);
+    }
+
+    public virtual void OnTextInput(TextInputEventArgs e)
+    {
+        if (!IsLoaded) return;
+        
+        Gui.Manager.PressChar((char)e.Unicode);
     }
 }
