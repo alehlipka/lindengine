@@ -18,7 +18,6 @@ public class LindenWindow: GameWindow
     /// Window name
     /// </summary>
     public readonly string Name;
-    protected readonly string BaseTitle;
     
     private readonly List<LindenWindowState> _states;
     public LindenWindowState SelectedState { get; private set; }
@@ -29,9 +28,6 @@ public class LindenWindow: GameWindow
         VSync = VSyncMode.Off;
         Name = name;
         _states = new List<LindenWindowState>();
-
-        Title += $" OpenGL version: {GL.GetString(StringName.Version)}";
-        BaseTitle = Title;
 
         Console.WriteLine($"Window created: {Name}");
         
@@ -112,10 +108,6 @@ public class LindenWindow: GameWindow
         base.OnRenderFrame(args);
 
         FpsCounter.Calculate(args.Time);
-
-        if (FpsCounter.IsChanged) {
-            Title = BaseTitle + $" FPS: {FpsCounter.FPS} Max: { FpsCounter.Max } Min: { FpsCounter.Min }";
-        }
         
         GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit);
         

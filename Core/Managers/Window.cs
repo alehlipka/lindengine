@@ -50,10 +50,9 @@ public class Window : LindenManager
                         StartVisible = true,
                         IsEventDriven = false,
                         NumberOfSamples = 16,
-                        Title = $"LindEngine: {windowName} ({windowClassName})",
-                        WindowState = WindowState.Normal,
-                        Size = new Vector2i(1024, 768),
-                        Location = new Vector2i(50, 50),
+                        Title = $"LindEngine",
+                        WindowState = WindowState.Maximized,
+                        MinimumSize = new Vector2i(800, 600)
                     }
                 )
             );

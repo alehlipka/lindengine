@@ -5,6 +5,7 @@ using System.Runtime.CompilerServices;
 using ImGuiNET;
 using LindEngine.Core.Exceptions;
 using LindEngine.Core.GuiElements;
+using LindEngine.Core.Windows.States;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Desktop;
@@ -41,7 +42,7 @@ public class Gui : LindenManager
             ImGui.SetCurrentContext(context);
             ImGuiIOPtr io = ImGui.GetIO();
             ImFontConfigPtr config = ImGuiNative.ImFontConfig_ImFontConfig();
-            io.Fonts.AddFontFromFileTTF(Path.Combine("Data", "Fonts", "OpenSans-Medium.ttf"), 16, config, io.Fonts.GetGlyphRangesCyrillic());
+            io.Fonts.AddFontFromFileTTF(Path.Combine("Data", "Fonts", "OpenSans-Bold.ttf"), 16, config, io.Fonts.GetGlyphRangesCyrillic());
             io.BackendFlags |= ImGuiBackendFlags.RendererHasVtxOffset;
         
             CreateBuffers(io);
@@ -89,6 +90,12 @@ public class Gui : LindenManager
         _guiElements.ForEach(gui => { names.Add(gui.Name); });
 
         return names;
+    }
+
+    public void Draw(string name, LindenWindowState state)
+    {
+        Select(name);
+        SelectedElement.Draw(state);
     }
 
     public void Resize(int width, int height)

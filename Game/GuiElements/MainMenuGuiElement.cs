@@ -1,0 +1,111 @@
+using System.Numerics;
+using ImGuiNET;
+using LindEngine.Core;
+using LindEngine.Core.GuiElements;
+using LindEngine.Core.Windows;
+using LindEngine.Core.Windows.States;
+using OpenTK.Graphics.OpenGL4;
+using OpenTK.Windowing.Common;
+
+namespace LindEngine.Game.GuiElements;
+
+public class MainMenuGuiElement: GuiElement
+{
+    private int _windowHeight;
+    private int _windowWidth;
+    private bool _exitTriggered;
+    
+    public MainMenuGuiElement(string name) : base(name)
+    {
+        
+    }
+
+    public override void Draw(LindenWindowState state)
+    {
+        _windowHeight = state.Window.ClientSize.Y;
+        _windowWidth = state.Window.ClientSize.X;
+        
+        ImGui.Begin("Main menu",
+            ImGuiWindowFlags.None
+            | ImGuiWindowFlags.NoCollapse
+            | ImGuiWindowFlags.NoMove
+            | ImGuiWindowFlags.NoResize
+            | ImGuiWindowFlags.NoTitleBar
+            | ImGuiWindowFlags.NoBackground
+        );
+        ImGui.SetWindowPos(new(0, 0));
+        ImGui.SetWindowSize(new(_windowWidth, _windowHeight));
+        DebugInfo(state);
+        ExitButton();
+        ExitModal();
+        ImGui.End();
+    }
+
+    private void DebugInfo(LindenWindowState state)
+    {
+        ImGui.Text("FPS:");
+        ImGui.SameLine();
+        ImGui.PushStyleColor(ImGuiCol.Text, new Vector4(0, 1, 0, 1));
+        ImGui.Text($"{ FpsCounter.FPS } [{ FpsCounter.Max }:{ FpsCounter.Min }]");
+        ImGui.PopStyleColor();
+        
+        ImGui.Text("OpenGL version:");
+        ImGui.SameLine();
+        ImGui.PushStyleColor(ImGuiCol.Text, new Vector4(0, 1, 0, 1));
+        ImGui.Text(GL.GetString(StringName.Version));
+        ImGui.PopStyleColor();
+        
+        ImGui.Text("VSync:");
+        ImGui.SameLine();
+        ImGui.PushStyleColor(ImGuiCol.Text, new Vector4(0, 1, 0, 1));
+        ImGui.Text(state.Window.VSync == VSyncMode.Off ? "disabled" : "enabled");
+        ImGui.PopStyleColor();
+        
+        ImGui.Text("Window name:");
+        ImGui.SameLine();
+        ImGui.PushStyleColor(ImGuiCol.Text, new Vector4(0, 1, 0, 1));
+        ImGui.Text(state.Window.Name);
+        ImGui.PopStyleColor();
+        
+        ImGui.Text("State name:");
+        ImGui.SameLine();
+        ImGui.PushStyleColor(ImGuiCol.Text, new Vector4(0, 1, 0, 1));
+        ImGui.Text(state.Name);
+        ImGui.PopStyleColor();
+    }
+
+    private void ExitButton()
+    {
+        float cursorPosY = ImGui.GetCursorPosY();
+        ImGui.SetCursorPosY(_windowHeight - 60);
+        ImGui.PushStyleColor(ImGuiCol.Button, new Vector4(0.1f, 0.1f, 0.1f, 1.0f));
+        ImGui.PushStyleColor(ImGuiCol.ButtonHovered, new Vector4(0.3f, 0.3f, 0.3f, 1.0f));
+        ImGui.PushStyleColor(ImGuiCol.ButtonActive, new Vector4(0.2f, 0.2f, 0.2f, 1.0f));
+        if (ImGui.Button("Выйти из игры", new Vector2(300, 50))) _exitTriggered = true;
+        ImGui.PopStyleColor(3);
+        ImGui.SetCursorPosY(cursorPosY);
+    }
+
+    private void ExitModal()
+    {
+        if (!_exitTriggered) return;
+        
+        int modalWidth = 244;
+        int modalHeight = 66;
+        int buttonWidth = 110;
+        int buttonHeight = 30;
+            
+        ImGui.OpenPopup("Exit popup");
+        ImGui.SetNextWindowSize(new Vector2(modalWidth, modalHeight));
+        ImGui.SetNextWindowPos(new Vector2((_windowWidth - modalWidth) / 2.0f, (_windowHeight - modalHeight) / 2.0f));
+        
+        if (!ImGui.BeginPopupModal("Exit popup", ref _exitTriggered,
+                ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoTitleBar)) return;
+        
+        ImGui.Text("Вы действительно хотите выйти?");
+        if (ImGui.Button("Да", new Vector2(buttonWidth, buttonHeight))) Application.Starter.Exit();
+        ImGui.SameLine();
+        if (ImGui.Button("Нет", new Vector2(buttonWidth, buttonHeight))) _exitTriggered = false;
+        ImGui.EndPopup();
+    }
+}
