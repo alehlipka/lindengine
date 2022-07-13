@@ -72,6 +72,12 @@ public class MainMenuGuiElement: GuiElement
         ImGui.PushStyleColor(ImGuiCol.Text, new Vector4(0, 1, 0, 1));
         ImGui.Text(state.Name);
         ImGui.PopStyleColor();
+        
+        ImGui.Text("Fullscreen toggle:");
+        ImGui.SameLine();
+        ImGui.PushStyleColor(ImGuiCol.Text, new Vector4(0, 1, 0, 1));
+        ImGui.Text("Tab");
+        ImGui.PopStyleColor();
     }
 
     private void ExitButton()

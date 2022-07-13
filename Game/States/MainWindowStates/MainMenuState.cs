@@ -2,6 +2,7 @@ using LindEngine.Core.Managers;
 using LindEngine.Core.Windows;
 using LindEngine.Core.Windows.States;
 using OpenTK.Windowing.Common;
+using OpenTK.Windowing.GraphicsLibraryFramework;
 
 namespace LindEngine.Game.States.MainWindowStates;
 
@@ -22,5 +23,10 @@ public class MainMenuState : LindenWindowState
     {
         base.OnUpdate(args);
         Gui.Manager.Update(Window, (float)args.Time);
+
+        if (Window.IsKeyPressed(Keys.Tab))
+        {
+            Window.WindowState = Window.IsFullscreen ? WindowState.Maximized : WindowState.Fullscreen;
+        }
     }
 }

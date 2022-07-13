@@ -4,6 +4,7 @@ using LindEngine.Core.Exceptions;
 using LindEngine.Core.Windows;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
+using OpenTK.Windowing.Common.Input;
 using OpenTK.Windowing.Desktop;
 
 namespace LindEngine.Core.Managers;
@@ -52,7 +53,8 @@ public class Window : LindenManager
                         NumberOfSamples = 16,
                         Title = $"LindEngine",
                         WindowState = WindowState.Maximized,
-                        MinimumSize = new Vector2i(800, 600)
+                        MinimumSize = new Vector2i(800, 600),
+                        Size = new Vector2i(1024, 768),
                     }
                 )
             );
