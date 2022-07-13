@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Runtime.CompilerServices;
 using ImGuiNET;
 using LindEngine.Core.Exceptions;
@@ -34,24 +35,28 @@ public class Gui : LindenManager
 
     private Gui()
     {
-        IntPtr context = ImGui.CreateContext();
-        ImGui.SetCurrentContext(context);
-        ImGuiIOPtr io = ImGui.GetIO();
-        io.Fonts.AddFontDefault();
-        io.BackendFlags |= ImGuiBackendFlags.RendererHasVtxOffset;
+        unsafe
+        {
+            IntPtr context = ImGui.CreateContext();
+            ImGui.SetCurrentContext(context);
+            ImGuiIOPtr io = ImGui.GetIO();
+            ImFontConfigPtr config = ImGuiNative.ImFontConfig_ImFontConfig();
+            io.Fonts.AddFontFromFileTTF(Path.Combine("Data", "Fonts", "OpenSans-Medium.ttf"), 16, config, io.Fonts.GetGlyphRangesCyrillic());
+            io.BackendFlags |= ImGuiBackendFlags.RendererHasVtxOffset;
         
-        CreateBuffers(io);
-        SetKeyMappings(io);
-        SetPerFrameImGuiData(io, 1f / 60f);
+            CreateBuffers(io);
+            SetKeyMappings(io);
+            SetPerFrameImGuiData(io, 1f / 60f);
         
-        ImGui.NewFrame();
-        _frameBegun = true;
+            ImGui.NewFrame();
+            _frameBegun = true;
 
-        _guiElements = new List<GuiElement>();
+            _guiElements = new List<GuiElement>();
         
-        Console.WriteLine("ImGui manager created");
+            Console.WriteLine("ImGui manager created");
         
-        AddItems();
+            AddItems();
+        }
     }
 
     protected sealed override void AddItems()

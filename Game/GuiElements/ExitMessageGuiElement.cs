@@ -19,18 +19,18 @@ public class ExitMessageGuiElement: GuiElement
         int xCenter = (state.Window.ClientSize.X - modalWidth) / 2;
         int yCenter = (state.Window.ClientSize.Y - modalHeight) / 2;
         
-        ImGui.OpenPopup("Exit");
+        ImGui.OpenPopup("Выйти");
         ImGui.SetNextWindowSize(new(modalWidth, modalHeight));
         ImGui.SetNextWindowPos(new(xCenter, yCenter));
         bool open = true;
-        if (ImGui.BeginPopupModal("Exit", ref open, ImGuiWindowFlags.NoResize))
+        if (ImGui.BeginPopupModal("Выйти", ref open, ImGuiWindowFlags.NoResize))
         {
-            ImGui.Text("Did you realy want to exit?");
-            if (ImGui.Button("Yes", new(176, 40))) {
+            ImGui.Text("Вы действительно хотите выйти?");
+            if (ImGui.Button("Да")) {
                 Application.Starter.Exit();
             }
             ImGui.SameLine();
-            if (ImGui.Button("No", new(100, 40))) {
+            if (ImGui.Button("Нет")) {
                 open = false;
             }
             ImGui.EndPopup();
