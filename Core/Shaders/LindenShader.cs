@@ -16,7 +16,7 @@ public class LindenShader
 
     public LindenShader(string path)
     {
-        var shaderDirectory = path;
+        string shaderDirectory = path;
         Name = Path.GetFileName(shaderDirectory);
 
         string vertexSource = LoadSource(Path.Combine(shaderDirectory, "vertex.glsl"));
@@ -42,10 +42,10 @@ public class LindenShader
         
         GL.GetProgram(_handle, GetProgramParameterName.ActiveUniforms, out int numberOfUniforms);
         _uniformLocations = new Dictionary<string, int>();
-        for (var i = 0; i < numberOfUniforms; i++)
+        for (int i = 0; i < numberOfUniforms; i++)
         {
-            var key = GL.GetActiveUniform(_handle, i, out _, out _);
-            var location = GL.GetUniformLocation(_handle, key);
+            string key = GL.GetActiveUniform(_handle, i, out _, out _);
+            int location = GL.GetUniformLocation(_handle, key);
             _uniformLocations.Add(key, location);
         }
     }
@@ -111,7 +111,7 @@ public class LindenShader
     private void CompileShader(int shader)
     {
         GL.CompileShader(shader);
-        GL.GetShader(shader, ShaderParameter.CompileStatus, out var code);
+        GL.GetShader(shader, ShaderParameter.CompileStatus, out int code);
         if (code == (int)All.True) return;
         string infoLog = GL.GetShaderInfoLog(shader);
         throw new Exception($"Error occurred whilst compiling Shader({shader}).\n\n{infoLog}");

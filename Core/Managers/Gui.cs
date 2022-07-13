@@ -10,6 +10,7 @@ using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
+using Vector4 = System.Numerics.Vector4;
 
 namespace LindEngine.Core.Managers;
 
@@ -219,7 +220,7 @@ public class Gui : LindenManager
                     GL.BindTexture(TextureTarget.Texture2D, (int)pcmd.TextureId);
 
                     // We do _windowHeight - (int)clip.W instead of (int)clip.Y because gl has flipped Y when it comes to these coordinates
-                    var clip = pcmd.ClipRect;
+                    Vector4 clip = pcmd.ClipRect;
                     GL.Scissor((int)clip.X, _windowHeight - (int)clip.W, (int)(clip.Z - clip.X), (int)(clip.W - clip.Y));
 
                     if ((io.BackendFlags & ImGuiBackendFlags.RendererHasVtxOffset) != 0)

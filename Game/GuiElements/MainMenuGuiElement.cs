@@ -15,15 +15,22 @@ public class MainMenuGuiElement: GuiElement
     private int _windowWidth;
     private bool _exitTriggered;
     
-    public MainMenuGuiElement(string name) : base(name)
+    public MainMenuGuiElement(string name) : base(name) { }
+
+    private void SetStyles()
     {
-        
+        ImGuiStylePtr style = ImGui.GetStyle();
+        style.Colors[(int)ImGuiCol.Button] = new Vector4(0.16f, 0.16f, 0.16f, 1.0f);
+        style.Colors[(int)ImGuiCol.ButtonHovered] = new Vector4(0.3f, 0.3f, 0.3f, 1.0f);
+        style.Colors[(int)ImGuiCol.ButtonActive] = new Vector4(0.2f, 0.2f, 0.2f, 1.0f);
     }
 
     public override void Draw(LindenWindowState state)
     {
         _windowHeight = state.Window.ClientSize.Y;
         _windowWidth = state.Window.ClientSize.X;
+        
+        SetStyles();
         
         ImGui.Begin("Main menu",
             ImGuiWindowFlags.None
@@ -84,11 +91,7 @@ public class MainMenuGuiElement: GuiElement
     {
         float cursorPosY = ImGui.GetCursorPosY();
         ImGui.SetCursorPosY(_windowHeight - 60);
-        ImGui.PushStyleColor(ImGuiCol.Button, new Vector4(0.1f, 0.1f, 0.1f, 1.0f));
-        ImGui.PushStyleColor(ImGuiCol.ButtonHovered, new Vector4(0.3f, 0.3f, 0.3f, 1.0f));
-        ImGui.PushStyleColor(ImGuiCol.ButtonActive, new Vector4(0.2f, 0.2f, 0.2f, 1.0f));
         if (ImGui.Button("Выйти из игры", new Vector2(300, 50))) _exitTriggered = true;
-        ImGui.PopStyleColor(3);
         ImGui.SetCursorPosY(cursorPosY);
     }
 
@@ -97,18 +100,19 @@ public class MainMenuGuiElement: GuiElement
         if (!_exitTriggered) return;
         
         int modalWidth = 244;
-        int modalHeight = 66;
+        int modalHeight = 74;
         int buttonWidth = 110;
         int buttonHeight = 30;
             
         ImGui.OpenPopup("Exit popup");
         ImGui.SetNextWindowSize(new Vector2(modalWidth, modalHeight));
         ImGui.SetNextWindowPos(new Vector2((_windowWidth - modalWidth) / 2.0f, (_windowHeight - modalHeight) / 2.0f));
-        
         if (!ImGui.BeginPopupModal("Exit popup", ref _exitTriggered,
                 ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoTitleBar)) return;
         
         ImGui.Text("Вы действительно хотите выйти?");
+        ImGui.Separator();
+        ImGui.Spacing();
         if (ImGui.Button("Да", new Vector2(buttonWidth, buttonHeight))) Application.Starter.Exit();
         ImGui.SameLine();
         if (ImGui.Button("Нет", new Vector2(buttonWidth, buttonHeight))) _exitTriggered = false;
