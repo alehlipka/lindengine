@@ -52,9 +52,9 @@ public class Window : LindenManager
                         IsEventDriven = false,
                         NumberOfSamples = 16,
                         Title = $"LindEngine",
-                        WindowState = WindowState.Maximized,
+                        WindowState = WindowState.Normal,
                         MinimumSize = new Vector2i(800, 600),
-                        Size = new Vector2i(1024, 768),
+                        Size = new Vector2i(800, 600),
                     }
                 )
             );
@@ -84,5 +84,10 @@ public class Window : LindenManager
         SelectedWindow = window ?? throw new WindowNotExistsException($"Window with name {name} is not exists");
         
         Console.WriteLine($"Window manager: window '{window.Name}' selected");
+    }
+
+    public override void Dispose()
+    {
+        _windowsList.ForEach(w => w.Dispose());
     }
 }

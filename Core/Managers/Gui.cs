@@ -415,4 +415,9 @@ public class Gui : LindenManager
 
         io.Fonts.ClearTexData();
     }
+
+    public override void Dispose()
+    {
+        
+    }
 }

@@ -7,4 +7,5 @@ public abstract class LindenManager
     protected abstract void AddItems();
     public abstract List<string> GetNames();
     public abstract void Select(string name);
+    public abstract void Dispose();
 }

@@ -54,4 +54,9 @@ public class Shader : LindenManager
         
         Console.WriteLine($"Shader manager: shader '{shader.Name}' selected");
     }
+
+    public override void Dispose()
+    {
+        _shadersList.ForEach(s => s.Dispose());
+    }
 }
