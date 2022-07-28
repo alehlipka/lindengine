@@ -7,7 +7,7 @@ using OpenTK.Mathematics;
 
 namespace LindEngine.Core.Shaders;
 
-public class LindenShader
+public class LindenShader : IDisposable
 {
     public readonly string Name;
 
@@ -19,19 +19,37 @@ public class LindenShader
         string shaderDirectory = path;
         Name = Path.GetFileName(shaderDirectory);
 
-        string vertexSource = LoadSource(Path.Combine(shaderDirectory, "vertex.glsl"));
         int vertexShader = GL.CreateShader(ShaderType.VertexShader);
+        int fragmentShader = GL.CreateShader(ShaderType.FragmentShader);
+        int geometryShader = 0;
+
+        string vertexShaderPath = Path.Combine(shaderDirectory, "vertex.glsl");
+        string fragmentShaderPath = Path.Combine(shaderDirectory, "fragment.glsl");
+        string geometryShaderPath = Path.Combine(shaderDirectory, "geometry.glsl");
+
+        bool geometryShaderExists = File.Exists(geometryShaderPath);
+
+        string vertexSource = LoadSource(vertexShaderPath);
         GL.ShaderSource(vertexShader, vertexSource);
         CompileShader(vertexShader);
         
-        string fragmentSource = LoadSource(Path.Combine(shaderDirectory, "fragment.glsl"));
-        int fragmentShader = GL.CreateShader(ShaderType.FragmentShader);
+        string fragmentSource = LoadSource(fragmentShaderPath);
         GL.ShaderSource(fragmentShader, fragmentSource);
         CompileShader(fragmentShader);
+
+        if (geometryShaderExists) {
+            geometryShader = GL.CreateShader(ShaderType.GeometryShader);
+            string geometrySource = LoadSource(geometryShaderPath);
+            GL.ShaderSource(geometryShader, geometrySource);
+            CompileShader(geometryShader);
+        }
 
         _handle = GL.CreateProgram();
         GL.AttachShader(_handle, vertexShader);
         GL.AttachShader(_handle, fragmentShader);
+        if (geometryShaderExists) {
+            GL.AttachShader(_handle, geometryShader);
+        }
         
         LinkProgram(_handle);
         
@@ -39,6 +57,11 @@ public class LindenShader
         GL.DetachShader(_handle, fragmentShader);
         GL.DeleteShader(vertexShader);
         GL.DeleteShader(fragmentShader);
+
+        if (geometryShaderExists) {
+            GL.DetachShader(_handle, geometryShader);
+            GL.DeleteShader(geometryShader);
+        }
         
         GL.GetProgram(_handle, GetProgramParameterName.ActiveUniforms, out int numberOfUniforms);
         _uniformLocations = new Dictionary<string, int>();
@@ -49,6 +72,29 @@ public class LindenShader
             _uniformLocations.Add(key, location);
         }
     }
+
+    private string LoadSource(string path)
+    {
+        using StreamReader reader = new StreamReader(path, Encoding.UTF8);
+        return reader.ReadToEnd();
+    }
+
+    private void CompileShader(int shader)
+    {
+        GL.CompileShader(shader);
+        GL.GetShader(shader, ShaderParameter.CompileStatus, out int code);
+        if (code == (int)All.True) return;
+        string infoLog = GL.GetShaderInfoLog(shader);
+        throw new Exception($"Error occurred whilst compiling Shader({shader}).\n\n{infoLog}");
+    }
+
+    private void LinkProgram(int program)
+    {
+        GL.LinkProgram(program);
+        GL.GetProgram(program, GetProgramParameterName.LinkStatus, out int code);
+        if (code == (int)All.True) return;
+        throw new Exception(GL.GetProgramInfoLog(program));
+    }
     
     public void Use()
     {
@@ -58,11 +104,6 @@ public class LindenShader
     public int GetAttribLocation(string attribName)
     {
         return GL.GetAttribLocation(_handle, attribName);
-    }
-
-    public void Dispose()
-    {
-        GL.DeleteProgram(_handle);
     }
     
     public void SetInt(string name, int data)
@@ -102,26 +143,8 @@ public class LindenShader
         GL.Uniform4(_uniformLocations[name], data);
     }
 
-    private string LoadSource(string path)
+    public void Dispose()
     {
-        using StreamReader reader = new StreamReader(path, Encoding.UTF8);
-        return reader.ReadToEnd();
-    }
-
-    private void CompileShader(int shader)
-    {
-        GL.CompileShader(shader);
-        GL.GetShader(shader, ShaderParameter.CompileStatus, out int code);
-        if (code == (int)All.True) return;
-        string infoLog = GL.GetShaderInfoLog(shader);
-        throw new Exception($"Error occurred whilst compiling Shader({shader}).\n\n{infoLog}");
-    }
-
-    private void LinkProgram(int program)
-    {
-        GL.LinkProgram(program);
-        GL.GetProgram(program, GetProgramParameterName.LinkStatus, out int code);
-        if (code == (int)All.True) return;
-        throw new Exception(GL.GetProgramInfoLog(program));
+        GL.DeleteProgram(_handle);
     }
 }

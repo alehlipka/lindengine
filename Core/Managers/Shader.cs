@@ -27,7 +27,7 @@ public class Shader : LindenManager
 
     protected sealed override void AddItems()
     {
-        string shadersDirectory = @"Data/Shaders";
+        string shadersDirectory = Path.Combine("Data", "Shaders");
         string[] directories = Directory.GetDirectories(shadersDirectory);
         foreach (string shaderName in directories)
         {
