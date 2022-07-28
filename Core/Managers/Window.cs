@@ -53,7 +53,8 @@ public class Window : LindenManager
                         NumberOfSamples = 16,
                         Title = $"LindEngine",
                         WindowState = WindowState.Normal,
-                        MinimumSize = new Vector2i(800, 600),
+                        WindowBorder = WindowBorder.Fixed,
+                        MinimumSize = new Vector2i(640, 360),
                         Size = new Vector2i(800, 600),
                     }
                 )
