@@ -18,7 +18,7 @@ public struct Vertex
     public static int SizeInBytes() => Vector3.SizeInBytes * 4 + Vector2.SizeInBytes + Vector4.SizeInBytes * 2;
 }
 
-public class Mesh
+public class LindenMesh
 {
     public Vector3 Position = Vector3.Zero;
     public Vector3 Rotation = Vector3.Zero;
@@ -31,7 +31,7 @@ public class Mesh
     private int VBO;
     private int EBO;
 
-    public Mesh(bool hasAnimations)
+    public LindenMesh(bool hasAnimations)
     {
         HasAnimations = hasAnimations;
     }
