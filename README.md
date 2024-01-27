@@ -67,7 +67,3 @@ This is only a documentation package. You can print out [spec.md](spec.md) to yo
 $ standard-readme-spec
 # Prints out the standard-readme spec
 ``` -->
-
-## Лицензия
-
-[GPL-3.0](LICENSE) © Aleh Lipka
