@@ -16,7 +16,25 @@ The repository contains:
 
 ## Install
 
+### Manjaro Linux
+
+```sh
+sudo pacman -S dotnet-sdk
+```
+
+[Official .Net packages for some other linux distributions](https://learn.microsoft.com/en-us/dotnet/core/install/linux)
+
+### Windows
+
+Download latest .Net from [this page](https://dotnet.microsoft.com/en-us/download) and follow instructions.
+
+### Then
+
+Just go to projects directory and run this:
+
 ```sh
 cd core
+```
+```sh
 dotnet run
 ```
