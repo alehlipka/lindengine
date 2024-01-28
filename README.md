@@ -17,7 +17,7 @@ The repository contains:
 ## Install
 
 ### Manjaro Linux
-
+![Manjaro Linux Logo](https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Manjaro-logo.svg/100px-Manjaro-logo.svg.png)
 ```sh
 sudo pacman -S dotnet-sdk
 ```
