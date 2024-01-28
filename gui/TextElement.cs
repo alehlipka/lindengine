@@ -1,36 +1,36 @@
-﻿using static StbTrueTypeSharp.StbTrueType;
+﻿using OpenTK.Mathematics;
+using static StbTrueTypeSharp.StbTrueType;
 
 namespace lindengine.gui
 {
     public class TextElement : Element
     {
-        byte[] bytes, bitmap;
-        int b_w, b_h, l_h, b_cursor, ascent, descent, lineGap;
-        float scale;
-        stbtt_fontinfo info;
+        protected byte[] bytes, bitmap;
+        protected int l_h, b_cursor, ascent, descent, lineGap;
+        protected float scale;
+        protected stbtt_fontinfo info;
+        protected string text;
 
-        public TextElement(string name, string text) : base(name)
+        public TextElement(string name, Vector2i size, string text) : base(name, size)
         {
-            text = "Пиздец\nSukablyat'\nЯ в полном ахуе от того как это работает!№(%*?)".Trim('\r');
-
+            this.text = text.Trim('\r', '\n', '\t', ' ');
             prepare();
-            start(text);
+            processText(text);
+            saveImage();
         }
 
         unsafe public void prepare()
         {
-            bytes = File.ReadAllBytes("/home/procrastinator/projects/lindengine/core/assets/fonts/DroidSans.ttf");
+            bytes = File.ReadAllBytes("assets/fonts/DroidSans.ttf");
             info = new();
             fixed (byte* ptr = bytes)
             {
                 stbtt_InitFont(info, ptr, 0);
             }
 
-            b_w = 400;
-            b_h = 300;
             l_h = 32;
 
-            bitmap = new byte[b_w * b_h];
+            bitmap = new byte[size.X * size.Y];
             scale = stbtt_ScaleForPixelHeight(info, l_h);
             b_cursor = 0;
             int asc, des, gap;
@@ -40,38 +40,50 @@ namespace lindengine.gui
             lineGap = gap;
         }
 
-        public void start(string text)
+        protected void saveImage()
+        {
+            var imageWriter = new StbImageWriteSharp.ImageWriter();
+            using var stream = File.OpenWrite("output.png");
+            imageWriter.WritePng(bitmap, size.X, size.Y, StbImageWriteSharp.ColorComponents.Grey, stream);
+        }
+
+        protected void processText(string text)
         {
             string[] lines = text.Split('\n');
             for (int line_number = 0; line_number < lines.Length; line_number++)
             {
-                b_cursor = b_w * l_h * line_number;
-
-                string[] words = lines[line_number].Split(' ');
-                for (int word_number = 0; word_number < words.Length; word_number++)
-                {
-                    for (int char_number = 0; char_number < words[word_number].Length; char_number++)
-                    {
-                        char current_char = words[word_number][char_number];
-                        char? next_char = (char_number < words[word_number].Length - 1)
-                            ? words[word_number][char_number + 1]
-                            : null;
-
-                        proccessCharacter(current_char, next_char);
-                        if (next_char == null)
-                        {
-                            proccessCharacter(' ');
-                        }
-                    }
-                }
+                b_cursor = size.X * l_h * line_number;
+                processLine(lines[line_number]);
             }
-
-            var imageWriter = new StbImageWriteSharp.ImageWriter();
-            using var stream = File.OpenWrite("output.png");
-            imageWriter.WritePng(bitmap, b_w, b_h, StbImageWriteSharp.ColorComponents.Grey, stream);
         }
 
-        unsafe protected void proccessCharacter(char current_char, char? next_char = null)
+        protected void processLine(string line)
+        {
+            string[] words = line.Split(' ');
+            for (int word_number = 0; word_number < words.Length; word_number++)
+            {
+                processWord(words[word_number]);
+            }
+        }
+
+        protected void processWord(string word)
+        {
+            for (int char_number = 0; char_number < word.Length; char_number++)
+            {
+                char current_char = word[char_number];
+                char? next_char = (char_number < word.Length - 1)
+                    ? word[char_number + 1]
+                    : null;
+
+                processCharacter(current_char, next_char);
+                if (next_char == null)
+                {
+                    processCharacter(' ');
+                }
+            }
+        }
+
+        unsafe protected void processCharacter(char current_char, char? next_char = null)
         {
             /* how wide is this character */
             int ax, lsb;
@@ -92,9 +104,9 @@ namespace lindengine.gui
             fixed (byte* ptr = bitmap)
             {
                 /* render character (stride and offset is important here) */
-                int byteOffset = b_cursor + lsb + (y * b_w);
+                int byteOffset = b_cursor + lsb + (y * size.X);
                 byte* ptr2 = ptr + byteOffset;
-                stbtt_MakeCodepointBitmap(info, ptr2, char_width, char_height, b_w, scale, scale, current_char);
+                stbtt_MakeCodepointBitmap(info, ptr2, char_width, char_height, size.X, scale, scale, current_char);
             }
 
             /* advance x */

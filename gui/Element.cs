@@ -1,4 +1,5 @@
 ﻿using OpenTK.Graphics.OpenGL4;
+using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 
 namespace lindengine.gui
@@ -11,6 +12,7 @@ namespace lindengine.gui
         protected int indexBufferHandle = GL.GenBuffer();
         protected int vertexArrayHandle = GL.GenVertexArray();
         protected List<Element> children = [];
+        protected Vector2i size;
 
         private delegate void ElementDelegate(Element element);
         private delegate void ElementContextResizeDelegate(Element element, ResizeEventArgs args);
@@ -27,9 +29,10 @@ namespace lindengine.gui
 
         private const string consoleStarter = "├──────── ";
 
-        public Element(string name)
+        public Element(string name, Vector2i size)
         {
             Name = name.ToLower();
+            this.size = size;
 
             CreateEvent += OnCreate;
             CreateEvent?.Invoke(this);
