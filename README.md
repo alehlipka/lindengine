@@ -1,4 +1,4 @@
-# Lindengine
+# ![lindengine](https://raw.githubusercontent.com/alehlipka/lindengine/main/core/assets/lindengine/lindengine-logo-icon.png) Lindengine framework
 
 Three-dimensional multiplatform [.Net](https://dotnet.microsoft.com) game framework / engine based on [OpenTK](https://github.com/opentk/opentk).
 
@@ -13,6 +13,9 @@ The repository contains:
 ## Table of Contents
 
 - [Install](#install)
+    - [Linux](#manjaro-linux)
+    - [Windows](#windows)
+- [Run](#run)
 
 ## Install
 
@@ -28,7 +31,7 @@ sudo pacman -S dotnet-sdk
 
 Download latest .Net from [this page](https://dotnet.microsoft.com/en-us/download) and follow instructions.
 
-### Then
+### Run
 
 Just go to projects directory and run this:
 
