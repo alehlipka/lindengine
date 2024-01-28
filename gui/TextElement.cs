@@ -4,90 +4,108 @@ namespace lindengine.gui
 {
     public class TextElement : Element
     {
+        byte[] bytes, bitmap;
+        int b_w, b_h, l_h, b_cursor, ascent, descent, lineGap;
+        float scale;
+        stbtt_fontinfo info;
+
         public TextElement(string name, string text) : base(name)
         {
-            test();
+            text = "Пиздец\nSukablyat'\nЯ в полном ахуе от того как это работает!№(%*?)".Trim('\r');
+
+            prepare();
+            start(text);
         }
 
-        unsafe public static void test()
+        unsafe public void prepare()
         {
-            string s = "Привет";
-            float fontSize = 32.0f;
-            int bufferWidth = 150;
-            int bufferHeight = 200;
-
-            byte[] bytes = File.ReadAllBytes("/home/procrastinator/projects/lindengine/core/assets/fonts/DroidSans.ttf");
-            byte[] buffer = new byte[bufferWidth * bufferHeight];
-
-            stbtt_fontinfo info = new stbtt_fontinfo();
-
+            bytes = File.ReadAllBytes("/home/procrastinator/projects/lindengine/core/assets/fonts/DroidSans.ttf");
+            info = new();
             fixed (byte* ptr = bytes)
             {
-                int res = stbtt_InitFont(info, ptr, 0);
+                stbtt_InitFont(info, ptr, 0);
             }
 
-            int ascent, descent, lineGap;
-            stbtt_GetFontVMetrics(info, &ascent, &descent, &lineGap);
-            int lineHeight = ascent - descent + lineGap;
+            b_w = 400;
+            b_h = 300;
+            l_h = 32;
 
-            float scale = stbtt_ScaleForPixelHeight(info, fontSize);
+            bitmap = new byte[b_w * b_h];
+            scale = stbtt_ScaleForPixelHeight(info, l_h);
+            b_cursor = 0;
+            int asc, des, gap;
+            stbtt_GetFontVMetrics(info, &asc, &des, &gap);
+            ascent = (int)(asc * scale);
+            descent = (int)(des * scale);
+            lineGap = gap;
+        }
 
-            ascent = (int)(ascent * scale + 0.5f);
-            descent = (int)(descent * scale - 0.5f);
-            lineHeight = (int)(lineHeight * scale + 0.5f);
-
-            int posX = 0, posY = 0;
-
-            for (int i = 0; i < s.Length; ++i)
+        public void start(string text)
+        {
+            string[] lines = text.Split('\n');
+            for (int line_number = 0; line_number < lines.Length; line_number++)
             {
-                char c = s[i];
-                int glyphId = stbtt_FindGlyphIndex(info, c);
-                if (glyphId == 0)
+                b_cursor = b_w * l_h * line_number;
+
+                string[] words = lines[line_number].Split(' ');
+                for (int word_number = 0; word_number < words.Length; word_number++)
                 {
-                    continue;
+                    for (int char_number = 0; char_number < words[word_number].Length; char_number++)
+                    {
+                        char current_char = words[word_number][char_number];
+                        char? next_char = (char_number < words[word_number].Length - 1)
+                            ? words[word_number][char_number + 1]
+                            : null;
+
+                        proccessCharacter(current_char, next_char);
+                        if (next_char == null)
+                        {
+                            proccessCharacter(' ');
+                        }
+                    }
                 }
-
-                int advanceTemp = 0, lsbTemp = 0;
-                stbtt_GetGlyphHMetrics(info, glyphId, &advanceTemp, &lsbTemp);
-                int advance = (int)(advanceTemp * scale + 0.5f);
-
-                int x0, y0, x1, y1;
-                //  2, -20, 17, 0
-                stbtt_GetGlyphBitmapBox(
-                    info, glyphId, scale, scale, &x0, &y0, &x1, &y1
-                );
-
-                posX += x0;
-                posY = ascent + y0;
-
-                if (posY < 0)
-                {
-                    posY = 0;
-                }
-
-                fixed (byte* ptr = buffer)
-                {
-                    byte* ptr2 = ptr + (posX + posY * bufferWidth);
-
-                    stbtt_MakeGlyphBitmap(
-                        info,
-                        ptr2,
-                        x1 - x0,
-                        y1 - y0,
-                        bufferWidth,
-                        scale,
-                        scale,
-                        glyphId
-                    );
-                }
-
-                posX += advance;
             }
 
             var imageWriter = new StbImageWriteSharp.ImageWriter();
-            using (var stream = File.OpenWrite("output.png"))
+            using var stream = File.OpenWrite("output.png");
+            imageWriter.WritePng(bitmap, b_w, b_h, StbImageWriteSharp.ColorComponents.Grey, stream);
+        }
+
+        unsafe protected void proccessCharacter(char current_char, char? next_char = null)
+        {
+            /* how wide is this character */
+            int ax, lsb;
+            stbtt_GetCodepointHMetrics(info, current_char, &ax, &lsb);
+            ax = (int)(ax * scale);
+            lsb = (int)(lsb * scale);
+            /* (Note that each Codepoint call has an alternative Glyph version which caches the work required to lookup the character word[i].) */
+
+            /* get bounding box for character (may be offset to account for chars that dip above or below the line) */
+            int c_x1, c_y1, c_x2, c_y2;
+            stbtt_GetCodepointBitmapBox(info, current_char, scale, scale, &c_x1, &c_y1, &c_x2, &c_y2);
+            int char_width = c_x2 - c_x1;
+            int char_height = c_y2 - c_y1;
+
+            /* compute y (different characters have different heights) */
+            int y = ascent + c_y1;
+
+            fixed (byte* ptr = bitmap)
             {
-                imageWriter.WritePng(buffer, bufferWidth, bufferHeight, StbImageWriteSharp.ColorComponents.Grey, stream);
+                /* render character (stride and offset is important here) */
+                int byteOffset = b_cursor + lsb + (y * b_w);
+                byte* ptr2 = ptr + byteOffset;
+                stbtt_MakeCodepointBitmap(info, ptr2, char_width, char_height, b_w, scale, scale, current_char);
+            }
+
+            /* advance x */
+            b_cursor += ax;
+
+            /* add kerning */
+            int kern = 0;
+            if (next_char != null && next_char != '\n')
+            {
+                kern = stbtt_GetCodepointKernAdvance(info, current_char, (char)next_char);
+                b_cursor += (int)(kern * scale);
             }
         }
     }
