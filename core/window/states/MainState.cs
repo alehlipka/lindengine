@@ -10,7 +10,7 @@ namespace lindengine.core.window.states
 
         protected override void OnCreate(State state)
         {
-            testElement = new TextElement("test", new Vector2i(400, 300), "Пиздец\nSukablyat'\nЯ в полном ахуе от того как это работает!№(%*?)");
+            testElement = new TextElement("text_element", new Vector2i(400, 300), "Пиздец\nSukablyat'\nЯ в полном ахуе от того как это работает!№(%*?)");
         }
 
         protected override void OnLoad(State state)

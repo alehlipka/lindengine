@@ -56,9 +56,9 @@ namespace lindengine.core.window
         {
             if (_isLoaded)
             {
-                Console.WriteLine(consoleStarter + $"State resizing: {Name} {e.Width}x{e.Height}");
+                Console.WriteLine(consoleStarter + $"State context resizing: {Name} {e.Width}x{e.Height}");
                 ContextResizeEvent?.Invoke(this, e);
-                Console.WriteLine(consoleStarter + $"State resized: {Name} {e.Width}x{e.Height}");
+                Console.WriteLine(consoleStarter + $"State context resized: {Name} {e.Width}x{e.Height}");
             }
         }
 

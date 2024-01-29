@@ -60,7 +60,7 @@ namespace lindengine.gui
             if (_isLoaded)
             {
                 ContextResizeEvent?.Invoke(this, e);
-                Console.WriteLine(consoleStarter + $"GUI element resized: {Name} {e.Width}x{e.Height}");
+                Console.WriteLine(consoleStarter + $"GUI element context resized: {Name} {e.Width}x{e.Height}");
             }
         }
 

@@ -71,12 +71,12 @@ namespace lindengine.core.camera
         {
             if (_isLoaded)
             {
-                Console.WriteLine(consoleStarter + $"Camera resizing: {Name} {e.Width}x{e.Height}");
-                
+                Console.WriteLine(consoleStarter + $"Camera context resizing: {Name} {e.Width}x{e.Height}");
+
                 AspectRatio = e.Width / (float)e.Height;
                 ContextResizeEvent?.Invoke(this, e);
-                
-                Console.WriteLine(consoleStarter + $"Camera resized: {Name} {e.Width}x{e.Height}");
+
+                Console.WriteLine(consoleStarter + $"Camera context resized: {Name} {e.Width}x{e.Height}");
             }
         }
 
