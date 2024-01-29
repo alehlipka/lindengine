@@ -21,7 +21,7 @@ namespace lindengine.gui
 
         unsafe public void prepare()
         {
-            bytes = File.ReadAllBytes("assets/fonts/DroidSans.ttf");
+            bytes = File.ReadAllBytes("assets/fonts/OpenSansBold.ttf");
             info = new();
             fixed (byte* ptr = bytes)
             {
@@ -42,8 +42,11 @@ namespace lindengine.gui
 
         protected void saveImage()
         {
-            var imageWriter = new StbImageWriteSharp.ImageWriter();
-            using var stream = File.OpenWrite("output.png");
+            string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            string fileName = "output.png";
+
+            StbImageWriteSharp.ImageWriter imageWriter = new StbImageWriteSharp.ImageWriter();
+            using FileStream stream = File.OpenWrite(Path.Combine(desktopPath, fileName));
             imageWriter.WritePng(bitmap, size.X, size.Y, StbImageWriteSharp.ColorComponents.Grey, stream);
         }
 

@@ -4,7 +4,8 @@
     {
         Last = -2,
         First = -1,
-        Window = 0,
+        Application = 0,
+        Window,
         Shader,
         State,
         Camera,

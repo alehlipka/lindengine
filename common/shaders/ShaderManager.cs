@@ -11,6 +11,7 @@
             _shadersPath = shadersPath;
             CreateShaders();
         }
+
         public static void Select(string shaderName)
         {
             if (_selectedShader?.Name != shaderName)

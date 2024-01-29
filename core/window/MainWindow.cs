@@ -21,7 +21,7 @@ namespace lindengine.core.window
 
         public MainWindow() : base(_gameWindowSettings, _nativeWindowSettings)
         {
-            Logger.Write(LogLevel.First, "Window creating");
+            Logger.Write(LogLevel.Window, "Window creating");
 
             ShaderManager.Create(Path.Combine("assets", "shaders"));
             StatesManager.Create();
@@ -85,7 +85,7 @@ namespace lindengine.core.window
             StatesManager.Unload();
             ShaderManager.Unload();
 
-            Logger.Write(LogLevel.Last, "Window unloaded");
+            Logger.Write(LogLevel.Window, "Window unloaded", true);
         }
     }
 }

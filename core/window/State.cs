@@ -32,7 +32,7 @@ namespace lindengine.core.window
             CreateEvent += OnCreate;
             CreateEvent?.Invoke(this);
 
-            Logger.Write(LogLevel.State, $"State creating: {Name}");
+            Logger.Write(LogLevel.State, $"State created: {Name}");
         }
 
         public void Load()

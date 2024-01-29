@@ -1,4 +1,5 @@
-﻿using lindengine.core.window;
+﻿using lindengine.common.logs;
+using lindengine.core.window;
 
 namespace lindengine.core
 {
@@ -6,9 +7,12 @@ namespace lindengine.core
     {
         static void Main(string[] args)
         {
-            using MainWindow mainWindow = new();
+            Logger.Write(LogLevel.First, "Application start", true);
 
+            using MainWindow mainWindow = new();
             mainWindow.Run();
+
+            Logger.Write(LogLevel.Last, "Application finish");
         }
     }
 }
