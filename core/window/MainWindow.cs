@@ -1,5 +1,5 @@
-﻿using lindengine.core.helpers;
-using lindengine.shader;
+﻿using lindengine.common.shaders;
+using lindengine.core.helpers;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
