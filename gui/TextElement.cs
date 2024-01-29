@@ -13,7 +13,7 @@ namespace lindengine.gui
 
         public TextElement(string name, Vector2i size, string text) : base(name, size)
         {
-            this.text = text.Trim('\r', '\n', '\t', ' ');
+            this.text = text;
             prepare();
             processText(text);
             saveImage();

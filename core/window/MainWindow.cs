@@ -1,4 +1,5 @@
-﻿using lindengine.common.shaders;
+﻿using lindengine.common.logs;
+using lindengine.common.shaders;
 using lindengine.core.helpers;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
@@ -14,26 +15,23 @@ namespace lindengine.core.window
         {
             Title = "Lindengine",
             ClientSize = new Vector2i(800, 600),
-            StartVisible = true,
+            StartVisible = false,
             Vsync = VSyncMode.On
         };
 
-        private const string consoleStarter = "├ ";
-
         public MainWindow() : base(_gameWindowSettings, _nativeWindowSettings)
         {
-            Console.WriteLine("┌ Window creating");
+            Logger.Write(LogLevel.First, "Window creating");
 
             ShaderManager.Create(Path.Combine("assets", "shaders"));
             StatesManager.Create();
 
-            Console.WriteLine(consoleStarter + "Window created");
-            Console.WriteLine("│");
+            Logger.Write(LogLevel.Window, "Window created", true);
         }
 
         protected override void OnLoad()
         {
-            Console.WriteLine(consoleStarter + "Window loading");
+            Logger.Write(LogLevel.Window, "Window loading");
 
             GL.Enable(EnableCap.Multisample);
             GL.Enable(EnableCap.Blend);
@@ -42,20 +40,18 @@ namespace lindengine.core.window
 
             StatesManager.Load("main");
 
-            Console.WriteLine(consoleStarter + "Window loaded");
-            Console.WriteLine("│");
+            Logger.Write(LogLevel.Window, "Window loaded", true);
         }
 
         protected override void OnResize(ResizeEventArgs e)
         {
-            Console.WriteLine(consoleStarter + $"Window resizing: {e.Width}x{e.Height}");
+            Logger.Write(LogLevel.Window, $"Window resizing: {e.Width}x{e.Height}");
 
             GL.Viewport(0, 0, e.Width, e.Height);
 
             StatesManager.Resize(e);
 
-            Console.WriteLine(consoleStarter + $"Window resized: {e.Width}x{e.Height}");
-            Console.WriteLine("│");
+            Logger.Write(LogLevel.Window, $"Window resized: {e.Width}x{e.Height}", true);
         }
 
         protected override void OnUpdateFrame(FrameEventArgs args)
@@ -84,12 +80,12 @@ namespace lindengine.core.window
         protected override void OnUnload()
         {
             base.OnUnload();
-            Console.WriteLine(consoleStarter + "Window unloading");
+            Logger.Write(LogLevel.Window, "Window unloading");
 
             StatesManager.Unload();
             ShaderManager.Unload();
 
-            Console.WriteLine("└ Window unloaded");
+            Logger.Write(LogLevel.Last, "Window unloaded");
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using OpenTK.Graphics.OpenGL4;
+﻿using lindengine.common.logs;
+using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 
 namespace lindengine.common.shaders
@@ -8,8 +9,6 @@ namespace lindengine.common.shaders
         public readonly string Name;
         protected readonly int Handle;
         protected readonly Dictionary<string, int> UniformLocations;
-
-        private const string consoleStarter = "├── ";
 
         public Shader(string name, string vertexPath, string fragmentPath)
         {
@@ -46,7 +45,7 @@ namespace lindengine.common.shaders
                 UniformLocations.Add(key, location);
             }
 
-            Console.WriteLine(consoleStarter + $"Shader created: {Name}");
+            Logger.Write(LogLevel.Shader, $"Shader created: {Name}");
         }
 
         private static void CompileShader(int shader)
@@ -107,7 +106,7 @@ namespace lindengine.common.shaders
         public void Unload()
         {
             GL.DeleteProgram(Handle);
-            Console.WriteLine(consoleStarter + $"Shader unloaded: {Name}");
+            Logger.Write(LogLevel.Shader, $"Shader unloaded: {Name}");
         }
     }
 }

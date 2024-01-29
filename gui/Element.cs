@@ -1,4 +1,5 @@
-﻿using OpenTK.Graphics.OpenGL4;
+﻿using lindengine.common.logs;
+using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 
@@ -27,8 +28,6 @@ namespace lindengine.gui
 
         private bool _isLoaded;
 
-        private const string consoleStarter = "├──────── ";
-
         public Element(string name, Vector2i size)
         {
             Name = name.ToLower();
@@ -36,7 +35,8 @@ namespace lindengine.gui
 
             CreateEvent += OnCreate;
             CreateEvent?.Invoke(this);
-            Console.WriteLine(consoleStarter + $"GUI element created: {Name}");
+
+            Logger.Write(LogLevel.GUI, $"GUI element created: {Name}");
         }
 
         public void Load()
@@ -51,7 +51,8 @@ namespace lindengine.gui
 
                 LoadEvent?.Invoke(this);
                 _isLoaded = true;
-                Console.WriteLine(consoleStarter + $"GUI element loaded: {Name}");
+
+                Logger.Write(LogLevel.GUI, $"GUI element loaded: {Name}");
             }
         }
 
@@ -60,7 +61,8 @@ namespace lindengine.gui
             if (_isLoaded)
             {
                 ContextResizeEvent?.Invoke(this, e);
-                Console.WriteLine(consoleStarter + $"GUI element context resized: {Name} {e.Width}x{e.Height}");
+
+                Logger.Write(LogLevel.GUI, $"GUI element context resized: {Name} {e.Width}x{e.Height}");
             }
         }
 
@@ -94,7 +96,8 @@ namespace lindengine.gui
                 UnloadEvent -= OnUnload;
 
                 _isLoaded = false;
-                Console.WriteLine(consoleStarter + $"GUI element unloaded: {Name}");
+
+                Logger.Write(LogLevel.GUI, $"GUI element unloaded: {Name}");
             }
         }
 
