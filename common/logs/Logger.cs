@@ -1,5 +1,5 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
+using System.Reflection;
 
 namespace lindengine.common.logs
 {
@@ -10,6 +10,14 @@ namespace lindengine.common.logs
         private static char line = '─';
         private static char last = '└';
         private static char separator = '│';
+        private static char openBox = '[';
+        private static char closeBox = ']';
+        private static int timeSize = 13;
+        private static double timeHigh = 1;
+        private static double timeMid = 0.5;
+        private static string titleOrder = "order".ToUpper();
+        private static string titleTime = "time".ToUpper();
+        private static string titleMessage = "message".ToUpper();
         private static ConsoleColor lineColor = ConsoleColor.DarkCyan;
         private static ConsoleColor timeLowColor = ConsoleColor.Green;
         private static ConsoleColor timeMidColor = ConsoleColor.Yellow;
@@ -25,6 +33,7 @@ namespace lindengine.common.logs
             {
                 case LogLevel.First:
                     logLevel = LogLevel.Application;
+                    //startChar = first;
                     break;
                 case LogLevel.Last:
                     startChar = last;
@@ -40,8 +49,7 @@ namespace lindengine.common.logs
             if (lastTime.TotalMicroseconds == 0)
             {
                 lastTime = time;
-
-                DrawHeader(1 + linesCount + 1 + (logLevelsCount - linesCount) + 1);
+                DrawHeader(linesCount + (logLevelsCount - linesCount) + 3);
             }
 
             DrawStartChar(startChar);
@@ -51,9 +59,7 @@ namespace lindengine.common.logs
             DrawOpenBox();
             DrawElapsedTime(elapsedTime);
             DrawCloseBox();
-
-            DrawLines(11 - elapsedTime.ToString().Length);
-
+            DrawLines(timeSize - elapsedTime.ToString().Length);
             DrawOpenBox();
             DrawText(text);
             DrawFinalBox();
@@ -64,14 +70,34 @@ namespace lindengine.common.logs
 
         private static void DrawHeader(int count)
         {
+            string version = Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? "0.0.0.0";
+
+            Console.Clear();
             Console.WriteLine();
-            Console.ForegroundColor = lineColor;
-            Console.Write($"{first}{new string('─', count - 2)}");
-            Console.Write("[time]");
-            Console.Write($"{new string('─', 11 - "time".Length)}");
-            Console.WriteLine("[message]");
-            Console.WriteLine(separator);
-            Console.ResetColor();
+
+            DrawStartChar(first);
+            DrawOpenBox();
+            DrawText($"Lindengine framework".ToUpper());
+            DrawCloseBox();
+            DrawLines(1);
+            DrawOpenBox();
+            DrawText($"v.{version}");
+            DrawFinalBox();
+
+            DrawStartChar(starter);
+            DrawOpenBox();
+            DrawText(titleOrder);
+            DrawCloseBox();
+            DrawLines(count - titleOrder.Length - 4);
+            DrawOpenBox();
+            DrawText(titleTime);
+            DrawCloseBox();
+            DrawLines(timeSize - titleTime.Length);
+            DrawOpenBox();
+            DrawText(titleMessage);
+            DrawFinalBox();
+
+            DrawSeparator();
         }
 
         private static void DrawStartChar(char startChar)
@@ -104,14 +130,14 @@ namespace lindengine.common.logs
         private static void DrawOpenBox()
         {
             Console.ForegroundColor = lineColor;
-            Console.Write('[');
+            Console.Write(openBox);
             Console.ResetColor();
         }
 
         private static void DrawCloseBox()
         {
             Console.ForegroundColor = lineColor;
-            Console.Write(']');
+            Console.Write(closeBox);
             Console.ResetColor();
         }
 
@@ -124,8 +150,8 @@ namespace lindengine.common.logs
 
         private static void DrawElapsedTime(double elapsedTime)
         {
-            if (elapsedTime >= 1) Console.ForegroundColor = timeHighColor;
-            else if (elapsedTime >= 0.5) Console.ForegroundColor = timeMidColor;
+            if (elapsedTime >= timeHigh) Console.ForegroundColor = timeHighColor;
+            else if (elapsedTime >= timeMid) Console.ForegroundColor = timeMidColor;
             else Console.ForegroundColor = timeLowColor;
 
             Console.Write(elapsedTime);
@@ -135,7 +161,7 @@ namespace lindengine.common.logs
         private static void DrawFinalBox()
         {
             Console.ForegroundColor = lineColor;
-            Console.WriteLine(']');
+            Console.WriteLine(closeBox);
             Console.ResetColor();
         }
     }

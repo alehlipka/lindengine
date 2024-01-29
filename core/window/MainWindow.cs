@@ -15,7 +15,7 @@ namespace lindengine.core.window
         {
             Title = "Lindengine",
             ClientSize = new Vector2i(800, 600),
-            StartVisible = false,
+            //StartVisible = false,
             Vsync = VSyncMode.On
         };
 
