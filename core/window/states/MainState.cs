@@ -1,4 +1,5 @@
 ﻿using lindengine.gui;
+using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 
 namespace lindengine.core.window.states
@@ -9,7 +10,7 @@ namespace lindengine.core.window.states
 
         protected override void OnCreate(State state)
         {
-            testElement = new TextElement("test", "example text");
+            testElement = new TextElement("text_element", new Vector2i(400, 300), "Пиздец\nSukablyat'\nЯ в полном ахуе от того как это работает!№(%*?)");
         }
 
         protected override void OnLoad(State state)

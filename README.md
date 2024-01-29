@@ -14,7 +14,7 @@ The repository contains:
 
 1. **core** - the heart of the framework. Contains the core classes and assets.
 2. **gui** - library for working with graphical interfaces.
-3. **shader** - library for working with [GLSL][glsl-url] shaders.
+3. **common** - library with common classes like shaders and textures.
 
 ## Table of Contents
 

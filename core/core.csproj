@@ -14,8 +14,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\common\common.csproj" />
     <ProjectReference Include="..\gui\gui.csproj" />
-    <ProjectReference Include="..\shader\shader.csproj" />
   </ItemGroup>
 
   <ItemGroup>

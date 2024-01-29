@@ -1,5 +1,5 @@
-﻿using OpenTK.Windowing.Common;
-using OpenTK.Windowing.GraphicsLibraryFramework;
+﻿using lindengine.common.logs;
+using OpenTK.Windowing.Common;
 
 namespace lindengine.core.window
 {
@@ -21,25 +21,26 @@ namespace lindengine.core.window
         private event StateFrameDelegate? UpdateEvent;
         private event StateFrameDelegate? RendereEvent;
 
-        private const string consoleStarter = "├──── ";
-
         public State(string name)
         {
-            Console.WriteLine(consoleStarter + $"State creating: {name}");
+            Logger.Write(LogLevel.State, $"State creating: {name}");
+            
             _isLoaded = false;
 
             Name = name.ToLower();
 
             CreateEvent += OnCreate;
             CreateEvent?.Invoke(this);
-            Console.WriteLine(consoleStarter + $"State created: {Name}");
+
+            Logger.Write(LogLevel.State, $"State creating: {Name}");
         }
 
         public void Load()
         {
             if (!_isLoaded)
             {
-                Console.WriteLine(consoleStarter + $"State loading: {Name}");
+                Logger.Write(LogLevel.State, $"State loading: {Name}");
+
                 LoadEvent += OnLoad;
                 ContextResizeEvent += OnContextResize;
                 UpdateEvent += OnUpdateFrame;
@@ -48,7 +49,8 @@ namespace lindengine.core.window
 
                 LoadEvent?.Invoke(this);
                 _isLoaded = true;
-                Console.WriteLine(consoleStarter + $"State loaded: {Name}");
+
+                Logger.Write(LogLevel.State, $"State loaded: {Name}");
             }
         }
 
@@ -56,9 +58,11 @@ namespace lindengine.core.window
         {
             if (_isLoaded)
             {
-                Console.WriteLine(consoleStarter + $"State resizing: {Name} {e.Width}x{e.Height}");
+                Logger.Write(LogLevel.State, $"State context resizing: {Name} {e.Width}x{e.Height}");
+
                 ContextResizeEvent?.Invoke(this, e);
-                Console.WriteLine(consoleStarter + $"State resized: {Name} {e.Width}x{e.Height}");
+
+                Logger.Write(LogLevel.State, $"State context resized: {Name} {e.Width}x{e.Height}");
             }
         }
 
@@ -82,7 +86,8 @@ namespace lindengine.core.window
         {
             if (_isLoaded)
             {
-                Console.WriteLine(consoleStarter + $"State unloading: {Name}");
+                Logger.Write(LogLevel.State, $"State unloading: {Name}");
+
                 UnloadEvent?.Invoke(this);
 
                 CreateEvent -= OnCreate;
@@ -94,7 +99,8 @@ namespace lindengine.core.window
 
                 _isLoaded = false;
                 UnloadedEvent?.Invoke(this);
-                Console.WriteLine(consoleStarter + $"State unloaded: {Name}");
+
+                Logger.Write(LogLevel.State, $"State unloaded: {Name}");
             }
         }
 

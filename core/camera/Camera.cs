@@ -1,4 +1,5 @@
-﻿using OpenTK.Mathematics;
+﻿using lindengine.common.logs;
+using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 
 namespace lindengine.core.camera
@@ -30,8 +31,6 @@ namespace lindengine.core.camera
 
         private bool _isLoaded;
 
-        private const string consoleStarter = "├── ";
-
         public Camera(string name, Vector3 position, Vector3 target, Vector3 up, float fov, float aspectRatio, float nearClip, float farClip)
         {
             Name = name.ToLower();
@@ -47,14 +46,16 @@ namespace lindengine.core.camera
 
             CreateEvent += OnCreate;
             CreateEvent?.Invoke(this);
-            Console.WriteLine(consoleStarter + $"Camera created: {Name}");
+
+            Logger.Write(LogLevel.Camera, $"Camera created: {Name}");
         }
 
         public void Load()
         {
             if (!_isLoaded)
             {
-                Console.WriteLine(consoleStarter + $"Camera loading: {Name}");
+                Logger.Write(LogLevel.Camera, $"Camera loading: {Name}");
+
                 LoadEvent += OnLoad;
                 ContextResizeEvent += OnContextResize;
                 UpdateEvent += OnUpdateFrame;
@@ -63,7 +64,8 @@ namespace lindengine.core.camera
 
                 LoadEvent?.Invoke(this);
                 _isLoaded = true;
-                Console.WriteLine(consoleStarter + $"Camera loaded: {Name}");
+
+                Logger.Write(LogLevel.Camera, $"Camera loaded: {Name}");
             }
         }
 
@@ -71,12 +73,12 @@ namespace lindengine.core.camera
         {
             if (_isLoaded)
             {
-                Console.WriteLine(consoleStarter + $"Camera resizing: {Name} {e.Width}x{e.Height}");
-                
+                Logger.Write(LogLevel.Camera, $"Camera context resizing: {Name} {e.Width}x{e.Height}");
+
                 AspectRatio = e.Width / (float)e.Height;
                 ContextResizeEvent?.Invoke(this, e);
-                
-                Console.WriteLine(consoleStarter + $"Camera resized: {Name} {e.Width}x{e.Height}");
+
+                Logger.Write(LogLevel.Camera, $"Camera context resized: {Name} {e.Width}x{e.Height}");
             }
         }
 
@@ -100,7 +102,8 @@ namespace lindengine.core.camera
         {
             if (_isLoaded)
             {
-                Console.WriteLine(consoleStarter + $"Camera unloading: {Name}");
+                Logger.Write(LogLevel.Camera, $"Camera unloading: {Name}");
+
                 UnloadEvent?.Invoke(this);
 
                 CreateEvent -= OnCreate;
@@ -111,7 +114,8 @@ namespace lindengine.core.camera
                 UnloadEvent -= OnUnload;
 
                 _isLoaded = false;
-                Console.WriteLine(consoleStarter + $"Camera unloaded: {Name}");
+
+                Logger.Write(LogLevel.Camera, $"Camera unloaded: {Name}");
             }
         }
 
