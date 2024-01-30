@@ -23,36 +23,23 @@ namespace lindengine.common.logs
         private static ConsoleColor timeMidColor = ConsoleColor.Yellow;
         private static ConsoleColor timeHighColor = ConsoleColor.Red;
 
+        private static TimeSpan totalTime;
         private static TimeSpan lastTime;
 
         public static void Write(LogLevel logLevel, string text, bool withSeparator = false)
         {
-            char startChar = starter;
-
-            switch (logLevel)
-            {
-                case LogLevel.First:
-                    logLevel = LogLevel.Application;
-                    //startChar = first;
-                    break;
-                case LogLevel.Last:
-                    startChar = last;
-                    logLevel = LogLevel.Application;
-                    break;
-            }
-
-            TimeSpan time = DateTime.Now - Process.GetCurrentProcess().StartTime;
+            totalTime = DateTime.Now - Process.GetCurrentProcess().StartTime;
             int linesCount = (int)Math.Max(0, (int)logLevel);
-            double elapsedTime = (time - lastTime).TotalSeconds;
+            double elapsedTime = (totalTime - lastTime).TotalSeconds;
             int logLevelsCount = Enum.GetNames(typeof(LogLevel)).Length;
 
-            if (lastTime.TotalMicroseconds == 0)
+            if (logLevel == LogLevel.First)
             {
-                lastTime = time;
+                lastTime = totalTime;
                 DrawHeader(linesCount + (logLevelsCount - linesCount) + 3);
             }
 
-            DrawStartChar(startChar);
+            DrawStartChar(starter);
             DrawLines(linesCount);
             DrawPosition();
             DrawLines(logLevelsCount - linesCount);
@@ -65,7 +52,20 @@ namespace lindengine.common.logs
             DrawFinalBox();
             if (withSeparator) DrawSeparator();
 
-            lastTime = time;
+            lastTime = totalTime;
+
+            if (logLevel == LogLevel.Last)
+            {
+                DrawFooter();
+            }
+        }
+
+        private static void DrawFooter()
+        {
+            DrawStartChar(last);
+            DrawOpenBox();
+            DrawText($"Total seconds: {totalTime.TotalSeconds}");
+            DrawFinalBox();
         }
 
         private static void DrawHeader(int count)
