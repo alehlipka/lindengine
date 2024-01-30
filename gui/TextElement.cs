@@ -11,9 +11,12 @@ namespace lindengine.gui
         protected stbtt_fontinfo info;
         protected string text;
 
+        private int lineShift;
+
         public TextElement(string name, Vector2i size, string text) : base(name, size)
         {
             this.text = text;
+
             prepare();
             processText(text);
             saveImage();
@@ -28,7 +31,7 @@ namespace lindengine.gui
                 stbtt_InitFont(info, ptr, 0);
             }
 
-            l_h = 32;
+            l_h = 24;
 
             bitmap = new byte[size.X * size.Y];
             scale = stbtt_ScaleForPixelHeight(info, l_h);
@@ -38,6 +41,8 @@ namespace lindengine.gui
             ascent = (int)(asc * scale);
             descent = (int)(des * scale);
             lineGap = gap;
+
+            lineShift = 0;
         }
 
         protected void saveImage()
@@ -55,16 +60,29 @@ namespace lindengine.gui
             string[] lines = text.Split('\n');
             for (int line_number = 0; line_number < lines.Length; line_number++)
             {
-                b_cursor = size.X * l_h * line_number;
-                processLine(lines[line_number]);
+                processLine(lines[line_number], line_number);
             }
         }
 
-        protected void processLine(string line)
+        protected void processLine(string line, int line_number)
         {
+            b_cursor = size.X * l_h * (line_number + lineShift);
+
             string[] words = line.Split(' ');
+            int currentLineWidth = 0;
+
             for (int word_number = 0; word_number < words.Length; word_number++)
             {
+                int wordWidth = getTextWidth(words[word_number] + ' ');
+                currentLineWidth += wordWidth;
+
+                if (currentLineWidth >= size.X)
+                {
+                    lineShift++;
+                    b_cursor = size.X * l_h * (line_number + lineShift);
+                    currentLineWidth = wordWidth;
+                }
+
                 processWord(words[word_number]);
             }
         }
@@ -84,6 +102,20 @@ namespace lindengine.gui
                     processCharacter(' ');
                 }
             }
+        }
+
+        unsafe protected int getTextWidth(string text)
+        {
+            int wordWidth = 0;
+
+            int ax, lsb;
+            foreach (char character in text)
+            {
+                stbtt_GetCodepointHMetrics(info, character, &ax, &lsb);
+                wordWidth += (int)(ax * scale);
+            }
+
+            return wordWidth;
         }
 
         unsafe protected void processCharacter(char current_char, char? next_char = null)
@@ -116,12 +148,12 @@ namespace lindengine.gui
             b_cursor += ax;
 
             /* add kerning */
-            int kern = 0;
-            if (next_char != null && next_char != '\n')
-            {
-                kern = stbtt_GetCodepointKernAdvance(info, current_char, (char)next_char);
-                b_cursor += (int)(kern * scale);
-            }
+            //int kern = 0;
+            //if (next_char != null && next_char != '\n')
+            //{
+            //    kern = stbtt_GetCodepointKernAdvance(info, current_char, (char)next_char);
+            //    b_cursor += (int)(kern * scale);
+            //}
         }
     }
 }
