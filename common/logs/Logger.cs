@@ -5,23 +5,23 @@ namespace lindengine.common.logs
 {
     public static class Logger
     {
-        private static char first = '┌';
-        private static char starter = '├';
-        private static char line = '─';
-        private static char last = '└';
-        private static char separator = '│';
-        private static char openBox = '[';
-        private static char closeBox = ']';
-        private static int timeSize = 13;
-        private static double timeHigh = 1;
-        private static double timeMid = 0.5;
-        private static string titleOrder = "order".ToUpper();
-        private static string titleTime = "time".ToUpper();
-        private static string titleMessage = "message".ToUpper();
-        private static ConsoleColor lineColor = ConsoleColor.DarkCyan;
-        private static ConsoleColor timeLowColor = ConsoleColor.Green;
-        private static ConsoleColor timeMidColor = ConsoleColor.Yellow;
-        private static ConsoleColor timeHighColor = ConsoleColor.Red;
+        private static readonly char first = '┌';
+        private static readonly char starter = '├';
+        private static readonly char line = '─';
+        private static readonly char last = '└';
+        private static readonly char separator = '│';
+        private static readonly char openBox = '[';
+        private static readonly char closeBox = ']';
+        private static readonly int timeSize = 13;
+        private static readonly double timeHigh = 1;
+        private static readonly double timeMid = 0.5;
+        private static readonly string titleOrder = "order".ToUpper();
+        private static readonly string titleTime = "time".ToUpper();
+        private static readonly string titleMessage = "message".ToUpper();
+        private static readonly ConsoleColor lineColor = ConsoleColor.DarkCyan;
+        private static readonly ConsoleColor timeLowColor = ConsoleColor.Green;
+        private static readonly ConsoleColor timeMidColor = ConsoleColor.Yellow;
+        private static readonly ConsoleColor timeHighColor = ConsoleColor.Red;
 
         private static TimeSpan totalTime;
         private static TimeSpan lastTime;
@@ -64,7 +64,7 @@ namespace lindengine.common.logs
         {
             DrawStartChar(last);
             DrawOpenBox();
-            DrawText($"Total seconds: {totalTime.TotalSeconds}");
+            DrawText($"{totalTime.TotalSeconds}");
             DrawFinalBox();
         }
 
