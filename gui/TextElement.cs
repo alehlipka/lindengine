@@ -22,7 +22,7 @@ namespace lindengine.gui
             saveImage();
         }
 
-        unsafe public void prepare()
+        unsafe protected void prepare()
         {
             bytes = File.ReadAllBytes("assets/fonts/OpenSansBold.ttf");
             info = new();
@@ -43,16 +43,6 @@ namespace lindengine.gui
             lineGap = gap;
 
             lineShift = 0;
-        }
-
-        protected void saveImage()
-        {
-            string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-            string fileName = "output.png";
-
-            StbImageWriteSharp.ImageWriter imageWriter = new StbImageWriteSharp.ImageWriter();
-            using FileStream stream = File.OpenWrite(Path.Combine(desktopPath, fileName));
-            imageWriter.WritePng(bitmap, size.X, size.Y, StbImageWriteSharp.ColorComponents.Grey, stream);
         }
 
         protected void processText(string text)
@@ -154,6 +144,16 @@ namespace lindengine.gui
             //    kern = stbtt_GetCodepointKernAdvance(info, current_char, (char)next_char);
             //    b_cursor += (int)(kern * scale);
             //}
+        }
+
+        protected void saveImage()
+        {
+            string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            string fileName = "output.png";
+
+            StbImageWriteSharp.ImageWriter imageWriter = new StbImageWriteSharp.ImageWriter();
+            using FileStream stream = File.OpenWrite(Path.Combine(desktopPath, fileName));
+            imageWriter.WritePng(bitmap, size.X, size.Y, StbImageWriteSharp.ColorComponents.Grey, stream);
         }
     }
 }
