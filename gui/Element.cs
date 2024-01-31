@@ -1,4 +1,5 @@
 ﻿using lindengine.common.logs;
+using lindengine.common.shaders;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
@@ -9,11 +10,14 @@ namespace lindengine.gui
     {
         public readonly string Name;
 
-        protected int vertexBufferHandle = GL.GenBuffer();
-        protected int indexBufferHandle = GL.GenBuffer();
-        protected int vertexArrayHandle = GL.GenVertexArray();
+        protected int vertexBuffer;
+        protected int indexBuffer;
+        protected int vertexArray;
+        protected uint[] indices;
+        protected float[] vertices;
         protected List<Element> children = [];
         protected Vector2i size;
+        protected Matrix4 modelMatrix = Matrix4.Identity;
 
         private delegate void ElementDelegate(Element element);
         private delegate void ElementContextResizeDelegate(Element element, ResizeEventArgs args);

@@ -2,9 +2,9 @@
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 
-namespace lindengine.core.camera
+namespace lindengine.common.cameras
 {
-    internal class Camera
+    public class Camera
     {
         public string Name;
         public Matrix4 ViewMatrix = Matrix4.Identity;
@@ -54,8 +54,6 @@ namespace lindengine.core.camera
         {
             if (!_isLoaded)
             {
-                Logger.Write(LogLevel.Camera, $"Camera loading: {Name}");
-
                 LoadEvent += OnLoad;
                 ContextResizeEvent += OnContextResize;
                 UpdateEvent += OnUpdateFrame;
@@ -69,16 +67,14 @@ namespace lindengine.core.camera
             }
         }
 
-        public void Resize(ResizeEventArgs e)
+        public void Resize(ResizeEventArgs args)
         {
             if (_isLoaded)
             {
-                Logger.Write(LogLevel.Camera, $"Camera context resizing: {Name} {e.Width}x{e.Height}");
+                AspectRatio = args.Width / (float)args.Height;
+                ContextResizeEvent?.Invoke(this, args);
 
-                AspectRatio = e.Width / (float)e.Height;
-                ContextResizeEvent?.Invoke(this, e);
-
-                Logger.Write(LogLevel.Camera, $"Camera context resized: {Name} {e.Width}x{e.Height}");
+                Logger.Write(LogLevel.Camera, $"Camera context resized: {Name} {args.Width}x{args.Height}");
             }
         }
 
@@ -102,8 +98,6 @@ namespace lindengine.core.camera
         {
             if (_isLoaded)
             {
-                Logger.Write(LogLevel.Camera, $"Camera unloading: {Name}");
-
                 UnloadEvent?.Invoke(this);
 
                 CreateEvent -= OnCreate;

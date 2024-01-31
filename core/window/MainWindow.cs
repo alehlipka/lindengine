@@ -33,10 +33,11 @@ namespace lindengine.core.window
         {
             Logger.Write(LogLevel.Window, "Window loading");
 
+            GL.Enable(EnableCap.CullFace);
             GL.Enable(EnableCap.Multisample);
             GL.Enable(EnableCap.Blend);
             GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
-            GL.ClearColor(Color4.Black);
+            GL.ClearColor(Color4.LimeGreen);
 
             StatesManager.Load("main");
 

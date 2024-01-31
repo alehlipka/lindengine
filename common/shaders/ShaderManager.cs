@@ -21,9 +21,9 @@
             }
         }
 
-        public static int? GetAttribLocation(string attribName)
+        public static int GetAttribLocation(string attribName)
         {
-            return _selectedShader?.GetAttribLocation(attribName);
+            return _selectedShader?.GetAttribLocation(attribName) ?? 0;
         }
 
         public static void SetUniformData<T>(string name, T data)
@@ -46,7 +46,7 @@
                 string shaderName = Path.GetFileName(directory);
                 string vertexPath = Path.Combine(directory, "vertex.glsl");
                 string fragmentPath = Path.Combine(directory, "fragment.glsl");
-                
+
                 _shaders.Add(new Shader(shaderName, vertexPath, fragmentPath));
             }
         }
