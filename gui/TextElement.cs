@@ -23,7 +23,7 @@ namespace lindengine.gui
         {
             this.text = text;
 
-             prepare();
+            prepare();
             processText(text);
             saveImage();
 
@@ -72,7 +72,7 @@ namespace lindengine.gui
             GL.VertexArrayVertexBuffer(vertexArray, 0, vertexBuffer, 0, 20);
             GL.VertexArrayElementBuffer(vertexArray, indexBuffer);
 
-            texture = Texture.LoadFromFile("assets/lindengine/lindengine-logo-big.png");
+            texture = Texture.LoadFromFile("lindengine-logo-big", "assets/lindengine/lindengine-logo-big.png");
             modelMatrix = Matrix4.CreateTranslation(new Vector3(10, 100, 0));
         }
 

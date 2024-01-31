@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Reflection;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace lindengine.common.logs
 {
@@ -18,10 +19,14 @@ namespace lindengine.common.logs
         private static readonly string titleOrder = "order".ToUpper();
         private static readonly string titleTime = "time".ToUpper();
         private static readonly string titleMessage = "message".ToUpper();
+        private static readonly ConsoleColor textColor = ConsoleColor.White;
         private static readonly ConsoleColor lineColor = ConsoleColor.DarkCyan;
         private static readonly ConsoleColor timeLowColor = ConsoleColor.Green;
         private static readonly ConsoleColor timeMidColor = ConsoleColor.Yellow;
         private static readonly ConsoleColor timeHighColor = ConsoleColor.Red;
+
+        private static int Top = 0;
+        private static int fpsCounter = 0;
 
         private static TimeSpan totalTime;
         private static TimeSpan lastTime;
@@ -58,6 +63,44 @@ namespace lindengine.common.logs
             {
                 DrawFooter();
             }
+        }
+
+        public static void WriteFPS(int rate, int fps, int min, int max)
+        {
+            fpsCounter--;
+            if (fpsCounter <= 0)
+            {
+                if (Top == 0)
+                {
+                    Top = Console.CursorTop - 2;
+                }
+                else
+                {
+                    Console.SetCursorPosition(0, Top);
+                    Console.Write(new string(' ', Console.WindowWidth));
+                    Console.SetCursorPosition(0, Top);
+                }
+
+                DrawStartChar(starter);
+                DrawLines(10);
+                DrawOpenBox();
+                DrawText($"FPS: {fps} min: {min} max: {max}");
+                DrawFinalBox();
+                DrawSeparator();
+
+                fpsCounter = rate;
+            }
+        }
+
+        private static void WriteAt(int left, int top, string s)
+        {
+            int currentLeft = Console.CursorLeft;
+            int currentTop = Console.CursorTop;
+            Console.CursorVisible = false;//Hide cursor
+            Console.SetCursorPosition(left, top);
+            Console.Write(s);
+            Console.SetCursorPosition(currentLeft, currentTop);
+            Console.CursorVisible = true;//Show cursor back
         }
 
         private static void DrawFooter()
@@ -123,8 +166,9 @@ namespace lindengine.common.logs
 
         private static void DrawText(string text)
         {
-            Console.ResetColor();
+            Console.ForegroundColor = textColor;
             Console.Write(text);
+            Console.ResetColor();
         }
 
         private static void DrawOpenBox()

@@ -3,13 +3,14 @@ using StbImageSharp;
 
 namespace lindengine.common.textures
 {
-    public class Texture(int glHandle, int width, int height)
+    public class Texture(string name, int glHandle, int width, int height)
     {
+        public readonly string Name = name;
         public readonly int Handle = glHandle;
         public readonly int Width = width;
         public readonly int Height = height;
 
-        public static Texture LoadFromFile(string path)
+        public static Texture LoadFromFile(string name, string path)
         {
             int handle = GL.GenTexture();
 
@@ -33,13 +34,18 @@ namespace lindengine.common.textures
 
             GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
 
-            return new Texture(handle, image.Width, image.Height);
+            return new Texture(name, handle, image.Width, image.Height);
         }
 
         public void Use(TextureUnit unit = TextureUnit.Texture0)
         {
             GL.ActiveTexture(unit);
             GL.BindTexture(TextureTarget.Texture2D, Handle);
+        }
+
+        public void Unload(TextureUnit unit = TextureUnit.Texture0)
+        {
+            GL.BindTextureUnit((int)unit, Handle);
         }
     }
 }

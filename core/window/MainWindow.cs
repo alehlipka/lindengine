@@ -16,7 +16,7 @@ namespace lindengine.core.window
         {
             Title = "Lindengine",
             ClientSize = new Vector2i(800, 600),
-            //StartVisible = false,
+            StartVisible = false,
             Vsync = VSyncMode.On
         };
 
@@ -70,6 +70,8 @@ namespace lindengine.core.window
 
             CameraManager.Update(args);
             StatesManager.Update(args);
+
+            Logger.WriteFPS(20, FPSCounter.FPS, FPSCounter.Min, FPSCounter.Max);
         }
 
         protected override void OnRenderFrame(FrameEventArgs args)
