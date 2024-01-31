@@ -73,7 +73,11 @@ namespace lindengine.gui
             GL.VertexArrayElementBuffer(vertexArray, indexBuffer);
 
             texture = Texture.LoadFromFile("lindengine-logo-big", "assets/lindengine/lindengine-logo-big.png");
-            modelMatrix = Matrix4.CreateTranslation(new Vector3(10, 100, 0));
+        }
+
+        protected override void OnContextResize(Element element, ResizeEventArgs args)
+        {
+            modelMatrix = Matrix4.CreateTranslation(new Vector3((args.Width - 280) / 2, (args.Height - 280) / 2, 0));
         }
 
         protected override void OnRenderFrame(Element element, FrameEventArgs args)

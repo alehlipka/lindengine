@@ -16,7 +16,7 @@ namespace lindengine.core.window
         {
             Title = "Lindengine",
             ClientSize = new Vector2i(800, 600),
-            StartVisible = false,
+            //StartVisible = false,
             Vsync = VSyncMode.On
         };
 
@@ -39,7 +39,7 @@ namespace lindengine.core.window
             GL.Enable(EnableCap.Multisample);
             GL.Enable(EnableCap.Blend);
             GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
-            GL.ClearColor(Color4.LimeGreen);
+            GL.ClearColor(Color4.Black);
 
             CameraManager.Load();
             StatesManager.Load("main");
