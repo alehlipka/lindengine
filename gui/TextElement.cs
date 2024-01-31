@@ -17,18 +17,15 @@ namespace lindengine.gui
         protected string text;
         protected Texture texture;
 
-        private OrthographicCamera camera;
-
         private int lineShift;
 
         public TextElement(string name, Vector2i size, string text) : base(name, size)
         {
-            camera = new OrthographicCamera("ortho", Vector3.UnitZ, Vector3.Zero, Vector3.UnitY, MathHelper.PiOver4, 800.0f / 600.0f, -100.0f, 100.0f);
             this.text = text;
 
-            // prepare();
-            // processText(text);
-            // saveImage();
+             prepare();
+            processText(text);
+            saveImage();
 
             vertices = [
                 0.0f,   0.0f,   0.0f, 0.0f, 0.0f,  // bottom left
@@ -79,31 +76,17 @@ namespace lindengine.gui
             modelMatrix = Matrix4.CreateTranslation(new Vector3(10, 100, 0));
         }
 
-        protected override void OnLoad(Element element)
-        {
-            camera.Load();
-        }
-
-        protected override void OnContextResize(Element element, ResizeEventArgs args)
-        {
-            camera.Resize(args);
-        }
-
         protected override void OnRenderFrame(Element element, FrameEventArgs args)
         {
             GL.BindVertexArray(vertexArray);
             texture.Use();
             ShaderManager.Select("gui");
-            ShaderManager.SetUniformData("viewMatrix", camera.ViewMatrix);
-            ShaderManager.SetUniformData("projectionMatrix", camera.ProjectionMatrix);
+            CameraManager.Select(CameraType.Orthographic);
+            ShaderManager.SetUniformData("viewMatrix", CameraManager.GetViewMatrix());
+            ShaderManager.SetUniformData("projectionMatrix", CameraManager.GetProjectionMatrix());
             ShaderManager.SetUniformData("modelMatrix", modelMatrix);
 
             GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0);
-        }
-
-        protected override void OnUnload(Element element)
-        {
-            camera.Unload();
         }
 
         unsafe protected void prepare()

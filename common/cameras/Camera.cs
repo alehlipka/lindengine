@@ -4,9 +4,9 @@ using OpenTK.Windowing.Common;
 
 namespace lindengine.common.cameras
 {
-    public class Camera
+    internal class Camera
     {
-        public string Name;
+        public CameraType Type;
         public Matrix4 ViewMatrix = Matrix4.Identity;
         public Matrix4 ProjectionMatrix = Matrix4.Identity;
 
@@ -31,9 +31,9 @@ namespace lindengine.common.cameras
 
         private bool _isLoaded;
 
-        public Camera(string name, Vector3 position, Vector3 target, Vector3 up, float fov, float aspectRatio, float nearClip, float farClip)
+        public Camera(CameraType type, Vector3 position, Vector3 target, Vector3 up, float fov, float aspectRatio, float nearClip, float farClip)
         {
-            Name = name.ToLower();
+            Type = type;
             Position = position;
             Target = target;
             Up = up;
@@ -47,7 +47,7 @@ namespace lindengine.common.cameras
             CreateEvent += OnCreate;
             CreateEvent?.Invoke(this);
 
-            Logger.Write(LogLevel.Camera, $"Camera created: {Name}");
+            Logger.Write(LogLevel.Camera, $"Camera created: {type}");
         }
 
         public void Load()
@@ -63,7 +63,7 @@ namespace lindengine.common.cameras
                 LoadEvent?.Invoke(this);
                 _isLoaded = true;
 
-                Logger.Write(LogLevel.Camera, $"Camera loaded: {Name}");
+                Logger.Write(LogLevel.Camera, $"Camera loaded: {Type}");
             }
         }
 
@@ -74,7 +74,7 @@ namespace lindengine.common.cameras
                 AspectRatio = args.Width / (float)args.Height;
                 ContextResizeEvent?.Invoke(this, args);
 
-                Logger.Write(LogLevel.Camera, $"Camera context resized: {Name} {args.Width}x{args.Height}");
+                Logger.Write(LogLevel.Camera, $"Camera context resized: {Type} {args.Width}x{args.Height}");
             }
         }
 
@@ -109,7 +109,7 @@ namespace lindengine.common.cameras
 
                 _isLoaded = false;
 
-                Logger.Write(LogLevel.Camera, $"Camera unloaded: {Name}");
+                Logger.Write(LogLevel.Camera, $"Camera unloaded: {Type}");
             }
         }
 

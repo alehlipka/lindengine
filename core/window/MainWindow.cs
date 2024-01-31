@@ -1,4 +1,5 @@
-﻿using lindengine.common.logs;
+﻿using lindengine.common.cameras;
+using lindengine.common.logs;
 using lindengine.common.shaders;
 using lindengine.core.helpers;
 using OpenTK.Graphics.OpenGL4;
@@ -23,6 +24,7 @@ namespace lindengine.core.window
         {
             Logger.Write(LogLevel.Window, "Window creating");
 
+            CameraManager.Create();
             ShaderManager.Create(Path.Combine("assets", "shaders"));
             StatesManager.Create();
 
@@ -39,6 +41,7 @@ namespace lindengine.core.window
             GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
             GL.ClearColor(Color4.LimeGreen);
 
+            CameraManager.Load();
             StatesManager.Load("main");
 
             Logger.Write(LogLevel.Window, "Window loaded", true);
@@ -50,6 +53,7 @@ namespace lindengine.core.window
 
             GL.Viewport(0, 0, e.Width, e.Height);
 
+            CameraManager.Resize(e);
             StatesManager.Resize(e);
 
             Logger.Write(LogLevel.Window, $"Window resized: {e.Width}x{e.Height}", true);
@@ -64,6 +68,7 @@ namespace lindengine.core.window
                 Close();
             }
 
+            CameraManager.Update(args);
             StatesManager.Update(args);
         }
 
@@ -73,6 +78,7 @@ namespace lindengine.core.window
             FPSCounter.Calculate(args.Time);
             GL.Clear(ClearBufferMask.DepthBufferBit | ClearBufferMask.ColorBufferBit);
 
+            CameraManager.Render(args);
             StatesManager.Render(args);
 
             SwapBuffers();
@@ -85,6 +91,7 @@ namespace lindengine.core.window
 
             StatesManager.Unload();
             ShaderManager.Unload();
+            CameraManager.Unload();
 
             Logger.Write(LogLevel.Window, "Window unloaded", true);
         }
