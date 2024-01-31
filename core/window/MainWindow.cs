@@ -70,8 +70,6 @@ namespace lindengine.core.window
 
             CameraManager.Update(args);
             StatesManager.Update(args);
-
-            Logger.WriteFPS(20, FPSCounter.FPS, FPSCounter.Min, FPSCounter.Max);
         }
 
         protected override void OnRenderFrame(FrameEventArgs args)

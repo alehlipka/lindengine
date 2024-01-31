@@ -65,44 +65,6 @@ namespace lindengine.common.logs
             }
         }
 
-        public static void WriteFPS(int rate, int fps, int min, int max)
-        {
-            fpsCounter--;
-            if (fpsCounter <= 0)
-            {
-                if (Top == 0)
-                {
-                    Top = Console.CursorTop - 2;
-                }
-                else
-                {
-                    Console.SetCursorPosition(0, Top);
-                    Console.Write(new string(' ', Console.WindowWidth));
-                    Console.SetCursorPosition(0, Top);
-                }
-
-                DrawStartChar(starter);
-                DrawLines(10);
-                DrawOpenBox();
-                DrawText($"FPS: {fps} min: {min} max: {max}");
-                DrawFinalBox();
-                DrawSeparator();
-
-                fpsCounter = rate;
-            }
-        }
-
-        private static void WriteAt(int left, int top, string s)
-        {
-            int currentLeft = Console.CursorLeft;
-            int currentTop = Console.CursorTop;
-            Console.CursorVisible = false;//Hide cursor
-            Console.SetCursorPosition(left, top);
-            Console.Write(s);
-            Console.SetCursorPosition(currentLeft, currentTop);
-            Console.CursorVisible = true;//Show cursor back
-        }
-
         private static void DrawFooter()
         {
             DrawStartChar(last);
