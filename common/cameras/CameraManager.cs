@@ -8,10 +8,11 @@ namespace lindengine.common.cameras
         private static readonly List<Camera> _cameras = [];
         private static Camera? _selectedCamera = null;
 
-        public static void Create()
+        public static void Create(Vector2i windowSize)
         {
             _cameras.Clear();
-            _cameras.Add(new OrthographicCamera(CameraType.Orthographic, Vector3.UnitZ, Vector3.Zero, Vector3.UnitY, MathHelper.PiOver4, 800.0f / 600.0f, -100.0f, 100.0f));
+            float aspect = windowSize.X / (float)windowSize.Y;
+            _cameras.Add(new OrthographicCamera(CameraType.Orthographic, Vector3.UnitZ, Vector3.Zero, Vector3.UnitY, MathHelper.PiOver4, aspect, -100.0f, 100.0f));
         }
 
         public static void Select(CameraType type)

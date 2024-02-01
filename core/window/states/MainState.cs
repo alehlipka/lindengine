@@ -5,14 +5,13 @@ using OpenTK.Windowing.Common;
 
 namespace lindengine.core.window.states
 {
-    internal class MainState(string name) : State(name)
+    internal class MainState(string name, Vector2i windowSize) : State(name, windowSize)
     {
         private TextElement? testElement;
 
         protected override void OnCreate(State state)
         {
-            string text = "FPS: 0";
-            testElement = new TextElement("text_element", new Vector2i(800, 600), text);
+            testElement = new TextElement("text_element", windowSize, string.Empty);
         }
 
         protected override void OnLoad(State state)

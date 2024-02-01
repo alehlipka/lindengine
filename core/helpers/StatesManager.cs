@@ -1,4 +1,5 @@
 ﻿using lindengine.core.window;
+using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using System.Reflection;
 
@@ -12,9 +13,9 @@ namespace lindengine.core.helpers
         private static readonly List<State> _windowStates = [];
         private static State? _selectedState = null;
 
-        public static void Create()
+        public static void Create(Vector2i windowSize)
         {
-            CreateStates();
+            CreateStates(windowSize);
         }
 
         public static void Load(string stateName)
@@ -54,7 +55,7 @@ namespace lindengine.core.helpers
             _selectedState?.Unload();
         }
 
-        private static void CreateStates()
+        private static void CreateStates(Vector2i windowSize)
         {
             _windowStates.Clear();
 
@@ -67,7 +68,7 @@ namespace lindengine.core.helpers
             types.ForEach(type =>
             {
                 string stateName = type.Name.Replace(STATES_NAME_CUT, "").ToLower();
-                object? stateObject = Activator.CreateInstance(type, stateName);
+                object? stateObject = Activator.CreateInstance(type, stateName, windowSize);
                 if (stateObject != null)
                 {
                     _windowStates.Add((State)stateObject);

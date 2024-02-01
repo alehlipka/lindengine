@@ -62,6 +62,7 @@ namespace lindengine.gui
         {
             if (_isLoaded)
             {
+                size = e.Size;
                 ContextResizeEvent?.Invoke(this, e);
 
                 Logger.Write(LogLevel.GUI, $"GUI element context resized: {Name} {e.Width}x{e.Height}");

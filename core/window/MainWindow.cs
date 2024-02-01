@@ -16,7 +16,7 @@ namespace lindengine.core.window
         {
             Title = "Lindengine",
             ClientSize = new Vector2i(800, 600),
-            //StartVisible = false,
+            StartVisible = false,
             Vsync = VSyncMode.On
         };
 
@@ -24,9 +24,9 @@ namespace lindengine.core.window
         {
             Logger.Write(LogLevel.Window, "Window creating");
 
-            CameraManager.Create();
+            CameraManager.Create(ClientSize);
             ShaderManager.Create(Path.Combine("assets", "shaders"));
-            StatesManager.Create();
+            StatesManager.Create(ClientSize);
 
             Logger.Write(LogLevel.Window, "Window created", true);
         }
@@ -43,6 +43,8 @@ namespace lindengine.core.window
 
             CameraManager.Load();
             StatesManager.Load("main");
+
+            IsVisible = true;
 
             Logger.Write(LogLevel.Window, "Window loaded", true);
         }

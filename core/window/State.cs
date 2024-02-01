@@ -1,4 +1,5 @@
 ﻿using lindengine.common.logs;
+using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 
 namespace lindengine.core.window
@@ -8,6 +9,8 @@ namespace lindengine.core.window
         public readonly string Name;
         public delegate void StateDelegate(State sender);
         public event StateDelegate? UnloadedEvent;
+
+        protected Vector2i windowSize;
 
         private bool _isLoaded;
 
@@ -21,13 +24,14 @@ namespace lindengine.core.window
         private event StateFrameDelegate? UpdateEvent;
         private event StateFrameDelegate? RendereEvent;
 
-        public State(string name)
+        public State(string name, Vector2i windowSize)
         {
             Logger.Write(LogLevel.State, $"State creating: {name}");
-            
+
             _isLoaded = false;
 
             Name = name.ToLower();
+            this.windowSize = windowSize;
 
             CreateEvent += OnCreate;
             CreateEvent?.Invoke(this);
@@ -60,6 +64,7 @@ namespace lindengine.core.window
             {
                 Logger.Write(LogLevel.State, $"State context resizing: {Name} {e.Width}x{e.Height}");
 
+                windowSize = new Vector2i(e.Width, e.Height);
                 ContextResizeEvent?.Invoke(this, e);
 
                 Logger.Write(LogLevel.State, $"State context resized: {Name} {e.Width}x{e.Height}");
