@@ -1,5 +1,7 @@
 # ![lindengine][lindengine-logo] Lindengine framework
 
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/alehlipka/lindengine/dotnet.yml?style=flat-square)
+
 ![OpenTK NuGet Version](https://img.shields.io/nuget/v/opentk?style=flat-square&label=OpenTK)
 ![StbImageSharp NuGet Version](https://img.shields.io/nuget/v/StbImageSharp?style=flat-square&label=StbImageSharp)
 ![StbTrueTypeSharp NuGet Version](https://img.shields.io/nuget/v/StbTrueTypeSharp?style=flat-square&label=StbTrueTypeSharp)
