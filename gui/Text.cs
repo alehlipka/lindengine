@@ -8,20 +8,19 @@ using OpenTK.Windowing.Common;
 
 namespace lindengine.gui
 {
-    public class TextElement(string name, Vector2i size, string text) : Element(name, size)
+    public class Text(string name, Vector2i size, string text, int fontSize, Color4 textColor) : Element(name, size)
     {
         protected string text = text;
-        protected int fontSize = 24;
+        protected int fontSize = fontSize;
         protected Texture? texture;
-
-        private readonly byte[] fontBytes = FontManager.GetFileBytes("opensansbold");
+        protected Color4 textColor = textColor;
 
         public void SetText(string newText)
         {
             if (!text.Equals(newText))
             {
                 text = newText;
-                texture = Texture.LoadFromBytes($"{Name}_texture", FontManager.GetBitmapBytes("opensansbold", size, text, fontSize), size);
+                texture = Texture.LoadFromBytes($"{Name}_texture", FontManager.GetBitmapBytes("droidsans", size, text, fontSize, textColor), size);
             }
         }
 
@@ -35,7 +34,7 @@ namespace lindengine.gui
             ];
             indices = [0, 3, 2, 0, 2, 1];
 
-            texture = Texture.LoadFromBytes($"{Name}_texture", FontManager.GetBitmapBytes("opensansbold", size, text, fontSize), size);
+            texture = Texture.LoadFromBytes($"{Name}_texture", FontManager.GetBitmapBytes("opensansbold", size, text, fontSize, textColor), size);
 
             ShaderManager.Select("gui");
             int position_attribute = ShaderManager.GetAttribLocation("aPosition");
@@ -74,19 +73,7 @@ namespace lindengine.gui
 
         protected override void OnContextResize(Element element, ResizeEventArgs args)
         {
-            vertices = [
-                0.0f,   0.0f,   0.0f, 0.0f, 0.0f,  // bottom left
-                0.0f,   size.Y, 0.0f, 0.0f, 1.0f,  // top left
-                size.X, size.Y, 0.0f, 1.0f, 1.0f,  // top right
-                size.X, 0.0f,   0.0f, 1.0f, 0.0f,  // bottom right
-            ];
-
-            GL.BindBuffer(BufferTarget.ArrayBuffer, vertexBuffer);
-            GL.BufferData(BufferTarget.ArrayBuffer, vertices.Length * sizeof(float), vertices, BufferUsageHint.StaticDraw);
-
-            texture = Texture.LoadFromBytes($"{Name}_texture", FontManager.GetBitmapBytes("opensansbold", size, text, fontSize), size);
-
-            modelMatrix = Matrix4.CreateTranslation(Vector3.Zero);
+            modelMatrix = Matrix4.CreateTranslation(new Vector3(10, args.Height - size.Y - 10, 0));
         }
 
         protected override void OnRenderFrame(Element element, FrameEventArgs args)

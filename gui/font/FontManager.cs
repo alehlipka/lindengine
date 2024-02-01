@@ -18,9 +18,9 @@ namespace lindengine.gui.font
             return _fonts.First(font => font.Name.Equals(fontName.ToLower()))?.FileBytes ?? [];
         }
 
-        public static byte[] GetBitmapBytes(string fontName, Vector2i bitmapSize, string text, int fontSize)
+        public static byte[] GetBitmapBytes(string fontName, Vector2i bitmapSize, string text, int fontSize, Color4 color)
         {
-            return _fonts.First(font => font.Name.Equals(fontName.ToLower()))?.GetBitmapBytes(bitmapSize, text, fontSize) ?? [];
+            return _fonts.First(font => font.Name.Equals(fontName.ToLower()))?.GetBitmapBytes(bitmapSize, text, fontSize, color) ?? [];
         }
 
         private static void CreateFonts()

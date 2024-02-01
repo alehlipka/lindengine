@@ -15,7 +15,7 @@ internal class Font(string name, byte[] bytes)
     private int _ascent, _descent, _lineGap;
     private Vector2i _bitmapSize;
 
-    unsafe public byte[] GetBitmapBytes(Vector2i bitmapSize, string text, int fontSize)
+    unsafe public byte[] GetBitmapBytes(Vector2i bitmapSize, string text, int fontSize, Color4 color)
     {
         _fontinfo = new();
         fixed (byte* ptr = FileBytes) stbtt_InitFont(_fontinfo, ptr, 0);
@@ -33,10 +33,10 @@ internal class Font(string name, byte[] bytes)
 
         ProcessText(text);
 
-        return ToRGBA();
+        return ToRGBA(color);
     }
 
-    private byte[] ToRGBA()
+    private byte[] ToRGBA(Color4 color)
     {
         byte[] rgbaData = new byte[_bitmapSize.X * _bitmapSize.Y * 4];
         for (int y = 0; y < _bitmapSize.Y; y++)
@@ -44,12 +44,17 @@ internal class Font(string name, byte[] bytes)
             for (int x = 0; x < _bitmapSize.X; x++)
             {
                 byte intensity = _bitmapBytes[y * _bitmapSize.X + x];
-
                 int index = (y * _bitmapSize.X + x) * 4;
-                rgbaData[index] = intensity;
-                rgbaData[index + 1] = intensity;
-                rgbaData[index + 2] = intensity;
-                rgbaData[index + 3] = intensity > 0 ? (byte)255 : (byte)0;
+
+                byte red = (byte)(color.R * 255);
+                byte green = (byte)(color.G * 255);
+                byte blue = (byte)(color.B * 255);
+                byte alpha = intensity < 200 ? (byte)(intensity - 255) : (byte)255;
+
+                rgbaData[index + 0] = red;
+                rgbaData[index + 1] = green;
+                rgbaData[index + 2] = blue;
+                rgbaData[index + 3] = alpha;
             }
         }
 

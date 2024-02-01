@@ -47,7 +47,6 @@ namespace lindengine.gui
         {
             if (_isLoaded)
             {
-                size = e.Size;
                 ContextResizeEvent?.Invoke(this, e);
             }
         }
