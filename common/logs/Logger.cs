@@ -25,9 +25,6 @@ namespace lindengine.common.logs
         private static readonly ConsoleColor timeMidColor = ConsoleColor.Yellow;
         private static readonly ConsoleColor timeHighColor = ConsoleColor.Red;
 
-        private static int Top = 0;
-        private static int fpsCounter = 0;
-
         private static TimeSpan totalTime;
         private static TimeSpan lastTime;
 
