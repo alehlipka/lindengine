@@ -13,9 +13,12 @@ namespace lindengine.gui
         protected int fontSize = 24;
         protected Texture? texture;
 
+        private readonly byte[] fontBytes = [];
+
         public TextElement(string name, Vector2i size, string text) : base(name, size)
         {
             this.text = text;
+            fontBytes = File.ReadAllBytes("assets/fonts/OpenSansBold.ttf");
         }
 
         public void SetText(string newText)
@@ -23,7 +26,7 @@ namespace lindengine.gui
             if (!text.Equals(newText))
             {
                 text = newText;
-                byte[] textBytes = BitmapText.GetBytes("assets/fonts/OpenSansBold.ttf", size, text, fontSize);
+                byte[] textBytes = BitmapText.GetBytes(fontBytes, size, text, fontSize);
                 texture = Texture.LoadFromBytes($"{Name}_texture", textBytes, size);
             }
         }
@@ -38,7 +41,7 @@ namespace lindengine.gui
             ];
             indices = [0, 3, 2, 0, 2, 1];
 
-            byte[] textBytes = BitmapText.GetBytes("assets/fonts/OpenSansBold.ttf", size, text, fontSize);
+            byte[] textBytes = BitmapText.GetBytes(fontBytes, size, text, fontSize);
             texture = Texture.LoadFromBytes($"{Name}_texture", textBytes, size);
 
             ShaderManager.Select("gui");

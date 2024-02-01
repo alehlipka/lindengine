@@ -7,12 +7,7 @@ namespace lindengine.core.window.states
 {
     internal class MainState(string name, Vector2i windowSize) : State(name, windowSize)
     {
-        private TextElement? testElement;
-
-        protected override void OnCreate(State state)
-        {
-            testElement = new TextElement("text_element", windowSize, string.Empty);
-        }
+        private readonly TextElement? testElement = new($"{name}_text_element", windowSize, string.Empty);
 
         protected override void OnLoad(State state)
         {

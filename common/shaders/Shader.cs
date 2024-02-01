@@ -1,5 +1,4 @@
-﻿using lindengine.common.logs;
-using OpenTK.Graphics.OpenGL4;
+﻿using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 
 namespace lindengine.common.shaders
@@ -44,8 +43,6 @@ namespace lindengine.common.shaders
 
                 UniformLocations.Add(key, location);
             }
-
-            Logger.Write(LogLevel.Shader, $"Shader created: {Name}");
         }
 
         private static void CompileShader(int shader)
@@ -106,7 +103,6 @@ namespace lindengine.common.shaders
         public void Unload()
         {
             GL.DeleteProgram(Handle);
-            Logger.Write(LogLevel.Shader, $"Shader unloaded: {Name}");
         }
     }
 }

@@ -40,12 +40,43 @@ internal static class BitmapText
         return rgbaData;
     }
 
+    public static byte[] GetBytes(byte[] fontBytes, Vector2i imageSize, string text, int fontSize)
+    {
+        create(fontBytes, imageSize, fontSize, text);
+
+        // каждый пиксель содержит 4 байта (R, G, B, A)
+        byte[] rgbaData = new byte[imageSize.X * imageSize.Y * 4];
+        // Копирование данных из 8-битного изображения в буфер RGBA
+        for (int y = 0; y < imageSize.Y; y++)
+        {
+            for (int x = 0; x < imageSize.X; x++)
+            {
+                // Получение значения яркости пикселя из исходного изображения
+                byte intensity = bitmap[y * imageSize.X + x];
+
+                // Установка значений компонентов RGBA в буфере
+                int index = (y * imageSize.X + x) * 4;
+                rgbaData[index] = intensity; // Красный
+                rgbaData[index + 1] = intensity; // Зелёный
+                rgbaData[index + 2] = intensity; // Синий
+                rgbaData[index + 3] = intensity > 0 ? (byte)255 : (byte)0; // Непрозрачность (значение 255 означает полностью непрозрачный пиксель)
+            }
+        }
+
+        return rgbaData;
+    }
+
     unsafe private static void create(string fontPath, Vector2i imageSize, int fontSize, string text)
+    {
+        create(File.ReadAllBytes(fontPath), imageSize, fontSize, text);
+    }
+
+    unsafe private static void create(byte[] fontBytes, Vector2i imageSize, int fontSize, string text)
     {
         BitmapText.imageSize = imageSize;
         BitmapText.text = text;
 
-        bytes = File.ReadAllBytes(fontPath);
+        bytes = fontBytes;
         info = new();
         fixed (byte* ptr = bytes)
         {

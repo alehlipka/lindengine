@@ -1,5 +1,4 @@
 ﻿using lindengine.common.cameras;
-using lindengine.common.logs;
 using lindengine.common.shaders;
 using lindengine.core.helpers;
 using OpenTK.Graphics.OpenGL4;
@@ -22,19 +21,13 @@ namespace lindengine.core.window
 
         public MainWindow() : base(_gameWindowSettings, _nativeWindowSettings)
         {
-            Logger.Write(LogLevel.Window, "Window creating");
-
             CameraManager.Create(ClientSize);
             ShaderManager.Create(Path.Combine("assets", "shaders"));
             StatesManager.Create(ClientSize);
-
-            Logger.Write(LogLevel.Window, "Window created", true);
         }
 
         protected override void OnLoad()
         {
-            Logger.Write(LogLevel.Window, "Window loading");
-
             GL.Enable(EnableCap.CullFace);
             GL.Enable(EnableCap.Multisample);
             GL.Enable(EnableCap.Blend);
@@ -45,26 +38,18 @@ namespace lindengine.core.window
             StatesManager.Load("main");
 
             IsVisible = true;
-
-            Logger.Write(LogLevel.Window, "Window loaded", true);
         }
 
         protected override void OnResize(ResizeEventArgs e)
         {
-            Logger.Write(LogLevel.Window, $"Window resizing: {e.Width}x{e.Height}");
-
             GL.Viewport(0, 0, e.Width, e.Height);
 
             CameraManager.Resize(e);
             StatesManager.Resize(e);
-
-            Logger.Write(LogLevel.Window, $"Window resized: {e.Width}x{e.Height}", true);
         }
 
         protected override void OnUpdateFrame(FrameEventArgs args)
         {
-            base.OnUpdateFrame(args);
-
             if (IsKeyDown(OpenTK.Windowing.GraphicsLibraryFramework.Keys.Escape))
             {
                 Close();
@@ -76,7 +61,6 @@ namespace lindengine.core.window
 
         protected override void OnRenderFrame(FrameEventArgs args)
         {
-            base.OnRenderFrame(args);
             FPSCounter.Calculate(args.Time);
             GL.Clear(ClearBufferMask.DepthBufferBit | ClearBufferMask.ColorBufferBit);
 
@@ -88,14 +72,9 @@ namespace lindengine.core.window
 
         protected override void OnUnload()
         {
-            base.OnUnload();
-            Logger.Write(LogLevel.Window, "Window unloading");
-
             StatesManager.Unload();
             ShaderManager.Unload();
             CameraManager.Unload();
-
-            Logger.Write(LogLevel.Window, "Window unloaded", true);
         }
     }
 }

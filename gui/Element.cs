@@ -1,5 +1,4 @@
-﻿using lindengine.common.logs;
-using OpenTK.Mathematics;
+﻿using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 
 namespace lindengine.gui
@@ -21,7 +20,6 @@ namespace lindengine.gui
         private delegate void ElementContextResizeDelegate(Element element, ResizeEventArgs args);
         private delegate void ElementFrameDelegate(Element element, FrameEventArgs args);
 
-        private event ElementDelegate? CreateEvent;
         private event ElementDelegate? LoadEvent;
         private event ElementDelegate? UnloadEvent;
         private event ElementContextResizeDelegate? ContextResizeEvent;
@@ -34,11 +32,6 @@ namespace lindengine.gui
         {
             Name = name.ToLower();
             this.size = size;
-
-            CreateEvent += OnCreate;
-            CreateEvent?.Invoke(this);
-
-            Logger.Write(LogLevel.GUI, $"GUI element created: {Name}");
         }
 
         public void Load()
@@ -53,8 +46,6 @@ namespace lindengine.gui
 
                 LoadEvent?.Invoke(this);
                 _isLoaded = true;
-
-                Logger.Write(LogLevel.GUI, $"GUI element loaded: {Name}");
             }
         }
 
@@ -64,8 +55,6 @@ namespace lindengine.gui
             {
                 size = e.Size;
                 ContextResizeEvent?.Invoke(this, e);
-
-                Logger.Write(LogLevel.GUI, $"GUI element context resized: {Name} {e.Width}x{e.Height}");
             }
         }
 
@@ -91,7 +80,6 @@ namespace lindengine.gui
             {
                 UnloadEvent?.Invoke(this);
 
-                CreateEvent -= OnCreate;
                 LoadEvent -= OnLoad;
                 ContextResizeEvent -= OnContextResize;
                 UpdateFrameEvent -= OnUpdateFrame;
@@ -99,12 +87,9 @@ namespace lindengine.gui
                 UnloadEvent -= OnUnload;
 
                 _isLoaded = false;
-
-                Logger.Write(LogLevel.GUI, $"GUI element unloaded: {Name}");
             }
         }
 
-        protected virtual void OnCreate(Element element) { }
         protected virtual void OnLoad(Element element) { }
         protected virtual void OnContextResize(Element element, ResizeEventArgs args) { }
         protected virtual void OnUpdateFrame(Element element, FrameEventArgs args) { }

@@ -1,5 +1,4 @@
-﻿using lindengine.common.logs;
-using OpenTK.Mathematics;
+﻿using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 
 namespace lindengine.core.window
@@ -17,7 +16,6 @@ namespace lindengine.core.window
         private delegate void StateContextResizeDelegate(State state, ResizeEventArgs args);
         private delegate void StateFrameDelegate(State state, FrameEventArgs args);
 
-        private event StateDelegate? CreateEvent;
         private event StateDelegate? LoadEvent;
         private event StateDelegate? UnloadEvent;
         private event StateContextResizeDelegate? ContextResizeEvent;
@@ -26,25 +24,16 @@ namespace lindengine.core.window
 
         public State(string name, Vector2i windowSize)
         {
-            Logger.Write(LogLevel.State, $"State creating: {name}");
-
             _isLoaded = false;
 
             Name = name.ToLower();
             this.windowSize = windowSize;
-
-            CreateEvent += OnCreate;
-            CreateEvent?.Invoke(this);
-
-            Logger.Write(LogLevel.State, $"State created: {Name}");
         }
 
         public void Load()
         {
             if (!_isLoaded)
             {
-                Logger.Write(LogLevel.State, $"State loading: {Name}");
-
                 LoadEvent += OnLoad;
                 ContextResizeEvent += OnContextResize;
                 UpdateEvent += OnUpdateFrame;
@@ -53,8 +42,6 @@ namespace lindengine.core.window
 
                 LoadEvent?.Invoke(this);
                 _isLoaded = true;
-
-                Logger.Write(LogLevel.State, $"State loaded: {Name}");
             }
         }
 
@@ -62,12 +49,8 @@ namespace lindengine.core.window
         {
             if (_isLoaded)
             {
-                Logger.Write(LogLevel.State, $"State context resizing: {Name} {e.Width}x{e.Height}");
-
                 windowSize = new Vector2i(e.Width, e.Height);
                 ContextResizeEvent?.Invoke(this, e);
-
-                Logger.Write(LogLevel.State, $"State context resized: {Name} {e.Width}x{e.Height}");
             }
         }
 
@@ -91,11 +74,8 @@ namespace lindengine.core.window
         {
             if (_isLoaded)
             {
-                Logger.Write(LogLevel.State, $"State unloading: {Name}");
-
                 UnloadEvent?.Invoke(this);
 
-                CreateEvent -= OnCreate;
                 LoadEvent -= OnLoad;
                 ContextResizeEvent -= OnContextResize;
                 UpdateEvent -= OnUpdateFrame;
@@ -104,12 +84,9 @@ namespace lindengine.core.window
 
                 _isLoaded = false;
                 UnloadedEvent?.Invoke(this);
-
-                Logger.Write(LogLevel.State, $"State unloaded: {Name}");
             }
         }
 
-        protected virtual void OnCreate(State state) { }
         protected virtual void OnLoad(State state) { }
         protected virtual void OnContextResize(State state, ResizeEventArgs args) { }
         protected virtual void OnUpdateFrame(State state, FrameEventArgs args) { }
