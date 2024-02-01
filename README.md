@@ -18,13 +18,6 @@ The repository contains:
 2. **gui** - library for working with graphical interfaces.
 3. **common** - library with common classes like shaders and textures.
 
-## Table of Contents
-
-- [Install](#install)
-    - [Linux](#manjaro-linux)
-    - [Windows](#windows)
-- [Run](#run)
-
 ## Install
 
 ### Manjaro Linux
