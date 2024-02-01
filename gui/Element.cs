@@ -11,8 +11,8 @@ namespace lindengine.gui
         protected int vertexBuffer;
         protected int indexBuffer;
         protected int vertexArray;
-        protected uint[] indices;
-        protected float[] vertices;
+        protected uint[] indices = [];
+        protected float[] vertices = [];
         protected List<Element> children = [];
         protected Vector2i size;
         protected Matrix4 modelMatrix = Matrix4.Identity;

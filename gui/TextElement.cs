@@ -4,26 +4,21 @@ using lindengine.common.textures;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
-using StbTrueTypeSharp;
-using static StbTrueTypeSharp.StbTrueType;
 
 namespace lindengine.gui
 {
     public class TextElement : Element
     {
-        protected byte[] bytes, bitmap;
-        protected int l_h, b_cursor, ascent, descent, lineGap;
-        protected float scale;
-        protected stbtt_fontinfo info;
         protected string text;
-        protected Texture texture;
-
-        private int lineShift;
+        protected Texture? texture;
 
         public TextElement(string name, Vector2i size, string text) : base(name, size)
         {
             this.text = text;
+        }
 
+        protected override void OnLoad(Element element)
+        {
             vertices = [
                 0.0f,   0.0f,   0.0f, 0.0f, 0.0f,  // bottom left
                 0.0f,   size.Y, 0.0f, 0.0f, 1.0f,  // top left
@@ -32,6 +27,9 @@ namespace lindengine.gui
             ];
             indices = [0, 3, 2, 0, 2, 1];
 
+            byte[] textBytes = BitmapText.GetBytes("assets/fonts/OpenSansBold.ttf", size, text, 24);
+            texture = Texture.LoadFromBytes($"{Name}_texture", textBytes, size);
+
             ShaderManager.Select("gui");
             int position_attribute = ShaderManager.GetAttribLocation("aPosition");
             int texture_attribute = ShaderManager.GetAttribLocation("aTexture");
@@ -39,11 +37,9 @@ namespace lindengine.gui
             vertexBuffer = GL.GenBuffer();
             GL.BindBuffer(BufferTarget.ArrayBuffer, vertexBuffer);
             GL.BufferData(BufferTarget.ArrayBuffer, vertices.Length * sizeof(float), vertices, BufferUsageHint.StaticDraw);
-
             indexBuffer = GL.GenBuffer();
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, indexBuffer);
             GL.BufferData(BufferTarget.ElementArrayBuffer, sizeof(uint) * indices.Length, indices, BufferUsageHint.StaticDraw);
-
             // Generate a name for the array and create it.
             // Note that glGenVertexArrays() won't work here.
             GL.CreateVertexArrays(1, out vertexArray);
@@ -64,17 +60,9 @@ namespace lindengine.gui
             // Make my attributes all use binding 0
             GL.VertexArrayAttribBinding(vertexArray, position_attribute, 0);
             GL.VertexArrayAttribBinding(vertexArray, texture_attribute, 0);
-
             // Quickly bind all attributes to use "buffer"
             GL.VertexArrayVertexBuffer(vertexArray, 0, vertexBuffer, 0, 20);
             GL.VertexArrayElementBuffer(vertexArray, indexBuffer);
-
-            prepare();
-            processText(text);
-            saveImage();
-
-            // texture = Texture.LoadFromFile("lindengine-logo-big", "assets/lindengine/lindengine-logo-big.png");
-            texture = getTextTexture();
         }
 
         protected override void OnContextResize(Element element, ResizeEventArgs args)
@@ -84,184 +72,16 @@ namespace lindengine.gui
 
         protected override void OnRenderFrame(Element element, FrameEventArgs args)
         {
-            GL.BindVertexArray(vertexArray);
-            texture.Use();
+            texture?.Use();
             ShaderManager.Select("gui");
             CameraManager.Select(CameraType.Orthographic);
+
+            GL.BindVertexArray(vertexArray);
             ShaderManager.SetUniformData("viewMatrix", CameraManager.GetViewMatrix());
             ShaderManager.SetUniformData("projectionMatrix", CameraManager.GetProjectionMatrix());
             ShaderManager.SetUniformData("modelMatrix", modelMatrix);
 
             GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0);
-        }
-
-        unsafe protected void prepare()
-        {
-            bytes = File.ReadAllBytes("assets/fonts/OpenSansBold.ttf");
-            info = new();
-            fixed (byte* ptr = bytes)
-            {
-                stbtt_InitFont(info, ptr, 0);
-            }
-
-            l_h = 24;
-
-            bitmap = new byte[size.X * size.Y];
-            scale = stbtt_ScaleForPixelHeight(info, l_h);
-            b_cursor = 0;
-            int asc, des, gap;
-            stbtt_GetFontVMetrics(info, &asc, &des, &gap);
-            ascent = (int)(asc * scale);
-            descent = (int)(des * scale);
-            lineGap = gap;
-
-            lineShift = 0;
-        }
-
-        protected void processText(string text)
-        {
-            string[] lines = text.Split('\n');
-            for (int line_number = 0; line_number < lines.Length; line_number++)
-            {
-                processLine(lines[line_number], line_number);
-            }
-        }
-
-        protected void processLine(string line, int line_number)
-        {
-            b_cursor = size.X * l_h * (line_number + lineShift);
-
-            string[] words = line.Split(' ');
-            int currentLineWidth = 0;
-
-            for (int word_number = 0; word_number < words.Length; word_number++)
-            {
-                int wordWidth = getTextWidth(words[word_number] + ' ');
-                currentLineWidth += wordWidth;
-
-                if (currentLineWidth >= size.X)
-                {
-                    lineShift++;
-                    b_cursor = size.X * l_h * (line_number + lineShift);
-                    currentLineWidth = wordWidth;
-                }
-
-                processWord(words[word_number]);
-            }
-        }
-
-        protected void processWord(string word)
-        {
-            for (int char_number = 0; char_number < word.Length; char_number++)
-            {
-                char current_char = word[char_number];
-                char? next_char = (char_number < word.Length - 1)
-                    ? word[char_number + 1]
-                    : null;
-
-                processCharacter(current_char, next_char);
-                if (next_char == null)
-                {
-                    processCharacter(' ');
-                }
-            }
-        }
-
-        unsafe protected int getTextWidth(string text)
-        {
-            int wordWidth = 0;
-
-            int ax, lsb;
-            foreach (char character in text)
-            {
-                stbtt_GetCodepointHMetrics(info, character, &ax, &lsb);
-                wordWidth += (int)(ax * scale);
-            }
-
-            return wordWidth;
-        }
-
-        unsafe protected void processCharacter(char current_char, char? next_char = null)
-        {
-            /* how wide is this character */
-            int ax, lsb;
-            stbtt_GetCodepointHMetrics(info, current_char, &ax, &lsb);
-            ax = (int)(ax * scale);
-            lsb = (int)(lsb * scale);
-            /* (Note that each Codepoint call has an alternative Glyph version which caches the work required to lookup the character word[i].) */
-
-            /* get bounding box for character (may be offset to account for chars that dip above or below the line) */
-            int c_x1, c_y1, c_x2, c_y2;
-            stbtt_GetCodepointBitmapBox(info, current_char, scale, scale, &c_x1, &c_y1, &c_x2, &c_y2);
-            int char_width = c_x2 - c_x1;
-            int char_height = c_y2 - c_y1;
-
-            /* compute y (different characters have different heights) */
-            int y = ascent + c_y1;
-
-            fixed (byte* ptr = bitmap)
-            {
-                /* render character (stride and offset is important here) */
-                int byteOffset = b_cursor + lsb + (y * size.X);
-                byte* ptr2 = ptr + byteOffset;
-                stbtt_MakeCodepointBitmap(info, ptr2, char_width, char_height, size.X, scale, scale, current_char);
-            }
-
-            /* advance x */
-            b_cursor += ax;
-        }
-
-        protected void saveImage()
-        {
-            string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-            string fileName = "output.png";
-
-            // каждый пиксель содержит 4 байта (R, G, B, A
-            byte[] rgbaData = new byte[size.X * size.Y * 4];
-            // Копирование данных из 8-битного изображения в буфер RGBA
-            for (int y = 0; y < size.Y; y++)
-            {
-                for (int x = 0; x < size.X; x++)
-                {
-                    // Получение значения яркости пикселя из исходного изображения
-                    byte intensity = bitmap[y * size.X + x];
-
-                    // Установка значений компонентов RGBA в буфере
-                    int index = (y * size.X + x) * 4;
-                    rgbaData[index] = intensity; // Красный
-                    rgbaData[index + 1] = intensity; // Зелёный
-                    rgbaData[index + 2] = intensity; // Синий
-                    rgbaData[index + 3] = intensity > 0 ? (byte)255 : (byte)0; // Непрозрачность (значение 255 означает полностью непрозрачный пиксель)
-                }
-            }
-
-            StbImageWriteSharp.ImageWriter imageWriter = new StbImageWriteSharp.ImageWriter();
-            using FileStream stream = File.OpenWrite(Path.Combine(desktopPath, fileName));
-            imageWriter.WritePng(rgbaData, size.X, size.Y, StbImageWriteSharp.ColorComponents.RedGreenBlueAlpha, stream);
-        }
-
-        protected Texture getTextTexture()
-        {
-            // каждый пиксель содержит 4 байта (R, G, B, A
-            byte[] rgbaData = new byte[size.X * size.Y * 4];
-            // Копирование данных из 8-битного изображения в буфер RGBA
-            for (int y = 0; y < size.Y; y++)
-            {
-                for (int x = 0; x < size.X; x++)
-                {
-                    // Получение значения яркости пикселя из исходного изображения
-                    byte intensity = bitmap[y * size.X + x];
-
-                    // Установка значений компонентов RGBA в буфере
-                    int index = (y * size.X + x) * 4;
-                    rgbaData[index] = intensity; // Красный
-                    rgbaData[index + 1] = intensity; // Зелёный
-                    rgbaData[index + 2] = intensity; // Синий
-                    rgbaData[index + 3] = intensity > 0 ? (byte)255 : (byte)0; // Непрозрачность (значение 255 означает полностью непрозрачный пиксель)
-                }
-            }
-
-            return Texture.LoadFromBytes("text", rgbaData, size);
         }
     }
 }

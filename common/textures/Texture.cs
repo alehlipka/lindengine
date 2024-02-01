@@ -59,16 +59,16 @@ namespace lindengine.common.textures
             return new Texture(name, handle, size.X, size.Y);
         }
 
-        private static byte[] FlipPixelsVertically(byte[] frameData, Vector2i size)
+        private static byte[] FlipPixelsVertically(byte[] frameData, Vector2i size, int pixelSize = 4)
         {
             byte[] data = new byte[frameData.Length];
             for (int k = 0; k < size.Y; k++)
             {
                 int j = size.Y - k - 1;
                 System.Buffer.BlockCopy(
-                    frameData, k * size.X * 4,
-                    data, j * size.X * 4,
-                    size.X * 4);
+                    frameData, k * size.X * pixelSize,
+                    data, j * size.X * pixelSize,
+                    size.X * pixelSize);
             }
 
             return data;
