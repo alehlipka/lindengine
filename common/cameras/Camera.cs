@@ -1,5 +1,4 @@
-﻿using lindengine.common.logs;
-using OpenTK.Mathematics;
+﻿using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 
 namespace lindengine.common.cameras
@@ -22,7 +21,6 @@ namespace lindengine.common.cameras
         private delegate void CameraContextResizeDelegate(Camera camera, ResizeEventArgs args);
         private delegate void CameraFrameDelegate(Camera camera, FrameEventArgs args);
 
-        private event CameraDelegate? CreateEvent;
         private event CameraDelegate? LoadEvent;
         private event CameraDelegate? UnloadEvent;
         private event CameraContextResizeDelegate? ContextResizeEvent;
@@ -43,11 +41,6 @@ namespace lindengine.common.cameras
             FarClip = farClip;
 
             ViewMatrix = Matrix4.LookAt(Position, Target, Up);
-
-            CreateEvent += OnCreate;
-            CreateEvent?.Invoke(this);
-
-            Logger.Write(LogLevel.Camera, $"Camera created: {type}");
         }
 
         public void Load()
@@ -62,8 +55,6 @@ namespace lindengine.common.cameras
 
                 LoadEvent?.Invoke(this);
                 _isLoaded = true;
-
-                Logger.Write(LogLevel.Camera, $"Camera loaded: {Type}");
             }
         }
 
@@ -73,8 +64,6 @@ namespace lindengine.common.cameras
             {
                 AspectRatio = args.Width / (float)args.Height;
                 ContextResizeEvent?.Invoke(this, args);
-
-                Logger.Write(LogLevel.Camera, $"Camera context resized: {Type} {args.Width}x{args.Height}");
             }
         }
 
@@ -100,7 +89,6 @@ namespace lindengine.common.cameras
             {
                 UnloadEvent?.Invoke(this);
 
-                CreateEvent -= OnCreate;
                 LoadEvent -= OnLoad;
                 ContextResizeEvent -= OnContextResize;
                 UpdateEvent -= OnUpdateFrame;
@@ -108,12 +96,9 @@ namespace lindengine.common.cameras
                 UnloadEvent -= OnUnload;
 
                 _isLoaded = false;
-
-                Logger.Write(LogLevel.Camera, $"Camera unloaded: {Type}");
             }
         }
 
-        protected virtual void OnCreate(Camera camera) { }
         protected virtual void OnLoad(Camera camera) { }
         protected virtual void OnContextResize(Camera camera, ResizeEventArgs args) { }
         protected virtual void OnUpdateFrame(Camera camera, FrameEventArgs args) { }
