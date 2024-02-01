@@ -14,15 +14,14 @@ namespace lindengine.gui
         protected int fontSize = 24;
         protected Texture? texture;
 
-        private readonly byte[] fontBytes = FontManager.GetBytes("opensansbold");
+        private readonly byte[] fontBytes = FontManager.GetFileBytes("opensansbold");
 
         public void SetText(string newText)
         {
             if (!text.Equals(newText))
             {
                 text = newText;
-                byte[] textBytes = BitmapText.GetBytes(fontBytes, size, text, fontSize);
-                texture = Texture.LoadFromBytes($"{Name}_texture", textBytes, size);
+                texture = Texture.LoadFromBytes($"{Name}_texture", FontManager.GetBitmapBytes("opensansbold", size, text, fontSize), size);
             }
         }
 
@@ -36,8 +35,7 @@ namespace lindengine.gui
             ];
             indices = [0, 3, 2, 0, 2, 1];
 
-            byte[] textBytes = BitmapText.GetBytes(fontBytes, size, text, fontSize);
-            texture = Texture.LoadFromBytes($"{Name}_texture", textBytes, size);
+            texture = Texture.LoadFromBytes($"{Name}_texture", FontManager.GetBitmapBytes("opensansbold", size, text, fontSize), size);
 
             ShaderManager.Select("gui");
             int position_attribute = ShaderManager.GetAttribLocation("aPosition");
@@ -86,8 +84,7 @@ namespace lindengine.gui
             GL.BindBuffer(BufferTarget.ArrayBuffer, vertexBuffer);
             GL.BufferData(BufferTarget.ArrayBuffer, vertices.Length * sizeof(float), vertices, BufferUsageHint.StaticDraw);
 
-            byte[] textBytes = BitmapText.GetBytes(fontBytes, size, text, fontSize);
-            texture = Texture.LoadFromBytes($"{Name}_texture", textBytes, size);
+            texture = Texture.LoadFromBytes($"{Name}_texture", FontManager.GetBitmapBytes("opensansbold", size, text, fontSize), size);
 
             modelMatrix = Matrix4.CreateTranslation(Vector3.Zero);
         }

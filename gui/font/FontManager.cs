@@ -1,4 +1,6 @@
-﻿namespace lindengine.gui.font
+﻿using OpenTK.Mathematics;
+
+namespace lindengine.gui.font
 {
     public static class FontManager
     {
@@ -11,9 +13,14 @@
             CreateFonts();
         }
 
-        public static byte[] GetBytes(string fontName)
+        public static byte[] GetFileBytes(string fontName)
         {
-            return _fonts.First(font => font.Name.Equals(fontName.ToLower()))?.Bytes ?? [];
+            return _fonts.First(font => font.Name.Equals(fontName.ToLower()))?.FileBytes ?? [];
+        }
+
+        public static byte[] GetBitmapBytes(string fontName, Vector2i bitmapSize, string text, int fontSize)
+        {
+            return _fonts.First(font => font.Name.Equals(fontName.ToLower()))?.GetBitmapBytes(bitmapSize, text, fontSize) ?? [];
         }
 
         private static void CreateFonts()
