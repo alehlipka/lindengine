@@ -4,6 +4,7 @@ using lindengine.common.textures;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
+using StbTrueTypeSharp;
 using static StbTrueTypeSharp.StbTrueType;
 
 namespace lindengine.gui
@@ -22,10 +23,6 @@ namespace lindengine.gui
         public TextElement(string name, Vector2i size, string text) : base(name, size)
         {
             this.text = text;
-
-            prepare();
-            processText(text);
-            saveImage();
 
             vertices = [
                 0.0f,   0.0f,   0.0f, 0.0f, 0.0f,  // bottom left
@@ -72,7 +69,12 @@ namespace lindengine.gui
             GL.VertexArrayVertexBuffer(vertexArray, 0, vertexBuffer, 0, 20);
             GL.VertexArrayElementBuffer(vertexArray, indexBuffer);
 
-            texture = Texture.LoadFromFile("lindengine-logo-big", "assets/lindengine/lindengine-logo-big.png");
+            prepare();
+            processText(text);
+            saveImage();
+
+            // texture = Texture.LoadFromFile("lindengine-logo-big", "assets/lindengine/lindengine-logo-big.png");
+            texture = getTextTexture();
         }
 
         protected override void OnContextResize(Element element, ResizeEventArgs args)
@@ -207,14 +209,6 @@ namespace lindengine.gui
 
             /* advance x */
             b_cursor += ax;
-
-            /* add kerning */
-            //int kern = 0;
-            //if (next_char != null && next_char != '\n')
-            //{
-            //    kern = stbtt_GetCodepointKernAdvance(info, current_char, (char)next_char);
-            //    b_cursor += (int)(kern * scale);
-            //}
         }
 
         protected void saveImage()
@@ -222,9 +216,52 @@ namespace lindengine.gui
             string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
             string fileName = "output.png";
 
+            // каждый пиксель содержит 4 байта (R, G, B, A
+            byte[] rgbaData = new byte[size.X * size.Y * 4];
+            // Копирование данных из 8-битного изображения в буфер RGBA
+            for (int y = 0; y < size.Y; y++)
+            {
+                for (int x = 0; x < size.X; x++)
+                {
+                    // Получение значения яркости пикселя из исходного изображения
+                    byte intensity = bitmap[y * size.X + x];
+
+                    // Установка значений компонентов RGBA в буфере
+                    int index = (y * size.X + x) * 4;
+                    rgbaData[index] = intensity; // Красный
+                    rgbaData[index + 1] = intensity; // Зелёный
+                    rgbaData[index + 2] = intensity; // Синий
+                    rgbaData[index + 3] = intensity > 0 ? (byte)255 : (byte)0; // Непрозрачность (значение 255 означает полностью непрозрачный пиксель)
+                }
+            }
+
             StbImageWriteSharp.ImageWriter imageWriter = new StbImageWriteSharp.ImageWriter();
             using FileStream stream = File.OpenWrite(Path.Combine(desktopPath, fileName));
-            imageWriter.WritePng(bitmap, size.X, size.Y, StbImageWriteSharp.ColorComponents.Grey, stream);
+            imageWriter.WritePng(rgbaData, size.X, size.Y, StbImageWriteSharp.ColorComponents.RedGreenBlueAlpha, stream);
+        }
+
+        protected Texture getTextTexture()
+        {
+            // каждый пиксель содержит 4 байта (R, G, B, A
+            byte[] rgbaData = new byte[size.X * size.Y * 4];
+            // Копирование данных из 8-битного изображения в буфер RGBA
+            for (int y = 0; y < size.Y; y++)
+            {
+                for (int x = 0; x < size.X; x++)
+                {
+                    // Получение значения яркости пикселя из исходного изображения
+                    byte intensity = bitmap[y * size.X + x];
+
+                    // Установка значений компонентов RGBA в буфере
+                    int index = (y * size.X + x) * 4;
+                    rgbaData[index] = intensity; // Красный
+                    rgbaData[index + 1] = intensity; // Зелёный
+                    rgbaData[index + 2] = intensity; // Синий
+                    rgbaData[index + 3] = intensity > 0 ? (byte)255 : (byte)0; // Непрозрачность (значение 255 означает полностью непрозрачный пиксель)
+                }
+            }
+
+            return Texture.LoadFromBytes("text", rgbaData, size);
         }
     }
 }
