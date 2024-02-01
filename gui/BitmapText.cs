@@ -1,5 +1,4 @@
-﻿using lindengine.common.textures;
-using OpenTK.Mathematics;
+﻿using OpenTK.Mathematics;
 using static StbTrueTypeSharp.StbTrueType;
 
 namespace lindengine.gui;
@@ -14,35 +13,9 @@ internal static class BitmapText
     private static string text = string.Empty;
     private static Vector2i imageSize;
 
-    public static byte[] GetBytes(string fontPath, Vector2i imageSize, string text, int fontSize)
-    {
-        create(fontPath, imageSize, fontSize, text);
-
-        // каждый пиксель содержит 4 байта (R, G, B, A)
-        byte[] rgbaData = new byte[imageSize.X * imageSize.Y * 4];
-        // Копирование данных из 8-битного изображения в буфер RGBA
-        for (int y = 0; y < imageSize.Y; y++)
-        {
-            for (int x = 0; x < imageSize.X; x++)
-            {
-                // Получение значения яркости пикселя из исходного изображения
-                byte intensity = bitmap[y * imageSize.X + x];
-
-                // Установка значений компонентов RGBA в буфере
-                int index = (y * imageSize.X + x) * 4;
-                rgbaData[index] = intensity; // Красный
-                rgbaData[index + 1] = intensity; // Зелёный
-                rgbaData[index + 2] = intensity; // Синий
-                rgbaData[index + 3] = intensity > 0 ? (byte)255 : (byte)0; // Непрозрачность (значение 255 означает полностью непрозрачный пиксель)
-            }
-        }
-
-        return rgbaData;
-    }
-
     public static byte[] GetBytes(byte[] fontBytes, Vector2i imageSize, string text, int fontSize)
     {
-        create(fontBytes, imageSize, fontSize, text);
+        Create(fontBytes, imageSize, fontSize, text);
 
         // каждый пиксель содержит 4 байта (R, G, B, A)
         byte[] rgbaData = new byte[imageSize.X * imageSize.Y * 4];
@@ -66,12 +39,7 @@ internal static class BitmapText
         return rgbaData;
     }
 
-    unsafe private static void create(string fontPath, Vector2i imageSize, int fontSize, string text)
-    {
-        create(File.ReadAllBytes(fontPath), imageSize, fontSize, text);
-    }
-
-    unsafe private static void create(byte[] fontBytes, Vector2i imageSize, int fontSize, string text)
+    unsafe private static void Create(byte[] fontBytes, Vector2i imageSize, int fontSize, string text)
     {
         BitmapText.imageSize = imageSize;
         BitmapText.text = text;
@@ -96,10 +64,10 @@ internal static class BitmapText
 
         lineShift = 0;
 
-        processText();
+        ProcessText();
     }
 
-    unsafe static private int getTextWidth(string text)
+    unsafe static private int GetTextWidth(string text)
     {
         int wordWidth = 0;
 
@@ -113,16 +81,16 @@ internal static class BitmapText
         return wordWidth;
     }
 
-    static private void processText()
+    static private void ProcessText()
     {
         string[] lines = text.Split('\n');
         for (int line_number = 0; line_number < lines.Length; line_number++)
         {
-            processLine(lines[line_number], line_number);
+            ProcessLine(lines[line_number], line_number);
         }
     }
 
-    static private void processLine(string line, int line_number)
+    static private void ProcessLine(string line, int line_number)
     {
         b_cursor = imageSize.X * l_h * (line_number + lineShift);
 
@@ -131,7 +99,7 @@ internal static class BitmapText
 
         for (int word_number = 0; word_number < words.Length; word_number++)
         {
-            int wordWidth = getTextWidth(words[word_number] + ' ');
+            int wordWidth = GetTextWidth(words[word_number] + ' ');
             currentLineWidth += wordWidth;
 
             if (currentLineWidth >= imageSize.X)

@@ -3,9 +3,9 @@ using OpenTK.Windowing.Common;
 
 namespace lindengine.gui
 {
-    public class Element
+    public class Element(string name, Vector2i size)
     {
-        public readonly string Name;
+        public readonly string Name = name.ToLower();
 
         protected int vertexBuffer;
         protected int indexBuffer;
@@ -13,7 +13,7 @@ namespace lindengine.gui
         protected uint[] indices = [];
         protected float[] vertices = [];
         protected List<Element> children = [];
-        protected Vector2i size;
+        protected Vector2i size = size;
         protected Matrix4 modelMatrix = Matrix4.Identity;
 
         private delegate void ElementDelegate(Element element);
@@ -27,12 +27,6 @@ namespace lindengine.gui
         private event ElementFrameDelegate? RendereFrameEvent;
 
         private bool _isLoaded;
-
-        public Element(string name, Vector2i size)
-        {
-            Name = name.ToLower();
-            this.size = size;
-        }
 
         public void Load()
         {

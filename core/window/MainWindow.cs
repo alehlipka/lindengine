@@ -1,6 +1,7 @@
 ﻿using lindengine.common.cameras;
 using lindengine.common.shaders;
 using lindengine.core.helpers;
+using lindengine.gui.font;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
@@ -23,6 +24,7 @@ namespace lindengine.core.window
         {
             CameraManager.Create(ClientSize);
             ShaderManager.Create(Path.Combine("assets", "shaders"));
+            FontManager.Create(Path.Combine("assets", "fonts"));
             StatesManager.Create(ClientSize);
         }
 

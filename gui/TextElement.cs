@@ -1,25 +1,20 @@
 ﻿using lindengine.common.cameras;
 using lindengine.common.shaders;
 using lindengine.common.textures;
+using lindengine.gui.font;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 
 namespace lindengine.gui
 {
-    public class TextElement : Element
+    public class TextElement(string name, Vector2i size, string text) : Element(name, size)
     {
-        protected string text;
+        protected string text = text;
         protected int fontSize = 24;
         protected Texture? texture;
 
-        private readonly byte[] fontBytes = [];
-
-        public TextElement(string name, Vector2i size, string text) : base(name, size)
-        {
-            this.text = text;
-            fontBytes = File.ReadAllBytes("assets/fonts/OpenSansBold.ttf");
-        }
+        private readonly byte[] fontBytes = FontManager.GetBytes("opensansbold");
 
         public void SetText(string newText)
         {
@@ -91,7 +86,7 @@ namespace lindengine.gui
             GL.BindBuffer(BufferTarget.ArrayBuffer, vertexBuffer);
             GL.BufferData(BufferTarget.ArrayBuffer, vertices.Length * sizeof(float), vertices, BufferUsageHint.StaticDraw);
 
-            byte[] textBytes = BitmapText.GetBytes("assets/fonts/OpenSansBold.ttf", size, text, 24);
+            byte[] textBytes = BitmapText.GetBytes(fontBytes, size, text, fontSize);
             texture = Texture.LoadFromBytes($"{Name}_texture", textBytes, size);
 
             modelMatrix = Matrix4.CreateTranslation(Vector3.Zero);
