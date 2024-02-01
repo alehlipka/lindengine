@@ -17,6 +17,16 @@ namespace lindengine.gui
             this.text = text;
         }
 
+        public void SetText(string newText)
+        {
+            if (!text.Equals(newText))
+            {
+                text = newText;
+                byte[] textBytes = BitmapText.GetBytes("assets/fonts/OpenSansBold.ttf", size, text, 24);
+                texture = Texture.LoadFromBytes($"{Name}_texture", textBytes, size);
+            }
+        }
+
         protected override void OnLoad(Element element)
         {
             vertices = [
@@ -67,7 +77,7 @@ namespace lindengine.gui
 
         protected override void OnContextResize(Element element, ResizeEventArgs args)
         {
-            modelMatrix = Matrix4.CreateTranslation(new Vector3((args.Width - 280) / 2, (args.Height - 280) / 2, 0));
+            modelMatrix = Matrix4.CreateTranslation(Vector3.Zero);
         }
 
         protected override void OnRenderFrame(Element element, FrameEventArgs args)

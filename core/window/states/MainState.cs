@@ -1,4 +1,5 @@
-﻿using lindengine.gui;
+﻿using lindengine.core.helpers;
+using lindengine.gui;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 
@@ -10,8 +11,8 @@ namespace lindengine.core.window.states
 
         protected override void OnCreate(State state)
         {
-            string text = "Test\n!\"#$%&'()*+,-./:;<=>?@[]^_`{|}~\n\nТекст(от лат. textus — ткань; сплетение, сочетание) — зафиксированная на каком-либо материальном носителе человеческая мысль; в общем плане связная и полная последовательность символов.";
-            testElement = new TextElement("text_element", new Vector2i(280, 280), text);
+            string text = "FPS: 0";
+            testElement = new TextElement("text_element", new Vector2i(800, 600), text);
         }
 
         protected override void OnLoad(State state)
@@ -26,6 +27,7 @@ namespace lindengine.core.window.states
 
         protected override void OnUpdateFrame(State state, FrameEventArgs args)
         {
+            testElement?.SetText($"FPS: {FPSCounter.FPS} Max: {FPSCounter.Max} Min: {FPSCounter.Min}");
             testElement?.Update(args);
         }
 
