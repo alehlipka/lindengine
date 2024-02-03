@@ -52,9 +52,20 @@ namespace lindengine.core.window
 
         protected override void OnUpdateFrame(FrameEventArgs args)
         {
-            if (IsKeyDown(OpenTK.Windowing.GraphicsLibraryFramework.Keys.Escape))
+            if (IsKeyPressed(OpenTK.Windowing.GraphicsLibraryFramework.Keys.Escape))
             {
                 Close();
+            }
+            else if (IsKeyPressed(OpenTK.Windowing.GraphicsLibraryFramework.Keys.F))
+            {
+                if (IsFullscreen)
+                {
+                    WindowState = WindowState.Normal;
+                }
+                else
+                {
+                    WindowState = WindowState.Fullscreen;
+                }
             }
 
             CameraManager.Update(args);

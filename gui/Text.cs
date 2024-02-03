@@ -34,7 +34,7 @@ namespace lindengine.gui
             ];
             indices = [0, 3, 2, 0, 2, 1];
 
-            texture = Texture.LoadFromBytes($"{Name}_texture", FontManager.GetBitmapBytes("opensansbold", size, text, fontSize, textColor), size);
+            texture = Texture.LoadFromBytes($"{Name}_texture", FontManager.GetBitmapBytes("droidsans", size, text, fontSize, textColor), size);
 
             ShaderManager.Select("gui");
             int position_attribute = ShaderManager.GetAttribLocation("aPosition");
