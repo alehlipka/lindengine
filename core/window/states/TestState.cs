@@ -7,8 +7,8 @@ namespace lindengine.core.window.states
 {
     internal class TestState(string name, Vector2i windowSize) : State(name, windowSize)
     {
-        private readonly Text? textElement = new($"{name}_text_element", new Vector2i(windowSize.X, 50), "Test state", 24, Color4.Black);
-        private readonly Background? background = new($"{name}_background", windowSize, Path.Combine("assets", "backgrounds", "mainmenu.png"));
+        private readonly Text? textElement = new($"{name}_text_element", new Vector2i(windowSize.X, 50), "Test state", 24, Color4.White);
+        private readonly Background? background = new($"{name}_background", windowSize, Path.Combine("assets", "backgrounds", "forest.png"));
 
         protected override void OnLoad(State state)
         {

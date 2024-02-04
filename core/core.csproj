@@ -24,6 +24,9 @@
     <None Update="assets\backgrounds\mainmenu.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="assets\backgrounds\forest.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="assets\buttons\default.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
