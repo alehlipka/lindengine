@@ -7,7 +7,7 @@ namespace lindengine.core.window.states
 {
     internal class MainState(string name, Vector2i windowSize) : State(name, windowSize)
     {
-        private readonly Text? textElement = new($"{name}_text_element", new Vector2i(windowSize.X, 25), "FPS: N/A", 24, Color4.Black);
+        private readonly Text? textElement = new($"{name}_text_element", new Vector2i(windowSize.X, 50), "Main state", 24, Color4.Black);
         private readonly Background? background = new($"{name}_background", windowSize, Path.Combine("assets", "backgrounds", "mainmenu.png"));
 
         protected override void OnLoad(State state)
@@ -20,7 +20,7 @@ namespace lindengine.core.window.states
 
         private void OnFPSChanged()
         {
-            textElement?.SetText($"FPS: {FPSCounter.FPS} Max: {FPSCounter.Max} Min: {FPSCounter.Min}");
+            textElement?.SetText($"Main state\nFPS: {FPSCounter.FPS} Max: {FPSCounter.Max} Min: {FPSCounter.Min}");
         }
 
         protected override void OnContextResize(State state, ResizeEventArgs args)
@@ -45,8 +45,6 @@ namespace lindengine.core.window.states
         {
             background?.Unload();
             textElement?.Unload();
-
-            FPSCounter.OnFPSChanged -= OnFPSChanged;
         }
     }
 }

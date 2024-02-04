@@ -1,4 +1,5 @@
-﻿using lindengine.gui;
+﻿using lindengine.core.helpers;
+using lindengine.gui;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 
@@ -6,13 +7,20 @@ namespace lindengine.core.window.states
 {
     internal class TestState(string name, Vector2i windowSize) : State(name, windowSize)
     {
-        private readonly Text? textElement = new($"{name}_text_element", new Vector2i(windowSize.X, 25), "Test state", 24, Color4.Black);
+        private readonly Text? textElement = new($"{name}_text_element", new Vector2i(windowSize.X, 50), "Test state", 24, Color4.Black);
         private readonly Background? background = new($"{name}_background", windowSize, Path.Combine("assets", "backgrounds", "mainmenu.png"));
 
         protected override void OnLoad(State state)
         {
             background?.Load(WindowSize);
             textElement?.Load(WindowSize);
+
+            FPSCounter.OnFPSChanged += OnFPSChanged;
+        }
+
+        private void OnFPSChanged()
+        {
+            textElement?.SetText($"Test state\nFPS: {FPSCounter.FPS} Max: {FPSCounter.Max} Min: {FPSCounter.Min}");
         }
 
         protected override void OnContextResize(State state, ResizeEventArgs args)

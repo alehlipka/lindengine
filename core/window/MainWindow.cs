@@ -5,7 +5,9 @@ using lindengine.gui.font;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
+using OpenTK.Windowing.Common.Input;
 using OpenTK.Windowing.Desktop;
+using StbImageSharp;
 
 namespace lindengine.core.window
 {
@@ -16,6 +18,7 @@ namespace lindengine.core.window
         {
             Title = "Lindengine",
             ClientSize = new Vector2i(800, 600),
+            WindowBorder = WindowBorder.Fixed,
             Vsync = VSyncMode.On
         };
 
@@ -25,6 +28,10 @@ namespace lindengine.core.window
             ShaderManager.Create(Path.Combine("assets", "shaders"));
             FontManager.Create(Path.Combine("assets", "fonts"));
             StatesManager.Create(ClientSize);
+
+            using Stream stream = File.OpenRead(Path.Combine("assets", "lindengine", "lindengine-logo-icon.png"));
+            ImageResult image = ImageResult.FromStream(stream, ColorComponents.RedGreenBlueAlpha);
+            Icon = new WindowIcon(new Image(image.Width, image.Height, image.Data));
         }
 
         protected override void OnLoad()
