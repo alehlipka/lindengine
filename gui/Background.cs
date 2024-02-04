@@ -12,8 +12,9 @@ public class Background(string name, Vector2i size, string path) : Element(name,
     protected Texture? texture;
     protected string texturePath = path;
 
-    protected override void OnLoad(Element element)
+    protected override void OnLoad(Element element, Vector2i windowSize)
     {
+        size = windowSize;
         vertices = [
             0.0f,   0.0f,   0.0f, 0.0f, 0.0f,  // bottom left
                 0.0f,   size.Y, 0.0f, 0.0f, 1.0f,  // top left
@@ -57,6 +58,12 @@ public class Background(string name, Vector2i size, string path) : Element(name,
         // Quickly bind all attributes to use "buffer"
         GL.VertexArrayVertexBuffer(vertexArray, 0, vertexBuffer, 0, 20);
         GL.VertexArrayElementBuffer(vertexArray, indexBuffer);
+    }
+
+    protected override void OnUnload(Element element)
+    {
+        GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+        GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
     }
 
     protected override void OnContextResize(Element element, ResizeEventArgs args)

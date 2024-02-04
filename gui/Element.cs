@@ -17,10 +17,11 @@ namespace lindengine.gui
         protected Matrix4 modelMatrix = Matrix4.Identity;
 
         private delegate void ElementDelegate(Element element);
+        private delegate void ElementLoadDelegate(Element element, Vector2i windowSize);
         private delegate void ElementContextResizeDelegate(Element element, ResizeEventArgs args);
         private delegate void ElementFrameDelegate(Element element, FrameEventArgs args);
 
-        private event ElementDelegate? LoadEvent;
+        private event ElementLoadDelegate? LoadEvent;
         private event ElementDelegate? UnloadEvent;
         private event ElementContextResizeDelegate? ContextResizeEvent;
         private event ElementFrameDelegate? UpdateFrameEvent;
@@ -28,7 +29,7 @@ namespace lindengine.gui
 
         private bool _isLoaded;
 
-        public void Load()
+        public void Load(Vector2i windowSize)
         {
             if (!_isLoaded)
             {
@@ -38,7 +39,7 @@ namespace lindengine.gui
                 RendereFrameEvent += OnRenderFrame;
                 UnloadEvent += OnUnload;
 
-                LoadEvent?.Invoke(this);
+                LoadEvent?.Invoke(this, windowSize);
                 _isLoaded = true;
             }
         }
@@ -83,7 +84,7 @@ namespace lindengine.gui
             }
         }
 
-        protected virtual void OnLoad(Element element) { }
+        protected virtual void OnLoad(Element element, Vector2i windowSize) { }
         protected virtual void OnContextResize(Element element, ResizeEventArgs args) { }
         protected virtual void OnUpdateFrame(Element element, FrameEventArgs args) { }
         protected virtual void OnRenderFrame(Element element, FrameEventArgs args) { }

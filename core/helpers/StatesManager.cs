@@ -9,7 +9,6 @@ namespace lindengine.core.helpers
     {
         private const string STATES_NAMESPACE = "lindengine.core.window.states";
         private const string STATES_NAME_CUT = "State";
-        private static string SelectedStateName = string.Empty;
         private static readonly List<State> _windowStates = [];
         private static State? _selectedState = null;
 
@@ -20,18 +19,10 @@ namespace lindengine.core.helpers
 
         public static void Load(string stateName)
         {
-            if (_selectedState?.Name != stateName)
+            if (_selectedState?.Name != stateName || !_selectedState.IsLoaded)
             {
-                if (_selectedState != null)
-                {
-                    SelectedStateName = stateName;
-                    _selectedState.UnloadedEvent += OnStateUnloaded;
-                    _selectedState.Unload();
-                }
-                else
-                {
-                    LoadStateByName(stateName);
-                }
+                _selectedState?.Unload();
+                LoadStateByName(stateName);
             }
         }
 
@@ -80,15 +71,6 @@ namespace lindengine.core.helpers
         {
             _selectedState = _windowStates.First(state => state.Name.Equals(stateName));
             _selectedState?.Load();
-        }
-
-        private static void OnStateUnloaded(State state)
-        {
-            if (_selectedState != null)
-            {
-                _selectedState.UnloadedEvent -= OnStateUnloaded;
-            }
-            LoadStateByName(SelectedStateName);
         }
     }
 }

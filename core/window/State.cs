@@ -3,36 +3,24 @@ using OpenTK.Windowing.Common;
 
 namespace lindengine.core.window
 {
-    internal class State
+    internal class State(string name, Vector2i windowSize)
     {
-        public readonly string Name;
-        public delegate void StateDelegate(State sender);
-        public event StateDelegate? UnloadedEvent;
+        public readonly string Name = name.ToLower();
+        public bool IsLoaded { get; protected set; } = false;
+        public Vector2i WindowSize { get; protected set; } = windowSize;
 
-        protected Vector2i windowSize;
-
-        private bool _isLoaded;
-
+        private delegate void StateDelegate(State sender);
         private delegate void StateContextResizeDelegate(State state, ResizeEventArgs args);
         private delegate void StateFrameDelegate(State state, FrameEventArgs args);
-
         private event StateDelegate? LoadEvent;
         private event StateDelegate? UnloadEvent;
         private event StateContextResizeDelegate? ContextResizeEvent;
         private event StateFrameDelegate? UpdateEvent;
         private event StateFrameDelegate? RendereEvent;
 
-        public State(string name, Vector2i windowSize)
-        {
-            _isLoaded = false;
-
-            Name = name.ToLower();
-            this.windowSize = windowSize;
-        }
-
         public void Load()
         {
-            if (!_isLoaded)
+            if (!IsLoaded)
             {
                 LoadEvent += OnLoad;
                 ContextResizeEvent += OnContextResize;
@@ -41,22 +29,22 @@ namespace lindengine.core.window
                 UnloadEvent += OnUnload;
 
                 LoadEvent?.Invoke(this);
-                _isLoaded = true;
+                IsLoaded = true;
             }
         }
 
         public void Resize(ResizeEventArgs e)
         {
-            if (_isLoaded)
+            if (IsLoaded)
             {
-                windowSize = new Vector2i(e.Width, e.Height);
+                WindowSize = new Vector2i(e.Width, e.Height);
                 ContextResizeEvent?.Invoke(this, e);
             }
         }
 
         public void Update(FrameEventArgs args)
         {
-            if (_isLoaded)
+            if (IsLoaded)
             {
                 UpdateEvent?.Invoke(this, args);
             }
@@ -64,7 +52,7 @@ namespace lindengine.core.window
 
         public void Render(FrameEventArgs args)
         {
-            if (_isLoaded)
+            if (IsLoaded)
             {
                 RendereEvent?.Invoke(this, args);
             }
@@ -72,7 +60,7 @@ namespace lindengine.core.window
 
         public void Unload()
         {
-            if (_isLoaded)
+            if (IsLoaded)
             {
                 UnloadEvent?.Invoke(this);
 
@@ -82,8 +70,7 @@ namespace lindengine.core.window
                 RendereEvent -= OnRenderFrame;
                 UnloadEvent -= OnUnload;
 
-                _isLoaded = false;
-                UnloadedEvent?.Invoke(this);
+                IsLoaded = false;
             }
         }
 

@@ -24,7 +24,7 @@ namespace lindengine.gui
             }
         }
 
-        protected override void OnLoad(Element element)
+        protected override void OnLoad(Element element, Vector2i windowSize)
         {
             vertices = [
                 0.0f,   0.0f,   0.0f, 0.0f, 0.0f,  // bottom left
@@ -69,6 +69,14 @@ namespace lindengine.gui
             // Quickly bind all attributes to use "buffer"
             GL.VertexArrayVertexBuffer(vertexArray, 0, vertexBuffer, 0, 20);
             GL.VertexArrayElementBuffer(vertexArray, indexBuffer);
+
+            modelMatrix = Matrix4.CreateTranslation(new Vector3(10, windowSize.Y - size.Y - 10, 0));
+        }
+
+        protected override void OnUnload(Element element)
+        {
+            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+            GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
         }
 
         protected override void OnContextResize(Element element, ResizeEventArgs args)

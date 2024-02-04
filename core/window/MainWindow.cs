@@ -67,6 +67,14 @@ namespace lindengine.core.window
                     WindowState = WindowState.Fullscreen;
                 }
             }
+            else if (IsKeyPressed(OpenTK.Windowing.GraphicsLibraryFramework.Keys.D1))
+            {
+                StatesManager.Load("main");
+            }
+            else if (IsKeyPressed(OpenTK.Windowing.GraphicsLibraryFramework.Keys.D2))
+            {
+                StatesManager.Load("test");
+            }
 
             CameraManager.Update(args);
             StatesManager.Update(args);
