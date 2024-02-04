@@ -18,7 +18,7 @@ namespace lindengine.core.window
         private event StateFrameDelegate? UpdateEvent;
         private event StateFrameDelegate? RendereEvent;
 
-        public void Load()
+        public void Load(Vector2i windowSize)
         {
             if (!IsLoaded)
             {
@@ -28,6 +28,7 @@ namespace lindengine.core.window
                 RendereEvent += OnRenderFrame;
                 UnloadEvent += OnUnload;
 
+                WindowSize = windowSize;
                 LoadEvent?.Invoke(this);
                 IsLoaded = true;
             }

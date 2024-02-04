@@ -17,12 +17,13 @@ namespace lindengine.core.helpers
             CreateStates(windowSize);
         }
 
-        public static void Load(string stateName)
+        public static void Load(string stateName, Vector2i windowSize)
         {
             if (_selectedState?.Name != stateName || !_selectedState.IsLoaded)
             {
                 _selectedState?.Unload();
-                LoadStateByName(stateName);
+                _selectedState = _windowStates.First(state => state.Name.Equals(stateName));
+                _selectedState?.Load(windowSize);
             }
         }
 
@@ -65,12 +66,6 @@ namespace lindengine.core.helpers
                     _windowStates.Add((State)stateObject);
                 }
             });
-        }
-
-        private static void LoadStateByName(string stateName)
-        {
-            _selectedState = _windowStates.First(state => state.Name.Equals(stateName));
-            _selectedState?.Load();
         }
     }
 }

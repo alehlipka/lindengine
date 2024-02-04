@@ -16,7 +16,6 @@ namespace lindengine.core.window
         {
             Title = "Lindengine",
             ClientSize = new Vector2i(800, 600),
-            StartVisible = false,
             Vsync = VSyncMode.On
         };
 
@@ -37,9 +36,7 @@ namespace lindengine.core.window
             GL.ClearColor(Color4.Black);
 
             CameraManager.Load();
-            StatesManager.Load("main");
-
-            IsVisible = true;
+            StatesManager.Load("main", ClientSize);
         }
 
         protected override void OnResize(ResizeEventArgs e)
@@ -69,11 +66,11 @@ namespace lindengine.core.window
             }
             else if (IsKeyPressed(OpenTK.Windowing.GraphicsLibraryFramework.Keys.D1))
             {
-                StatesManager.Load("main");
+                StatesManager.Load("main", ClientSize);
             }
             else if (IsKeyPressed(OpenTK.Windowing.GraphicsLibraryFramework.Keys.D2))
             {
-                StatesManager.Load("test");
+                StatesManager.Load("test", ClientSize);
             }
 
             CameraManager.Update(args);
