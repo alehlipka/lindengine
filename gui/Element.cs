@@ -1,5 +1,6 @@
 ﻿using lindengine.common.cameras;
 using lindengine.common.shaders;
+using lindengine.common.textures;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
@@ -18,6 +19,7 @@ namespace lindengine.gui
         protected List<Element> children = [];
         protected Vector2i size = size;
         protected Matrix4 modelMatrix = Matrix4.Identity;
+        protected List<Texture> textures = [];
 
         private delegate void ElementDelegate(Element element);
         private delegate void ElementLoadDelegate(Element element, Vector2i windowSize);
@@ -49,6 +51,21 @@ namespace lindengine.gui
                 InitializeBuffers();
 
                 _isLoaded = true;
+
+                Console.WriteLine($"{Name} loaded");
+            }
+        }
+
+        protected virtual void LoadTexture(Texture texture)
+        {
+            Texture? searchableTexture = textures.Find(t => t.Name == texture.Name);
+            if (searchableTexture != null)
+            {
+                searchableTexture = texture;
+            }
+            else
+            {
+                textures.Add(texture);
             }
         }
 
@@ -85,14 +102,7 @@ namespace lindengine.gui
             GL.EnableVertexArrayAttrib(vertexArray, position_attribute);
             GL.EnableVertexArrayAttrib(vertexArray, texture_attribute);
             // Set up the formats for my attributes
-            GL.VertexArrayAttribFormat(
-                vertexArray,
-                position_attribute,     // attribute index, from the shader location = 1
-                3,                      // size of attribute, vec3
-                VertexAttribType.Float, // contains floats
-                false,                  // does not need to be normalized as it is already, floats ignore this flag anyway
-                0                       // relative offset after a Vector3
-            );
+            GL.VertexArrayAttribFormat(vertexArray, position_attribute, 3, VertexAttribType.Float, false, 0);
             GL.VertexArrayAttribFormat(vertexArray, texture_attribute, 2, VertexAttribType.Float, false, 12);
             // Make my attributes all use binding 0
             GL.VertexArrayAttribBinding(vertexArray, position_attribute, 0);
@@ -130,6 +140,8 @@ namespace lindengine.gui
             {
                 RendereFrameEvent?.Invoke(this, args);
 
+                textures.ForEach(texture => texture.Use());
+
                 ShaderManager.Select("gui");
                 CameraManager.Select(CameraType.Orthographic);
 
@@ -150,6 +162,15 @@ namespace lindengine.gui
 
                 GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
                 GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
+                GL.BindVertexArray(0);
+
+                // Make my attributes all use binding 0
+                GL.DisableVertexArrayAttrib(vertexArray, 0);
+                GL.DisableVertexArrayAttrib(vertexArray, 1);
+                // Quickly bind all attributes to use "buffer"
+                GL.VertexArrayVertexBuffer(0, 0, 0, 0, 0);
+                GL.VertexArrayElementBuffer(0, 0);
+
                 GL.DeleteBuffer(indexBuffer);
                 GL.DeleteBuffer(vertexBuffer);
                 GL.DeleteVertexArray(vertexArray);
@@ -161,6 +182,8 @@ namespace lindengine.gui
                 UnloadEvent -= OnUnload;
 
                 _isLoaded = false;
+
+                Console.WriteLine($"{Name} unloaded");
             }
         }
 

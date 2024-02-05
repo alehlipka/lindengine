@@ -11,7 +11,14 @@ namespace lindengine.gui
         protected int fontSize = fontSize;
         protected Color4 textColor = textColor;
         protected byte[] fontBitmapBytes = [];
-        protected Texture? texture;
+
+        protected override void OnLoad(Element element, Vector2i windowSize)
+        {
+            fontBitmapBytes = FontManager.GetBitmapBytes("droidsans", size, text, fontSize, textColor);
+            LoadTexture(Texture.LoadFromBytes($"{Name}_texture", fontBitmapBytes, size));
+
+            modelMatrix = Matrix4.CreateTranslation(new Vector3(10, windowSize.Y - size.Y - 100, 0));
+        }
 
         public void SetText(string newText)
         {
@@ -19,25 +26,13 @@ namespace lindengine.gui
             {
                 text = newText;
                 fontBitmapBytes = FontManager.GetBitmapBytes("droidsans", size, text, fontSize, textColor);
-                texture = Texture.LoadFromBytes($"{Name}_texture", fontBitmapBytes, size);
+                LoadTexture(Texture.LoadFromBytes($"{Name}_texture", fontBitmapBytes, size));
             }
-        }
-
-        protected override void OnLoad(Element element, Vector2i windowSize)
-        {
-            fontBitmapBytes = FontManager.GetBitmapBytes("droidsans", size, text, fontSize, textColor);
-            texture = Texture.LoadFromBytes($"{Name}_texture", fontBitmapBytes, size);
-            modelMatrix = Matrix4.CreateTranslation(new Vector3(10, windowSize.Y - size.Y - 10, 0));
         }
 
         protected override void OnContextResize(Element element, ResizeEventArgs args)
         {
-            modelMatrix = Matrix4.CreateTranslation(new Vector3(10, args.Height - size.Y - 10, 0));
-        }
-
-        protected override void OnRenderFrame(Element element, FrameEventArgs args)
-        {
-            texture?.Use();
+            modelMatrix = Matrix4.CreateTranslation(new Vector3(10, args.Height - size.Y - 100, 0));
         }
     }
 }

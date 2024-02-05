@@ -19,7 +19,8 @@ namespace lindengine.core.window
             Title = "Lindengine",
             ClientSize = new Vector2i(800, 600),
             WindowBorder = WindowBorder.Fixed,
-            Vsync = VSyncMode.On
+            Vsync = VSyncMode.On,
+            StartVisible = false
         };
 
         public MainWindow() : base(_gameWindowSettings, _nativeWindowSettings)
@@ -54,6 +55,8 @@ namespace lindengine.core.window
             StatesManager.Resize(e);
         }
 
+        double seconds = 0;
+        bool isMain = true;
         protected override void OnUpdateFrame(FrameEventArgs args)
         {
             if (IsKeyPressed(OpenTK.Windowing.GraphicsLibraryFramework.Keys.Escape))
@@ -78,6 +81,21 @@ namespace lindengine.core.window
             else if (IsKeyPressed(OpenTK.Windowing.GraphicsLibraryFramework.Keys.D2))
             {
                 StatesManager.Load("test", ClientSize);
+            }
+
+            seconds += args.Time;
+            if (seconds >= 5)
+            {
+                isMain = !isMain;
+                if (isMain)
+                {
+                    StatesManager.Load("main", ClientSize);
+                }
+                else
+                {
+                    StatesManager.Load("test", ClientSize);
+                }
+                seconds = 0;
             }
 
             CameraManager.Update(args);

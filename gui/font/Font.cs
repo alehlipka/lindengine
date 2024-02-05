@@ -20,8 +20,6 @@ internal class Font(string name, byte[] bytes)
         _fontinfo = new();
         fixed (byte* ptr = FileBytes) stbtt_InitFont(_fontinfo, ptr, 0);
         _fontSize = fontSize;
-        _bitmapSize = bitmapSize;
-        _bitmapBytes = new byte[_bitmapSize.X * _bitmapSize.Y];
         _scale = stbtt_ScaleForPixelHeight(_fontinfo, _fontSize);
         _bitmapCursor = 0;
         int asc, desc, gap;
@@ -30,6 +28,9 @@ internal class Font(string name, byte[] bytes)
         _descent = (int)(desc * _scale);
         _lineGap = gap;
         _lineShift = 0;
+
+        _bitmapSize = CalculateBitmapSize(bitmapSize, text);
+        _bitmapBytes = new byte[_bitmapSize.X * _bitmapSize.Y];
 
         ProcessText(text);
 
@@ -59,6 +60,40 @@ internal class Font(string name, byte[] bytes)
         }
 
         return rgbaData;
+    }
+
+    private Vector2i CalculateBitmapSize(Vector2i bitmapSize, string text)
+    {
+        if (bitmapSize.X == 0)
+        {
+            return CalculateBitmapInfinityWidth(bitmapSize, text);
+        }
+        else if (bitmapSize.Y == 0)
+        {
+            return CalculateBitmapInfinityHeight(bitmapSize, text);
+        }
+
+        return bitmapSize;
+    }
+
+    private Vector2i CalculateBitmapInfinityWidth(Vector2i bitmapSize, string text)
+    {
+        int maxWidth = 0;
+        foreach (string line in text.Split('\n'))
+        {
+            int lineWidth = GetTextWidth(line);
+            if (lineWidth > maxWidth)
+            {
+                maxWidth = lineWidth + 10;
+            }
+        }
+
+        return new Vector2i(maxWidth, bitmapSize.Y);
+    }
+
+    private Vector2i CalculateBitmapInfinityHeight(Vector2i bitmapSize, string text)
+    {
+        return bitmapSize;
     }
 
     unsafe private int GetTextWidth(string text)
