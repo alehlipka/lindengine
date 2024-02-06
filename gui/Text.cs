@@ -5,13 +5,6 @@ using OpenTK.Windowing.Common;
 
 namespace lindengine.gui
 {
-    public enum FontIncrease
-    {
-        Horizontal,
-        Vertical,
-        Both
-    }
-
     public class Text(string name, string text, int fontSize, FontIncrease increase, Color4 textColor) : Element(name)
     {
         protected string text = text;
