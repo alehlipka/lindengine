@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using lindengine.common.cameras;
+﻿using lindengine.common.cameras;
 using lindengine.common.shaders;
 using lindengine.core.helpers;
 using lindengine.gui.font;
@@ -43,7 +42,7 @@ namespace lindengine.core.window
 
             GL.CullFace(CullFaceMode.Back);
             GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
-            GL.ClearColor(Color4.Black);
+            GL.ClearColor(Color4.Green);
 
             CameraManager.Load();
             StatesManager.Load("main", ClientSize);
@@ -57,7 +56,6 @@ namespace lindengine.core.window
             StatesManager.Resize(e);
         }
 
-        float last;
         protected override void OnUpdateFrame(FrameEventArgs args)
         {
             if (IsKeyPressed(OpenTK.Windowing.GraphicsLibraryFramework.Keys.Escape))
@@ -94,13 +92,6 @@ namespace lindengine.core.window
 
             CameraManager.Update(args);
             StatesManager.Update(args);
-
-            float memoryUsed = Process.GetCurrentProcess().PrivateMemorySize64 / 1024f / 1024f;
-            if (memoryUsed != last)
-            {
-                last = memoryUsed;
-                Title = "Used memory: " + memoryUsed.ToString("0.000") + "MB";
-            }
         }
 
         protected override void OnRenderFrame(FrameEventArgs args)

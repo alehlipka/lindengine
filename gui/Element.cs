@@ -91,7 +91,7 @@ namespace lindengine.gui
             GL.BindVertexArray(vertexArrayName);
 
             GL.BindBuffer(BufferTarget.ArrayBuffer, vertexBufferName);
-            GL.BufferData(BufferTarget.ArrayBuffer, vertices.Length * sizeof(float), vertices, BufferUsageHint.StaticDraw);
+            GL.BufferData(BufferTarget.ArrayBuffer, vertices.Length * sizeof(float), vertices, BufferUsageHint.StreamDraw);
 
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, indexBufferName);
             GL.BufferData(BufferTarget.ElementArrayBuffer, indices.Length * sizeof(float), indices, BufferUsageHint.StaticDraw);

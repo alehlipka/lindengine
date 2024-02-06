@@ -8,27 +8,27 @@ namespace lindengine.core.window.states
     {
         private readonly Background? background = new($"{name}_background", Path.Combine("assets", "backgrounds", "forest.png"));
 
-        protected override void OnLoad(State state)
+        protected override void OnLoad()
         {
             background?.Load(WindowSize);
         }
 
-        protected override void OnContextResize(State state, ResizeEventArgs args)
+        protected override void OnContextResize(ResizeEventArgs args)
         {
             background?.Resize(args);
         }
 
-        protected override void OnUpdateFrame(State state, FrameEventArgs args)
+        protected override void OnUpdateFrame(FrameEventArgs args)
         {
             background?.Update(args);
         }
 
-        protected override void OnRenderFrame(State state, FrameEventArgs args)
+        protected override void OnRenderFrame(FrameEventArgs args)
         {
             background?.Render(args);
         }
 
-        protected override void OnUnload(State state)
+        protected override void OnUnload()
         {
             background?.Unload();
         }

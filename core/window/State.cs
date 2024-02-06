@@ -9,9 +9,9 @@ namespace lindengine.core.window
         public bool IsLoaded { get; protected set; } = false;
         public Vector2i WindowSize { get; protected set; } = windowSize;
 
-        private delegate void StateDelegate(State sender);
-        private delegate void StateContextResizeDelegate(State state, ResizeEventArgs args);
-        private delegate void StateFrameDelegate(State state, FrameEventArgs args);
+        private delegate void StateDelegate();
+        private delegate void StateContextResizeDelegate(ResizeEventArgs args);
+        private delegate void StateFrameDelegate(FrameEventArgs args);
         private event StateDelegate? LoadEvent;
         private event StateDelegate? UnloadEvent;
         private event StateContextResizeDelegate? ContextResizeEvent;
@@ -29,7 +29,7 @@ namespace lindengine.core.window
                 UnloadEvent += OnUnload;
 
                 WindowSize = windowSize;
-                LoadEvent?.Invoke(this);
+                LoadEvent?.Invoke();
                 IsLoaded = true;
             }
         }
@@ -39,7 +39,7 @@ namespace lindengine.core.window
             if (IsLoaded)
             {
                 WindowSize = new Vector2i(e.Width, e.Height);
-                ContextResizeEvent?.Invoke(this, e);
+                ContextResizeEvent?.Invoke(e);
             }
         }
 
@@ -47,7 +47,7 @@ namespace lindengine.core.window
         {
             if (IsLoaded)
             {
-                UpdateEvent?.Invoke(this, args);
+                UpdateEvent?.Invoke(args);
             }
         }
 
@@ -55,7 +55,7 @@ namespace lindengine.core.window
         {
             if (IsLoaded)
             {
-                RendereEvent?.Invoke(this, args);
+                RendereEvent?.Invoke(args);
             }
         }
 
@@ -63,7 +63,7 @@ namespace lindengine.core.window
         {
             if (IsLoaded)
             {
-                UnloadEvent?.Invoke(this);
+                UnloadEvent?.Invoke();
 
                 LoadEvent -= OnLoad;
                 ContextResizeEvent -= OnContextResize;
@@ -75,10 +75,10 @@ namespace lindengine.core.window
             }
         }
 
-        protected virtual void OnLoad(State state) { }
-        protected virtual void OnContextResize(State state, ResizeEventArgs args) { }
-        protected virtual void OnUpdateFrame(State state, FrameEventArgs args) { }
-        protected virtual void OnRenderFrame(State state, FrameEventArgs args) { }
-        protected virtual void OnUnload(State state) { }
+        protected virtual void OnLoad() { }
+        protected virtual void OnContextResize(ResizeEventArgs args) { }
+        protected virtual void OnUpdateFrame(FrameEventArgs args) { }
+        protected virtual void OnRenderFrame(FrameEventArgs args) { }
+        protected virtual void OnUnload() { }
     }
 }
