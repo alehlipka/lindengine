@@ -1,4 +1,5 @@
-﻿using lindengine.common.cameras;
+﻿using System.Diagnostics;
+using lindengine.common.cameras;
 using lindengine.common.shaders;
 using lindengine.core.helpers;
 using lindengine.gui.font;
@@ -19,8 +20,7 @@ namespace lindengine.core.window
             Title = "Lindengine",
             ClientSize = new Vector2i(800, 600),
             WindowBorder = WindowBorder.Fixed,
-            Vsync = VSyncMode.On,
-            StartVisible = false
+            Vsync = VSyncMode.On
         };
 
         public MainWindow() : base(_gameWindowSettings, _nativeWindowSettings)
@@ -40,6 +40,8 @@ namespace lindengine.core.window
             GL.Enable(EnableCap.CullFace);
             GL.Enable(EnableCap.Multisample);
             GL.Enable(EnableCap.Blend);
+
+            GL.CullFace(CullFaceMode.Back);
             GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
             GL.ClearColor(Color4.Black);
 
@@ -55,8 +57,7 @@ namespace lindengine.core.window
             StatesManager.Resize(e);
         }
 
-        double seconds = 0;
-        bool isMain = true;
+        float last;
         protected override void OnUpdateFrame(FrameEventArgs args)
         {
             if (IsKeyPressed(OpenTK.Windowing.GraphicsLibraryFramework.Keys.Escape))
@@ -82,24 +83,24 @@ namespace lindengine.core.window
             {
                 StatesManager.Load("test", ClientSize);
             }
-
-            seconds += args.Time;
-            if (seconds >= 5)
+            else if (IsKeyPressed(OpenTK.Windowing.GraphicsLibraryFramework.Keys.Q))
             {
-                isMain = !isMain;
-                if (isMain)
-                {
-                    StatesManager.Load("main", ClientSize);
-                }
-                else
-                {
-                    StatesManager.Load("test", ClientSize);
-                }
-                seconds = 0;
+                GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
+            }
+            else if (IsKeyPressed(OpenTK.Windowing.GraphicsLibraryFramework.Keys.E))
+            {
+                GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Line);
             }
 
             CameraManager.Update(args);
             StatesManager.Update(args);
+
+            float memoryUsed = Process.GetCurrentProcess().PrivateMemorySize64 / 1024f / 1024f;
+            if (memoryUsed != last)
+            {
+                last = memoryUsed;
+                Title = "Used memory: " + memoryUsed.ToString("0.000") + "MB";
+            }
         }
 
         protected override void OnRenderFrame(FrameEventArgs args)

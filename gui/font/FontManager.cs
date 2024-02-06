@@ -13,14 +13,12 @@ namespace lindengine.gui.font
             CreateFonts();
         }
 
-        public static byte[] GetFileBytes(string fontName)
-        {
-            return _fonts.First(font => font.Name.Equals(fontName.ToLower()))?.FileBytes ?? [];
-        }
-
         public static byte[] GetBitmapBytes(string fontName, Vector2i bitmapSize, string text, int fontSize, Color4 color)
         {
-            return _fonts.First(font => font.Name.Equals(fontName.ToLower()))?.GetBitmapBytes(bitmapSize, text, fontSize, color) ?? [];
+            Font? font = _fonts.Find(font => font.Name.Equals(fontName.ToLower()));
+            byte[]? bytes = font?.GetBitmapBytes(bitmapSize, text, fontSize, color);
+
+            return bytes ?? [];
         }
 
         private static void CreateFonts()

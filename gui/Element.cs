@@ -7,9 +7,10 @@ using OpenTK.Windowing.Common;
 
 namespace lindengine.gui
 {
-    public class Element(string name, Vector2i size)
+    public class Element
     {
-        public readonly string Name = name.ToLower();
+        public readonly string Name;
+        public Vector2i Size { get; protected set; }
 
         protected int vertexBuffer;
         protected int indexBuffer;
@@ -17,7 +18,6 @@ namespace lindengine.gui
         protected uint[] indices = [];
         protected float[] vertices = [];
         protected List<Element> children = [];
-        protected Vector2i size = size;
         protected Matrix4 modelMatrix = Matrix4.Identity;
         protected List<Texture> textures = [];
 
@@ -33,6 +33,26 @@ namespace lindengine.gui
         private event ElementFrameDelegate? RendereFrameEvent;
 
         private bool _isLoaded;
+
+        public Element(string name)
+        {
+            Name = name;
+
+            GL.CreateBuffers(1, out vertexBuffer);
+            GL.CreateBuffers(1, out indexBuffer);
+            GL.CreateVertexArrays(1, out vertexArray);
+
+            ShaderManager.Select("gui");
+            int positionAttribute = ShaderManager.GetAttribLocation("aPosition");
+            int textureAttribute = ShaderManager.GetAttribLocation("aTexture");
+
+            GL.EnableVertexArrayAttrib(vertexArray, positionAttribute);
+            GL.EnableVertexArrayAttrib(vertexArray, textureAttribute);
+            GL.VertexArrayAttribFormat(vertexArray, positionAttribute, 3, VertexAttribType.Float, false, 0);
+            GL.VertexArrayAttribFormat(vertexArray, textureAttribute, 2, VertexAttribType.Float, false, 12);
+            GL.VertexArrayAttribBinding(vertexArray, positionAttribute, 0);
+            GL.VertexArrayAttribBinding(vertexArray, textureAttribute, 0);
+        }
 
         public void Load(Vector2i windowSize)
         {
@@ -51,8 +71,6 @@ namespace lindengine.gui
                 InitializeBuffers();
 
                 _isLoaded = true;
-
-                Console.WriteLine($"{Name} loaded");
             }
         }
 
@@ -73,9 +91,9 @@ namespace lindengine.gui
         {
             vertices = [
                 0.0f,   0.0f,   0.0f, 0.0f, 0.0f,  // bottom left
-                0.0f,   size.Y, 0.0f, 0.0f, 1.0f,  // top left
-                size.X, size.Y, 0.0f, 1.0f, 1.0f,  // top right
-                size.X, 0.0f,   0.0f, 1.0f, 0.0f,  // bottom right
+                0.0f,   Size.Y, 0.0f, 0.0f, 1.0f,  // top left
+                Size.X, Size.Y, 0.0f, 1.0f, 1.0f,  // top right
+                Size.X, 0.0f,   0.0f, 1.0f, 0.0f,  // bottom right
             ];
         }
 
@@ -86,36 +104,15 @@ namespace lindengine.gui
 
         protected virtual void InitializeBuffers()
         {
-            ShaderManager.Select("gui");
-            int position_attribute = ShaderManager.GetAttribLocation("aPosition");
-            int texture_attribute = ShaderManager.GetAttribLocation("aTexture");
-            vertexBuffer = GL.GenBuffer();
-            BindVertexBuffer();
-            indexBuffer = GL.GenBuffer();
-            GL.BindBuffer(BufferTarget.ElementArrayBuffer, indexBuffer);
-            GL.BufferData(BufferTarget.ElementArrayBuffer, sizeof(uint) * indices.Length, indices, BufferUsageHint.StaticDraw);
-            // Generate a name for the array and create it.
-            // Note that glGenVertexArrays() won't work here.
-            GL.CreateVertexArrays(1, out vertexArray);
-            // Instead of binding it, we pass it to the functions below.
-            // Enable my attributes
-            GL.EnableVertexArrayAttrib(vertexArray, position_attribute);
-            GL.EnableVertexArrayAttrib(vertexArray, texture_attribute);
-            // Set up the formats for my attributes
-            GL.VertexArrayAttribFormat(vertexArray, position_attribute, 3, VertexAttribType.Float, false, 0);
-            GL.VertexArrayAttribFormat(vertexArray, texture_attribute, 2, VertexAttribType.Float, false, 12);
-            // Make my attributes all use binding 0
-            GL.VertexArrayAttribBinding(vertexArray, position_attribute, 0);
-            GL.VertexArrayAttribBinding(vertexArray, texture_attribute, 0);
-            // Quickly bind all attributes to use "buffer"
+            GL.NamedBufferData(vertexBuffer, vertices.Length * sizeof(float), vertices, BufferUsageHint.StaticDraw);
+            GL.NamedBufferData(indexBuffer, indices.Length * sizeof(uint), indices, BufferUsageHint.StaticDraw);
             GL.VertexArrayVertexBuffer(vertexArray, 0, vertexBuffer, 0, 20);
             GL.VertexArrayElementBuffer(vertexArray, indexBuffer);
         }
 
-        protected virtual void BindVertexBuffer()
+        protected void ResetVertexBuffer()
         {
-            GL.BindBuffer(BufferTarget.ArrayBuffer, vertexBuffer);
-            GL.BufferData(BufferTarget.ArrayBuffer, vertices.Length * sizeof(float), vertices, BufferUsageHint.StaticDraw);
+            GL.NamedBufferSubData(vertexBuffer, 0, vertices.Length * sizeof(float), vertices);
         }
 
         public void Resize(ResizeEventArgs e)
@@ -160,21 +157,6 @@ namespace lindengine.gui
             {
                 UnloadEvent?.Invoke(this);
 
-                GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
-                GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
-                GL.BindVertexArray(0);
-
-                // Make my attributes all use binding 0
-                GL.DisableVertexArrayAttrib(vertexArray, 0);
-                GL.DisableVertexArrayAttrib(vertexArray, 1);
-                // Quickly bind all attributes to use "buffer"
-                GL.VertexArrayVertexBuffer(0, 0, 0, 0, 0);
-                GL.VertexArrayElementBuffer(0, 0);
-
-                GL.DeleteBuffer(indexBuffer);
-                GL.DeleteBuffer(vertexBuffer);
-                GL.DeleteVertexArray(vertexArray);
-
                 LoadEvent -= OnLoad;
                 ContextResizeEvent -= OnContextResize;
                 UpdateFrameEvent -= OnUpdateFrame;
@@ -182,8 +164,6 @@ namespace lindengine.gui
                 UnloadEvent -= OnUnload;
 
                 _isLoaded = false;
-
-                Console.WriteLine($"{Name} unloaded");
             }
         }
 

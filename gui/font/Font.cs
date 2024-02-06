@@ -1,7 +1,7 @@
 ﻿using OpenTK.Mathematics;
 using static StbTrueTypeSharp.StbTrueType;
 
-namespace lindengine.gui;
+namespace lindengine.gui.font;
 
 internal class Font(string name, byte[] bytes)
 {

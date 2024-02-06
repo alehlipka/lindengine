@@ -5,19 +5,27 @@ using OpenTK.Windowing.Common;
 
 namespace lindengine.gui
 {
-    public class Text(string name, Vector2i size, string text, int fontSize, Color4 textColor) : Element(name, size)
+    public enum FontIncrease
+    {
+        Horizontal,
+        Vertical,
+        Both
+    }
+
+    public class Text(string name, string text, int fontSize, FontIncrease increase, Color4 textColor) : Element(name)
     {
         protected string text = text;
         protected int fontSize = fontSize;
+        protected FontIncrease increase = increase;
         protected Color4 textColor = textColor;
         protected byte[] fontBitmapBytes = [];
 
         protected override void OnLoad(Element element, Vector2i windowSize)
         {
-            fontBitmapBytes = FontManager.GetBitmapBytes("droidsans", size, text, fontSize, textColor);
-            LoadTexture(Texture.LoadFromBytes($"{Name}_texture", fontBitmapBytes, size));
+            // fontBitmapBytes = FontManager.GetBitmapBytes("droidsans", size, text, fontSize, textColor);
+            // LoadTexture(Texture.LoadFromBytes($"{Name}_texture", fontBitmapBytes, size));
 
-            modelMatrix = Matrix4.CreateTranslation(new Vector3(10, windowSize.Y - size.Y - 100, 0));
+            modelMatrix = Matrix4.CreateTranslation(new Vector3(10, windowSize.Y - Size.Y - 100, 0));
         }
 
         public void SetText(string newText)
@@ -25,14 +33,14 @@ namespace lindengine.gui
             if (!text.Equals(newText))
             {
                 text = newText;
-                fontBitmapBytes = FontManager.GetBitmapBytes("droidsans", size, text, fontSize, textColor);
-                LoadTexture(Texture.LoadFromBytes($"{Name}_texture", fontBitmapBytes, size));
+                // fontBitmapBytes = FontManager.GetBitmapBytes("droidsans", size, text, fontSize, textColor);
+                // LoadTexture(Texture.LoadFromBytes($"{Name}_texture", fontBitmapBytes, size));
             }
         }
 
         protected override void OnContextResize(Element element, ResizeEventArgs args)
         {
-            modelMatrix = Matrix4.CreateTranslation(new Vector3(10, args.Height - size.Y - 100, 0));
+            modelMatrix = Matrix4.CreateTranslation(new Vector3(10, args.Height - Size.Y - 100, 0));
         }
     }
 }
