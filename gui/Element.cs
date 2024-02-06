@@ -7,14 +7,14 @@ using OpenTK.Windowing.Common;
 
 namespace lindengine.gui
 {
-    public class Element
+    public class Element(string name)
     {
-        public readonly string Name;
+        public readonly string Name = name;
         public Vector2i Size { get; protected set; }
 
-        protected int vertexBuffer;
-        protected int indexBuffer;
-        protected int vertexArray;
+        protected int vertexBufferName;
+        protected int indexBufferName;
+        protected int vertexArrayName;
         protected uint[] indices = [];
         protected float[] vertices = [];
         protected List<Element> children = [];
@@ -33,26 +33,6 @@ namespace lindengine.gui
         private event ElementFrameDelegate? RendereFrameEvent;
 
         private bool _isLoaded;
-
-        public Element(string name)
-        {
-            Name = name;
-
-            GL.CreateBuffers(1, out vertexBuffer);
-            GL.CreateBuffers(1, out indexBuffer);
-            GL.CreateVertexArrays(1, out vertexArray);
-
-            ShaderManager.Select("gui");
-            int positionAttribute = ShaderManager.GetAttribLocation("aPosition");
-            int textureAttribute = ShaderManager.GetAttribLocation("aTexture");
-
-            GL.EnableVertexArrayAttrib(vertexArray, positionAttribute);
-            GL.EnableVertexArrayAttrib(vertexArray, textureAttribute);
-            GL.VertexArrayAttribFormat(vertexArray, positionAttribute, 3, VertexAttribType.Float, false, 0);
-            GL.VertexArrayAttribFormat(vertexArray, textureAttribute, 2, VertexAttribType.Float, false, 12);
-            GL.VertexArrayAttribBinding(vertexArray, positionAttribute, 0);
-            GL.VertexArrayAttribBinding(vertexArray, textureAttribute, 0);
-        }
 
         public void Load(Vector2i windowSize)
         {
@@ -104,15 +84,39 @@ namespace lindengine.gui
 
         protected virtual void InitializeBuffers()
         {
-            GL.NamedBufferData(vertexBuffer, vertices.Length * sizeof(float), vertices, BufferUsageHint.StaticDraw);
-            GL.NamedBufferData(indexBuffer, indices.Length * sizeof(uint), indices, BufferUsageHint.StaticDraw);
-            GL.VertexArrayVertexBuffer(vertexArray, 0, vertexBuffer, 0, 20);
-            GL.VertexArrayElementBuffer(vertexArray, indexBuffer);
+            indexBufferName = GL.GenBuffer();
+            vertexBufferName = GL.GenBuffer();
+            vertexArrayName = GL.GenVertexArray();
+
+            GL.BindVertexArray(vertexArrayName);
+
+            GL.BindBuffer(BufferTarget.ArrayBuffer, vertexBufferName);
+            GL.BufferData(BufferTarget.ArrayBuffer, vertices.Length * sizeof(float), vertices, BufferUsageHint.StaticDraw);
+
+            GL.BindBuffer(BufferTarget.ElementArrayBuffer, indexBufferName);
+            GL.BufferData(BufferTarget.ElementArrayBuffer, indices.Length * sizeof(float), indices, BufferUsageHint.StaticDraw);
+
+            ShaderManager.Select("gui");
+            int positionAttribute = ShaderManager.GetAttribLocation("aPosition");
+            int textureAttribute = ShaderManager.GetAttribLocation("aTexture");
+
+            GL.EnableVertexAttribArray(positionAttribute);
+            GL.VertexAttribPointer(positionAttribute, 3, VertexAttribPointerType.Float, false, 5 * sizeof(float), 0);
+
+            GL.EnableVertexAttribArray(textureAttribute);
+            GL.VertexAttribPointer(textureAttribute, 2, VertexAttribPointerType.Float, false, 5 * sizeof(float), 3 * sizeof(float));
+
+            GL.BindVertexArray(0);
+            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+            GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
+
         }
 
         protected void ResetVertexBuffer()
         {
-            GL.NamedBufferSubData(vertexBuffer, 0, vertices.Length * sizeof(float), vertices);
+            GL.BindBuffer(BufferTarget.ArrayBuffer, vertexBufferName);
+            GL.BufferSubData(BufferTarget.ArrayBuffer, 0, vertices.Length * sizeof(float), vertices);
+            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
         }
 
         public void Resize(ResizeEventArgs e)
@@ -142,12 +146,13 @@ namespace lindengine.gui
                 ShaderManager.Select("gui");
                 CameraManager.Select(CameraType.Orthographic);
 
-                GL.BindVertexArray(vertexArray);
                 ShaderManager.SetUniformData("viewMatrix", CameraManager.GetViewMatrix());
                 ShaderManager.SetUniformData("projectionMatrix", CameraManager.GetProjectionMatrix());
                 ShaderManager.SetUniformData("modelMatrix", modelMatrix);
 
+                GL.BindVertexArray(vertexArrayName);
                 GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0);
+                GL.BindVertexArray(0);
             }
         }
 
@@ -156,6 +161,14 @@ namespace lindengine.gui
             if (_isLoaded)
             {
                 UnloadEvent?.Invoke(this);
+
+                GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+                GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
+                GL.BindVertexArray(0);
+
+                GL.DeleteBuffer(vertexBufferName);
+                GL.DeleteBuffer(indexBufferName);
+                GL.DeleteVertexArray(vertexArrayName);
 
                 LoadEvent -= OnLoad;
                 ContextResizeEvent -= OnContextResize;
