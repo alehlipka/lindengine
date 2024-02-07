@@ -53,28 +53,19 @@ namespace lindengine.gui
             }
         }
 
-        protected virtual void LoadBytesTexture(string name, byte[] bytes, Vector2i size, bool mipmap = false, TextureUnit unit = TextureUnit.Texture0)
+        protected virtual void LoadTexture(string name, TextureData textureData, bool mipmap = false, TextureUnit unit = TextureUnit.Texture0)
         {
             Texture? searchableTexture = textures.Find(t => t.Name == name);
             if (searchableTexture == null)
             {
-                textures.Add(Texture.LoadFromBytes(name, bytes, size, mipmap, unit));
+                textures.Add(Texture.LoadFromBytes(name, textureData, mipmap, unit));
             }
         }
 
-        protected virtual void LoadFileTexture(string name,string path, bool mipmap = false, TextureUnit unit = TextureUnit.Texture0)
+        protected virtual void ChangeTexture(string name, TextureData textureData)
         {
             Texture? searchableTexture = textures.Find(t => t.Name == name);
-            if (searchableTexture == null)
-            {
-                textures.Add(Texture.LoadFromFile(name, path, mipmap, unit));
-            }
-        }
-
-        protected virtual void ChangeTexture(string name, byte[] bytes, Vector2i size)
-        {
-            Texture? searchableTexture = textures.Find(t => t.Name == name);
-            searchableTexture?.Change(bytes, size);
+            searchableTexture?.Change(textureData);
         }
 
         protected virtual void InitializeVertices()

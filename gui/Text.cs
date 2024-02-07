@@ -1,4 +1,5 @@
-﻿using lindengine.gui.font;
+﻿using lindengine.common.textures;
+using lindengine.gui.font;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 
@@ -9,13 +10,11 @@ namespace lindengine.gui
         protected string text = text;
         protected int fontSize = fontSize;
         protected Color4 textColor = textColor;
-        protected byte[] fontBitmapBytes = [];
 
         protected override void OnLoad(Element element, Vector2i windowSize)
         {
             Size = new Vector2i(800, fontSize * 7);
-            fontBitmapBytes = FontManager.GetBitmapBytes("opensansbold", Size, text, fontSize, textColor);
-            LoadBytesTexture($"{Name}_texture", fontBitmapBytes, Size);
+            LoadTexture($"{Name}_texture", new TextureData(FontManager.GetBitmapBytes("opensansbold", Size, text, fontSize, textColor), Size));
 
             modelMatrix = Matrix4.CreateTranslation(new Vector3(10, windowSize.Y - Size.Y - 10, 0));
         }
@@ -27,8 +26,7 @@ namespace lindengine.gui
             if (!text.Equals(newText))
             {
                 text = newText;
-                fontBitmapBytes = FontManager.GetBitmapBytes("opensansbold", Size, text, fontSize, textColor);
-                ChangeTexture($"{Name}_texture", fontBitmapBytes, Size);
+                ChangeTexture($"{Name}_texture", new TextureData(FontManager.GetBitmapBytes("opensansbold", Size, text, fontSize, textColor), Size));
             }
         }
 

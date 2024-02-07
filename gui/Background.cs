@@ -1,4 +1,5 @@
-﻿using OpenTK.Mathematics;
+﻿using lindengine.common.textures;
+using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 
 namespace lindengine.gui;
@@ -10,7 +11,7 @@ public class Background(string name, string path) : Element(name)
     protected override void OnLoad(Element element, Vector2i windowSize)
     {
         Size = windowSize;
-        LoadFileTexture($"{Name}_texture", texturePath);
+        LoadTexture($"{Name}_texture", TextureData.FromFile(texturePath));
     }
 
     protected override void OnContextResize(Element element, ResizeEventArgs args)
