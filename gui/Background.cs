@@ -11,7 +11,7 @@ public class Background(string name, string path) : Element(name)
     protected override void OnLoad(Element element, Vector2i windowSize)
     {
         Size = windowSize;
-        LoadTexture(Texture.LoadFromFile($"{Name}_texture", texturePath));
+        LoadFileTexture($"{Name}_texture", texturePath);
     }
 
     protected override void OnContextResize(Element element, ResizeEventArgs args)

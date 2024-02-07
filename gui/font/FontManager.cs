@@ -9,9 +9,6 @@ namespace lindengine.gui.font
 
         public static void Create(string fontsPath)
         {
-            FontPipeline fontPipeline = new();
-            Console.WriteLine(fontPipeline.Process("hello\nworld"));
-
             _fontsPath = fontsPath;
             CreateFonts();
         }

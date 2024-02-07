@@ -11,6 +11,7 @@ namespace lindengine.gui
     {
         public readonly string Name = name;
         public Vector2i Size { get; protected set; }
+        public bool IsLoaded { get; protected set; }
 
         protected int vertexBufferName;
         protected int indexBufferName;
@@ -32,11 +33,9 @@ namespace lindengine.gui
         private event ElementFrameDelegate? UpdateFrameEvent;
         private event ElementFrameDelegate? RendereFrameEvent;
 
-        private bool _isLoaded;
-
         public void Load(Vector2i windowSize)
         {
-            if (!_isLoaded)
+            if (!IsLoaded)
             {
                 LoadEvent += OnLoad;
                 ContextResizeEvent += OnContextResize;
@@ -50,21 +49,32 @@ namespace lindengine.gui
                 InitializeIndices();
                 InitializeBuffers();
 
-                _isLoaded = true;
+                IsLoaded = true;
             }
         }
 
-        protected virtual void LoadTexture(Texture texture)
+        protected virtual void LoadBytesTexture(string name, byte[] bytes, Vector2i size, bool mipmap = false, TextureUnit unit = TextureUnit.Texture0)
         {
-            Texture? searchableTexture = textures.Find(t => t.Name == texture.Name);
-            if (searchableTexture != null)
+            Texture? searchableTexture = textures.Find(t => t.Name == name);
+            if (searchableTexture == null)
             {
-                searchableTexture = texture;
+                textures.Add(Texture.LoadFromBytes(name, bytes, size, mipmap, unit));
             }
-            else
+        }
+
+        protected virtual void LoadFileTexture(string name,string path, bool mipmap = false, TextureUnit unit = TextureUnit.Texture0)
+        {
+            Texture? searchableTexture = textures.Find(t => t.Name == name);
+            if (searchableTexture == null)
             {
-                textures.Add(texture);
+                textures.Add(Texture.LoadFromFile(name, path, mipmap, unit));
             }
+        }
+
+        protected virtual void ChangeTexture(string name, byte[] bytes, Vector2i size)
+        {
+            Texture? searchableTexture = textures.Find(t => t.Name == name);
+            searchableTexture?.Change(bytes, size);
         }
 
         protected virtual void InitializeVertices()
@@ -91,7 +101,7 @@ namespace lindengine.gui
             GL.BindVertexArray(vertexArrayName);
 
             GL.BindBuffer(BufferTarget.ArrayBuffer, vertexBufferName);
-            GL.BufferData(BufferTarget.ArrayBuffer, vertices.Length * sizeof(float), vertices, BufferUsageHint.StreamDraw);
+            GL.BufferData(BufferTarget.ArrayBuffer, vertices.Length * sizeof(float), vertices, BufferUsageHint.StaticDraw);
 
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, indexBufferName);
             GL.BufferData(BufferTarget.ElementArrayBuffer, indices.Length * sizeof(float), indices, BufferUsageHint.StaticDraw);
@@ -121,7 +131,7 @@ namespace lindengine.gui
 
         public void Resize(ResizeEventArgs e)
         {
-            if (_isLoaded)
+            if (IsLoaded)
             {
                 ContextResizeEvent?.Invoke(this, e);
             }
@@ -129,7 +139,7 @@ namespace lindengine.gui
 
         public void Update(FrameEventArgs args)
         {
-            if (_isLoaded)
+            if (IsLoaded)
             {
                 UpdateFrameEvent?.Invoke(this, args);
             }
@@ -137,7 +147,7 @@ namespace lindengine.gui
 
         public void Render(FrameEventArgs args)
         {
-            if (_isLoaded)
+            if (IsLoaded)
             {
                 RendereFrameEvent?.Invoke(this, args);
 
@@ -158,7 +168,7 @@ namespace lindengine.gui
 
         public void Unload()
         {
-            if (_isLoaded)
+            if (IsLoaded)
             {
                 UnloadEvent?.Invoke(this);
 
@@ -176,7 +186,7 @@ namespace lindengine.gui
                 RendereFrameEvent -= OnRenderFrame;
                 UnloadEvent -= OnUnload;
 
-                _isLoaded = false;
+                IsLoaded = false;
             }
         }
 

@@ -8,15 +8,15 @@ namespace lindengine.common.textures
     {
         public readonly string Name = name;
         public readonly int Handle = glHandle;
-        public readonly int Width = width;
-        public readonly int Height = height;
+        public int Width = width;
+        public int Height = height;
         public readonly TextureUnit Unit = unit;
 
-        public static Texture LoadFromBytes(string name, byte[] bytes, Vector2i size, TextureUnit unit = TextureUnit.Texture0)
+        public static Texture LoadFromBytes(string name, byte[] bytes, Vector2i size, bool mipmap = false, TextureUnit unit = TextureUnit.Texture0)
         {
             int handle = GL.GenTexture();
 
-            GL.ActiveTexture(TextureUnit.Texture0);
+            GL.ActiveTexture(unit);
             GL.BindTexture(TextureTarget.Texture2D, handle);
 
             bytes = FlipPixelsVertically(bytes, size);
@@ -28,20 +28,35 @@ namespace lindengine.common.textures
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat);
 
-            GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
+            if (mipmap) GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
+
+            GL.BindTexture(TextureTarget.Texture2D, 0);
 
             return new Texture(name, handle, size.X, size.Y, unit);
         }
 
-        public static Texture LoadFromFile(string name, string path, TextureUnit unit = TextureUnit.Texture0)
+        public void Change(byte[] bytes, Vector2i size)
         {
-            ImageResult image;
-            using (Stream stream = File.OpenRead(path))
-            {
-                image = ImageResult.FromStream(stream, ColorComponents.RedGreenBlueAlpha);
-            }
+            bytes = FlipPixelsVertically(bytes, size);
 
-            return LoadFromBytes(name, image.Data, new Vector2i(image.Width, image.Height), unit);
+            Width = size.X;
+            Height = size.Y;
+
+            GL.BindTexture(TextureTarget.Texture2D, Handle);
+            GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, size.X, size.Y, 0, PixelFormat.Rgba, PixelType.UnsignedByte, bytes);
+            GL.BindTexture(TextureTarget.Texture2D, 0);
+        }
+
+        public static Texture LoadFromFile(string name, string path, bool mipmap = false, TextureUnit unit = TextureUnit.Texture0)
+        {
+            byte[] data = File.ReadAllBytes(path);
+            ImageResult image = ImageResult.FromMemory(data, ColorComponents.RedGreenBlueAlpha);
+
+            data = image.Data;
+            Vector2i size = new(image.Width, image.Height);
+            Texture texture = LoadFromBytes(name, data, size, mipmap, unit);
+
+            return texture;
         }
 
         private static byte[] FlipPixelsVertically(byte[] frameData, Vector2i size, int pixelSize = 4)

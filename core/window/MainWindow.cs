@@ -42,7 +42,7 @@ namespace lindengine.core.window
 
             GL.CullFace(CullFaceMode.Back);
             GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
-            GL.ClearColor(Color4.Green);
+            GL.ClearColor(Color4.Black);
 
             CameraManager.Load();
             StatesManager.Load("main", ClientSize);
@@ -73,6 +73,10 @@ namespace lindengine.core.window
                     WindowState = WindowState.Fullscreen;
                 }
             }
+            else if (IsKeyPressed(OpenTK.Windowing.GraphicsLibraryFramework.Keys.D0))
+            {
+                StatesManager.Unload();
+            }
             else if (IsKeyPressed(OpenTK.Windowing.GraphicsLibraryFramework.Keys.D1))
             {
                 StatesManager.Load("main", ClientSize);
@@ -80,6 +84,20 @@ namespace lindengine.core.window
             else if (IsKeyPressed(OpenTK.Windowing.GraphicsLibraryFramework.Keys.D2))
             {
                 StatesManager.Load("test", ClientSize);
+            }
+            else if (IsKeyPressed(OpenTK.Windowing.GraphicsLibraryFramework.Keys.D8))
+            {
+                if (IsFullscreen)
+                {
+                    ClientSize = new Vector2i(800, 600);
+                }
+            }
+            else if (IsKeyPressed(OpenTK.Windowing.GraphicsLibraryFramework.Keys.D9))
+            {
+                if (!IsFullscreen)
+                {
+                    ClientSize = new Vector2i(1920, 1080);
+                }
             }
             else if (IsKeyPressed(OpenTK.Windowing.GraphicsLibraryFramework.Keys.Q))
             {
