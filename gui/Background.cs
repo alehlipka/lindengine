@@ -1,5 +1,4 @@
-﻿using lindengine.common.textures;
-using OpenTK.Mathematics;
+﻿using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 
 namespace lindengine.gui;

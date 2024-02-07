@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics;
 using lindengine.core.helpers;
 using lindengine.gui;
-using lindengine.gui.font;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
@@ -10,7 +9,7 @@ namespace lindengine.core.window.states
 {
     internal class MainState(string name, Vector2i windowSize) : State(name, windowSize)
     {
-        private readonly Text? textElement = new($"{name}_text_element", $"State: {name}", 16, FontIncrease.Horizontal, Color4.Black);
+        private readonly Text? textElement = new($"{name}_text_element", $"State: {name}", 16, Color4.Black);
         private readonly Background? background = new($"{name}_background", Path.Combine("assets", "backgrounds", "mainmenu.png"));
 
         protected override void OnLoad()

@@ -1,15 +1,13 @@
-﻿using lindengine.common.textures;
-using lindengine.gui.font;
+﻿using lindengine.gui.font;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 
 namespace lindengine.gui
 {
-    public class Text(string name, string text, int fontSize, FontIncrease increase, Color4 textColor) : Element(name)
+    public class Text(string name, string text, int fontSize, Color4 textColor) : Element(name)
     {
         protected string text = text;
         protected int fontSize = fontSize;
-        protected FontIncrease increase = increase;
         protected Color4 textColor = textColor;
         protected byte[] fontBitmapBytes = [];
 
