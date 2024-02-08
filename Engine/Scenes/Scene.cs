@@ -1,11 +1,11 @@
 ﻿using OpenTK.Mathematics;
 namespace Lindengine.Scenes;
 
-internal class Scene(string name, Vector2i size)
+public class Scene(string name, Vector2i size)
 {
     public readonly string Name = name;
-    public Vector2i Size = size;
-    public bool IsLoaded = false;
+    public Vector2i Size { get; protected set; } = size;
+    public bool IsLoaded { get; protected set; } = false;
 
     public void Load()
     {
@@ -15,21 +15,21 @@ internal class Scene(string name, Vector2i size)
         }
     }
 
-    public void Resize()
+    public void Resize(Vector2i size)
     {
         if (IsLoaded)
         {
         }
     }
 
-    public void Update()
+    public void Update(double elapsedSeconds)
     {
         if (IsLoaded)
         {
         }
     }
 
-    public void Render()
+    public void Render(double elapsedSeconds)
     {
         if (IsLoaded)
         {
