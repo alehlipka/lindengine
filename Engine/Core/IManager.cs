@@ -13,13 +13,15 @@ public interface IManager<T>
 
     public T? Select(string name);
 
+    public void Load();
     public void Resize(Vector2i size);
     public void Update(double elapsedSeconds);
     public void Render(double elapsedSeconds);
     public void Unload();
 
-    public void ResizeAll(Vector2i size);
-    public void UpdateAll(double elapsedSeconds);
-    public void RenderAll(double elapsedSeconds);
-    public void UnloadAll();
+    public void LoadAll(Predicate<T> match);
+    public void ResizeAll(Predicate<T> match, Vector2i size);
+    public void UpdateAll(Predicate<T> match, double elapsedSeconds);
+    public void RenderAll(Predicate<T> match, double elapsedSeconds);
+    public void UnloadAll(Predicate<T> match);
 }

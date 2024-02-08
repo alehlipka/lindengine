@@ -1,7 +1,7 @@
 ﻿using OpenTK.Mathematics;
 namespace Lindengine.Scenes;
 
-public class Scene(string name, Vector2i size)
+public class Scene(string name, Vector2i size) : IManaged
 {
     public readonly string Name = name;
     public Vector2i Size { get; protected set; } = size;

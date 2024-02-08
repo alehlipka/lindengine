@@ -62,6 +62,11 @@ namespace Lindengine.Scenes
             return _selectedScene;
         }
 
+        public void Load()
+        {
+            _selectedScene?.Load();
+        }
+
         public void Resize(Vector2i size)
         {
             _selectedScene?.Resize(size);
@@ -82,22 +87,27 @@ namespace Lindengine.Scenes
             _selectedScene?.Unload();
         }
 
-        public void ResizeAll(Vector2i size)
+        public void LoadAll(Predicate<Scene> match)
+        {
+            _scenes.FindAll(match).ForEach(s => s.Load());
+        }
+
+        public void ResizeAll(Predicate<Scene> match, Vector2i size)
         {
             _scenes.ForEach(s => s.Resize(size));
         }
 
-        public void UpdateAll(double elapsedSeconds)
+        public void UpdateAll(Predicate<Scene> match, double elapsedSeconds)
         {
             _scenes.ForEach(s => s.Update(elapsedSeconds));
         }
 
-        public void RenderAll(double elapsedSeconds)
+        public void RenderAll(Predicate<Scene> match, double elapsedSeconds)
         {
             _scenes.ForEach(s => s.Render(elapsedSeconds));
         }
 
-        public void UnloadAll()
+        public void UnloadAll(Predicate<Scene> match)
         {
             _scenes.ForEach(s => s.Unload());
         }
