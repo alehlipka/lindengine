@@ -1,4 +1,5 @@
-﻿using OpenTK.Mathematics;
+﻿using Lindengine.Core;
+using OpenTK.Mathematics;
 namespace Lindengine.Scenes;
 
 public class Scene(string name, Vector2i size) : IManaged

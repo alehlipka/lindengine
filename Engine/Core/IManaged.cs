@@ -1,6 +1,6 @@
 ﻿using OpenTK.Mathematics;
 
-namespace Lindengine;
+namespace Lindengine.Core;
 
 public interface IManaged
 {
