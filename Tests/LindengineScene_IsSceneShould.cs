@@ -13,10 +13,16 @@ public class LindengineScene_IsSceneShould
     }
 
     [TestMethod]
-    public void IsNewScene_IsLoaded_ReturnFalse()
+    public void IsScene_IsLoaded_ReturnFalse()
     {
         bool result = _scene.IsLoaded;
 
         Assert.IsFalse(result, "IsLoaded should not be true");
+    }
+
+    [TestMethod]
+    public void IsScene_IsTypeOf_ReturnScene()
+    {
+        Assert.IsInstanceOfType(_scene, typeof(Scene));
     }
 }
