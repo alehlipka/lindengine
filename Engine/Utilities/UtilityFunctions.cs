@@ -1,4 +1,4 @@
-﻿namespace Lindengine.Utils
+﻿namespace Lindengine.Utilities
 {
     internal class UtilityFunctions
     {

@@ -1,8 +1,8 @@
 ﻿using OpenTK.Mathematics;
 
-namespace Lindengine.Core;
+namespace Lindengine.Core.Interfaces;
 
-public interface IManager<T>
+public interface IItemsManager<T>
 {
     public void Add(T item);
     public void AddMany(IEnumerable<T> items);

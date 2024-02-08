@@ -1,9 +1,9 @@
-﻿using Lindengine.Core;
+﻿using Lindengine.Core.Interfaces;
 using OpenTK.Mathematics;
 
 namespace Lindengine.Scenes
 {
-    public class SceneManager() : IManager<Scene>
+    internal class SceneManager : IItemsManager<Scene>
     {
         private readonly List<Scene> _scenes = [];
         private Scene? _selectedScene;
@@ -94,17 +94,17 @@ namespace Lindengine.Scenes
 
         public void ResizeAll(Predicate<Scene> match, Vector2i size)
         {
-            _scenes.ForEach(s => s.Resize(size));
+            _scenes.ForEach(s => s.Resize(size, true));
         }
 
         public void UpdateAll(Predicate<Scene> match, double elapsedSeconds)
         {
-            _scenes.ForEach(s => s.Update(elapsedSeconds));
+            _scenes.ForEach(s => s.Update(elapsedSeconds, true));
         }
 
         public void RenderAll(Predicate<Scene> match, double elapsedSeconds)
         {
-            _scenes.ForEach(s => s.Render(elapsedSeconds));
+            _scenes.ForEach(s => s.Render(elapsedSeconds, true));
         }
 
         public void UnloadAll(Predicate<Scene> match)
