@@ -1,6 +1,7 @@
 ﻿namespace Lindengine.Scenes
 {
-    internal class SceneManager
+    public class SceneManager(string scenesNamespace)
     {
+        private readonly string _scenesNamespace = scenesNamespace;
     }
 }
