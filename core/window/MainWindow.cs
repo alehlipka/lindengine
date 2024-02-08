@@ -94,7 +94,7 @@ namespace lindengine.core.window
             }
             else if (IsKeyPressed(OpenTK.Windowing.GraphicsLibraryFramework.Keys.D9))
             {
-                if (!IsFullscreen)
+                if (IsFullscreen)
                 {
                     ClientSize = new Vector2i(1920, 1080);
                 }

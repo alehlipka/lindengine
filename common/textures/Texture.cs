@@ -38,7 +38,7 @@ namespace lindengine.common.textures
             Height = data.Size.Y;
 
             GL.BindTexture(TextureTarget.Texture2D, Handle);
-            GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, data.Size.X, data.Size.Y, 0, PixelFormat.Rgba, PixelType.UnsignedByte, data.VerticalFlippedBytes);
+            GL.TexSubImage2D(TextureTarget.Texture2D, 0, 0, 0, data.Size.X, data.Size.Y, PixelFormat.Rgba, PixelType.UnsignedByte, data.VerticalFlippedBytes);
             GL.BindTexture(TextureTarget.Texture2D, 0);
         }
 

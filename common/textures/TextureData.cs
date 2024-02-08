@@ -3,30 +3,35 @@ using StbImageSharp;
 
 namespace lindengine.common.textures
 {
-    public class TextureData(byte[] bytes, Vector2i size)
+    public class TextureData
     {
-        public byte[] Bytes = bytes;
-        public Vector2i Size = size;
+        public readonly byte[] Bytes;
+        public readonly byte[] VerticalFlippedBytes;
+        public readonly Vector2i Size;
 
-        public byte[] VerticalFlippedBytes
+        public TextureData(byte[] bytes, Vector2i size)
         {
-            get
+            Bytes = bytes;
+            Size = size;
+            VerticalFlippedBytes = GetVerticalFlippedBytes();
+        }
+
+        private byte[] GetVerticalFlippedBytes()
+        {
+            int pixelSize = 4;
+            byte[] data = new byte[Bytes.Length];
+
+            for (int k = 0; k < Size.Y; k++)
             {
-                int pixelSize = 4;
-                byte[] data = new byte[Bytes.Length];
+                int j = Size.Y - k - 1;
+                int srcOffset = k * Size.X * pixelSize;
+                int dstOffset = j * Size.X * pixelSize;
+                int count = Size.X * pixelSize;
 
-                for (int k = 0; k < Size.Y; k++)
-                {
-                    int j = Size.Y - k - 1;
-                    int srcOffset = k * Size.X * pixelSize;
-                    int dstOffset = j * Size.X * pixelSize;
-                    int count = Size.X * pixelSize;
-
-                    Buffer.BlockCopy(Bytes, srcOffset, data, dstOffset, count);
-                }
-
-                return data;
+                Buffer.BlockCopy(Bytes, srcOffset, data, dstOffset, count);
             }
+
+            return data;
         }
 
         public static TextureData FromFile(string path)
