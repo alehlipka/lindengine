@@ -28,9 +28,7 @@ public abstract class UiElement
     private bool _isModelMatrixDirty;
     private bool _isVertexBufferDirty;
     private float _border;
-    private readonly VertexBuffer _vertexBuffer;
-    private readonly ElementBuffer _elementBuffer;
-    private readonly VertexArray _vertexArray;
+    private readonly BuffersContainer _buffersContainer;
     private UiElement? _parent;
     private readonly List<UiElement> _children = [];
     
@@ -173,9 +171,7 @@ public abstract class UiElement
 
         UtilityFunctions.GetBorderedVertices(_size, _border, out _indices, out _vertices);
 
-        _vertexArray = new VertexArray();
-        _vertexBuffer = new VertexBuffer();
-        _elementBuffer = new ElementBuffer();
+        _buffersContainer = new BuffersContainer();
     }
 
     public void AddElement(UiElement element)
@@ -233,7 +229,7 @@ public abstract class UiElement
 
         if (_isVertexBufferDirty)
         {
-            _vertexBuffer.SetVertices(_vertices);
+            _buffersContainer.SetVertices(_vertices);
             _isVertexBufferDirty = false;
         }
         
@@ -266,9 +262,9 @@ public abstract class UiElement
 
     protected virtual void OnLoad()
     {
-        _vertexBuffer.SetVertices(_vertices);
-        _elementBuffer.SetIndices(_indices);
-        _vertexArray.SetBuffers(_vertexBuffer, _elementBuffer, _shader);
+        _buffersContainer.SetVertices(_vertices);
+        _buffersContainer.SetIndices(_indices);
+        _buffersContainer.LinkShaderAttributes(_shader);
     }
 
     protected virtual void OnWindowResize(Vector2i size)
@@ -286,7 +282,7 @@ public abstract class UiElement
         _shader.SetUniformData("viewMatrix", camera.ViewMatrix);
         _shader.SetUniformData("projectionMatrix", camera.ProjectionMatrix);
         _shader.SetUniformData("modelMatrix", _modelMatrix);
-        _vertexArray.Use();
+        _buffersContainer.Use();
         
         GL.DrawElements(PrimitiveType.Triangles, _indices.Length, DrawElementsType.UnsignedInt, 0);
     }
@@ -294,8 +290,6 @@ public abstract class UiElement
     protected virtual void OnUnload()
     {
         _texture.Unload();
-        _vertexBuffer.Unload();
-        _elementBuffer.Unload();
-        _vertexArray.Unload();
+        _buffersContainer.Unload();
     }
 }

@@ -5,16 +5,16 @@ namespace Lindengine.Utilities.BufferObject;
 internal class ElementBuffer
 {
     internal readonly int Name;
-    private uint[] _indices = [];
+    internal uint[] Indices = [];
     
-    public ElementBuffer()
+    internal ElementBuffer()
     {
         GL.CreateBuffers(1, out Name);
     }
     
-    public void SetIndices(uint[] indices)
+    internal void SetIndices(uint[] indices)
     {
-        if (indices.Length != _indices.Length)
+        if (indices.Length != Indices.Length)
         {
             GL.NamedBufferData(Name, indices.Length * sizeof(float), indices, BufferUsageHint.StaticDraw);
         }
@@ -23,10 +23,10 @@ internal class ElementBuffer
             GL.NamedBufferSubData(Name, 0, indices.Length * sizeof(float), indices);
         }
         
-        _indices = indices;
+        Indices = indices;
     }
 
-    public void Unload()
+    internal void Unload()
     {
         GL.DeleteBuffer(Name);
     }

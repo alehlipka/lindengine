@@ -5,16 +5,16 @@ namespace Lindengine.Utilities.BufferObject;
 internal class VertexBuffer
 {
     internal readonly int Name;
-    private float[] _vertices = [];
+    internal float[] Vertices = [];
 
-    public VertexBuffer()
+    internal VertexBuffer()
     {
         GL.CreateBuffers(1, out Name);
     }
 
-    public void SetVertices(float[] vertices)
+    internal void SetVertices(float[] vertices)
     {
-        if (vertices.Length != _vertices.Length)
+        if (vertices.Length != Vertices.Length)
         {
             GL.NamedBufferData(Name, vertices.Length * sizeof(float), vertices, BufferUsageHint.StaticDraw);
         }
@@ -23,10 +23,10 @@ internal class VertexBuffer
             GL.NamedBufferSubData(Name, 0, vertices.Length * sizeof(float), vertices);
         }
         
-        _vertices = vertices;
+        Vertices = vertices;
     }
 
-    public void Unload()
+    internal void Unload()
     {
         GL.DeleteBuffer(Name);
     }
