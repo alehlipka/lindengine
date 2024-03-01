@@ -27,14 +27,14 @@ public class DemoScene : Scene
         Texture panel3 = Lind.Engine.Resources.Load<Texture>(Path.Combine("Assets", "UI", "Panels", "panel_3.png"));
         Texture panel4 = Lind.Engine.Resources.Load<Texture>(Path.Combine("Assets", "UI", "Panels", "panel_4.png"));
         
-        // Form insideForm1 = new(new Vector2i(350, 275), 32, ElementOrigin.BottomLeft, new Vector2(25, 100), panel1, shader);
-        // Form insideForm2 = new(new Vector2i(350, 60), 12, ElementOrigin.BottomLeft, new Vector2(25, 25), panel2, shader);
-        // Form insideInsideForm = new(new Vector2i(100, 100), 16, ElementOrigin.Center, new Vector2(350, 275)/2, panel3, shader);
-        // insideForm1.AddElement(insideInsideForm);
+        Form insideForm1 = new(new Vector2i(350, 275), 32, ElementOrigin.BottomLeft, new Vector3(25, 100, 0), panel1, shader);
+        Form insideForm2 = new(new Vector2i(350, 60), 12, ElementOrigin.BottomLeft, new Vector3(25, 25, 0), panel2, shader);
+        Form insideInsideForm = new(new Vector2i(100, 100), 16, ElementOrigin.Center, new Vector3(350, 275, 0)/2, panel3, shader);
+        insideForm1.AddElement(insideInsideForm);
         
-        _menuForm = new Form(new Vector2i(400, 200), 16, ElementOrigin.BottomLeft, new Vector3(50, 100, 0), panel4, shader);
-        // _menuForm.AddElement(insideForm1);
-        // _menuForm.AddElement(insideForm2);
+        _menuForm = new Form(new Vector2i(400, 400), 16, ElementOrigin.TopRight, Vector3.Zero, panel4, shader);
+        _menuForm.AddElement(insideForm1);
+        _menuForm.AddElement(insideForm2);
     }
 
     protected override void OnLoad()
@@ -46,6 +46,7 @@ public class DemoScene : Scene
     protected override void OnWindowResize(Vector2i size)
     {
         _orthographicCamera.WindowResize(size);
+        _menuForm.Position = new Vector3(Size.X - 20, Size.Y - 20, 0);
     }
 
     protected override void OnUpdate(double elapsedSeconds)

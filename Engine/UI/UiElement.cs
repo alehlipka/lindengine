@@ -10,26 +10,20 @@ namespace Lindengine.UI;
 
 public abstract class UiElement
 {
-    private Vector2i _size;
     private ElementOrigin _origin;
+    private Vector2i _size;
     private Vector3 _position;
     private Vector3 _angle;
     private Vector3 _scale;
-    private Texture _texture;
-    private readonly ShaderProgram _shader;
     private bool _isLoaded;
-    private Matrix4 _originMatrix;
-    private Matrix4 _translationMatrix;
-    private Matrix4 _rotationMatrix;
-    private Matrix4 _scaleMatrix;
-    private Matrix4 _modelMatrix;
     private uint[] _indices;
     private float[] _vertices;
-    private bool _isModelMatrixDirty;
-    private bool _isVertexBufferDirty;
     private float _border;
-    private readonly BuffersContainer _buffersContainer;
+    private Texture _texture;
     private UiElement? _parent;
+    private readonly ShaderProgram _shader;
+    private readonly ModelMatrix _modelMatrix;
+    private readonly BuffersContainer _buffersContainer;
     private readonly List<UiElement> _children = [];
     
     private event VoidDelegate? LoadEvent;
@@ -44,18 +38,9 @@ public abstract class UiElement
         set
         {
             _size = value;
-            _originMatrix = _origin switch
-            {
-                ElementOrigin.BottomLeft => Matrix4.CreateTranslation(0, 0, 0),
-                ElementOrigin.BottomRight => Matrix4.CreateTranslation(-_size.X, 0, 0),
-                ElementOrigin.TopLeft => Matrix4.CreateTranslation(0, -_size.Y, 0),
-                ElementOrigin.TopRight => Matrix4.CreateTranslation(-_size.X, -_size.Y, 0),
-                ElementOrigin.Center => Matrix4.CreateTranslation(-_size.X / 2.0f, -_size.Y / 2.0f, 0),
-                _ => Matrix4.Identity
-            };
+            _modelMatrix.Origin(_origin, _size);
             UtilityFunctions.GetBorderedVertices(_size, _border, out _indices, out _vertices);
-            _isModelMatrixDirty = true;
-            _isVertexBufferDirty = true;
+            _buffersContainer.SetVertices(_vertices);
         }
     }
 
@@ -65,16 +50,7 @@ public abstract class UiElement
         set
         {
             _origin = value;
-            _originMatrix = _origin switch
-            {
-                ElementOrigin.BottomLeft => Matrix4.CreateTranslation(0, 0, 0),
-                ElementOrigin.BottomRight => Matrix4.CreateTranslation(-_size.X, 0, 0),
-                ElementOrigin.TopLeft => Matrix4.CreateTranslation(0, -_size.Y, 0),
-                ElementOrigin.TopRight => Matrix4.CreateTranslation(-_size.X, -_size.Y, 0),
-                ElementOrigin.Center => Matrix4.CreateTranslation(-_size.X / 2.0f, -_size.Y / 2.0f, 0),
-                _ => Matrix4.Identity
-            };
-            _isModelMatrixDirty = true;
+            _modelMatrix.Origin(_origin, _size);
         }
     }
 
@@ -84,8 +60,7 @@ public abstract class UiElement
         set
         {
             _position = value;
-            _translationMatrix = Matrix4.CreateTranslation(new Vector3(_position));
-            _isModelMatrixDirty = true;
+            _modelMatrix.Translate(_position);
         }
     }
 
@@ -95,8 +70,7 @@ public abstract class UiElement
         set
         {
             _angle = value;
-            _rotationMatrix = Matrix4.CreateFromQuaternion(new Quaternion(_angle));
-            _isModelMatrixDirty = true;
+            _modelMatrix.Rotate(_angle);
         }
     }
 
@@ -106,8 +80,7 @@ public abstract class UiElement
         set
         {
             _scale = value;
-            _scaleMatrix = Matrix4.CreateScale(_scale);
-            _isModelMatrixDirty = true;
+            _modelMatrix.Scale(_scale);
         }
     }
 
@@ -126,7 +99,7 @@ public abstract class UiElement
         {
             _border = value;
             UtilityFunctions.GetBorderedVertices(_size, _border, out _indices, out _vertices);
-            _isVertexBufferDirty = true;
+            _buffersContainer.SetVertices(_vertices);
         }
     }
 
@@ -136,7 +109,15 @@ public abstract class UiElement
         set
         {
             _parent = value;
-            _isModelMatrixDirty = true;
+            if (_parent != null)
+            {
+                _modelMatrix.Parent(_parent._modelMatrix.GetMatrix());
+                _parent._modelMatrix.OnChange += () => _modelMatrix.Parent(_parent._modelMatrix.GetMatrix());
+            }
+            else
+            {
+                _modelMatrix.Parent(Matrix4.Identity);
+            }
         }
     }
 
@@ -154,31 +135,21 @@ public abstract class UiElement
         _parent = null;
 
         _isLoaded = false;
-        _originMatrix = _origin switch
-        {
-            ElementOrigin.BottomLeft => Matrix4.CreateTranslation(0, 0, 0),
-            ElementOrigin.BottomRight => Matrix4.CreateTranslation(-_size.X, 0, 0),
-            ElementOrigin.TopLeft => Matrix4.CreateTranslation(0, -_size.Y, 0),
-            ElementOrigin.TopRight => Matrix4.CreateTranslation(-_size.X, -_size.Y, 0),
-            ElementOrigin.Center => Matrix4.CreateTranslation(-_size.X / 2.0f, -_size.Y / 2.0f, 0),
-            _ => Matrix4.Identity
-        };
-        _translationMatrix = Matrix4.CreateTranslation(new Vector3(_position));
-        _rotationMatrix = Matrix4.CreateFromQuaternion(new Quaternion(_angle));
-        _scaleMatrix = Matrix4.CreateScale(_scale);
-
-        _modelMatrix = _originMatrix * _scaleMatrix * _rotationMatrix * _translationMatrix;
-
         UtilityFunctions.GetBorderedVertices(_size, _border, out _indices, out _vertices);
-
         _buffersContainer = new BuffersContainer();
+        _modelMatrix = new ModelMatrix();
+        
+        _modelMatrix.Origin(_origin, _size);
+        _modelMatrix.Translate(_position);
+        _modelMatrix.Rotate(_angle);
+        _modelMatrix.Scale(_scale);
     }
 
     public void AddElement(UiElement element)
     {
-        element.Parent = this;
         if (_children.Contains(element)) return;
         _children.Add(element);
+        element.Parent = this;
     }
 
     public void RemoveElement(UiElement element)
@@ -216,22 +187,8 @@ public abstract class UiElement
     public void Update(double elapsedSeconds, bool force = false)
     {
         if (!_isLoaded && !force) return;
-
+        
         UpdateEvent?.Invoke(elapsedSeconds);
-
-        if (_isModelMatrixDirty)
-        {
-            _modelMatrix = _originMatrix * _scaleMatrix * _rotationMatrix * _translationMatrix;
-            if (_parent != null) _modelMatrix = _parent._modelMatrix * _modelMatrix;
-            _isModelMatrixDirty = false;
-            _children.ForEach(child => child._isModelMatrixDirty = true);
-        }
-
-        if (_isVertexBufferDirty)
-        {
-            _buffersContainer.SetVertices(_vertices);
-            _isVertexBufferDirty = false;
-        }
         
         _children.ForEach(child => child.Update(elapsedSeconds, true));
     }
@@ -239,6 +196,7 @@ public abstract class UiElement
     public void Render(Camera camera, double elapsedSeconds)
     {
         if (!_isLoaded) return;
+        
         RenderEvent?.Invoke(camera, elapsedSeconds);
         
         _children.ForEach(child => child.Render(camera, elapsedSeconds));
@@ -281,7 +239,7 @@ public abstract class UiElement
         _texture.Use();
         _shader.SetUniformData("viewMatrix", camera.ViewMatrix);
         _shader.SetUniformData("projectionMatrix", camera.ProjectionMatrix);
-        _shader.SetUniformData("modelMatrix", _modelMatrix);
+        _shader.SetUniformData("modelMatrix", _modelMatrix.GetMatrix());
         _buffersContainer.Use();
         
         GL.DrawElements(PrimitiveType.Triangles, _indices.Length, DrawElementsType.UnsignedInt, 0);
