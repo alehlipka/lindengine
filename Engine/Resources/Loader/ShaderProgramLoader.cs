@@ -1,7 +1,7 @@
 using Lindengine.Graphics.Shader;
 using OpenTK.Graphics.OpenGL4;
 
-namespace Lindengine.Resources.Loaders;
+namespace Lindengine.Resources.Loader;
 
 internal static class ShaderProgramLoader
 {

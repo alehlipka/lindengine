@@ -2,6 +2,7 @@
 using Lindengine.Graphics.Shader;
 using Lindengine.Output.Camera;
 using Lindengine.Utilities;
+using Lindengine.Utilities.BufferObject;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 
@@ -27,14 +28,11 @@ public abstract class UiElement
     private bool _isModelMatrixDirty;
     private bool _isVertexBufferDirty;
     private float _border;
-    private readonly int _indexBufferName;
-    private readonly int _vertexBufferName;
-    private readonly int _vertexArrayName;
+    private readonly VertexBuffer _vertexBuffer;
+    private readonly ElementBuffer _elementBuffer;
+    private readonly VertexArray _vertexArray;
     private UiElement? _parent;
     private readonly List<UiElement> _children = [];
-
-    private bool _isClickable;
-    private bool _isDragable;
     
     private event VoidDelegate? LoadEvent;
     private event VoidDelegate? UnloadEvent;
@@ -175,11 +173,9 @@ public abstract class UiElement
 
         UtilityFunctions.GetBorderedVertices(_size, _border, out _indices, out _vertices);
 
-        GL.CreateVertexArrays(1, out _vertexArrayName);
-        GL.CreateBuffers(1, out _vertexBufferName);
-        GL.CreateBuffers(1, out _indexBufferName);
-
-        _isClickable = true;
+        _vertexArray = new VertexArray();
+        _vertexBuffer = new VertexBuffer();
+        _elementBuffer = new ElementBuffer();
     }
 
     public void AddElement(UiElement element)
@@ -237,7 +233,7 @@ public abstract class UiElement
 
         if (_isVertexBufferDirty)
         {
-            GL.NamedBufferSubData(_vertexBufferName, 0, _vertices.Length * sizeof(float), _vertices);
+            _vertexBuffer.SetVertices(_vertices);
             _isVertexBufferDirty = false;
         }
         
@@ -270,22 +266,9 @@ public abstract class UiElement
 
     protected virtual void OnLoad()
     {
-        int positionAttribute = _shader.GetAttribLocation("aPosition");
-        int textureAttribute = _shader.GetAttribLocation("aTexture");
-        
-        GL.NamedBufferData(_vertexBufferName, _vertices.Length * sizeof(float), _vertices, BufferUsageHint.StaticDraw);
-        GL.NamedBufferData(_indexBufferName, _indices.Length * sizeof(uint), _indices, BufferUsageHint.StaticDraw);
-        
-        GL.EnableVertexArrayAttrib(_vertexArrayName, positionAttribute);
-        GL.VertexArrayAttribBinding(_vertexArrayName, positionAttribute, 0);
-        GL.VertexArrayAttribFormat(_vertexArrayName, positionAttribute, 3, VertexAttribType.Float, false, 0);
-        
-        GL.EnableVertexArrayAttrib(_vertexArrayName, textureAttribute);
-        GL.VertexArrayAttribBinding(_vertexArrayName, textureAttribute, 0);
-        GL.VertexArrayAttribFormat(_vertexArrayName, textureAttribute, 2, VertexAttribType.Float, false, 3 * sizeof(float));
-        
-        GL.VertexArrayVertexBuffer(_vertexArrayName, 0, _vertexBufferName, 0, 5 * sizeof(float));
-        GL.VertexArrayElementBuffer(_vertexArrayName, _indexBufferName);
+        _vertexBuffer.SetVertices(_vertices);
+        _elementBuffer.SetIndices(_indices);
+        _vertexArray.SetBuffers(_vertexBuffer, _elementBuffer, _shader);
     }
 
     protected virtual void OnWindowResize(Vector2i size)
@@ -303,16 +286,16 @@ public abstract class UiElement
         _shader.SetUniformData("viewMatrix", camera.ViewMatrix);
         _shader.SetUniformData("projectionMatrix", camera.ProjectionMatrix);
         _shader.SetUniformData("modelMatrix", _modelMatrix);
-
-        GL.BindVertexArray(_vertexArrayName);
+        _vertexArray.Use();
+        
         GL.DrawElements(PrimitiveType.Triangles, _indices.Length, DrawElementsType.UnsignedInt, 0);
-        GL.BindVertexArray(0);
     }
 
     protected virtual void OnUnload()
     {
-        GL.DeleteBuffer(_vertexBufferName);
-        GL.DeleteBuffer(_indexBufferName);
-        GL.DeleteVertexArray(_vertexArrayName);
+        _texture.Unload();
+        _vertexBuffer.Unload();
+        _elementBuffer.Unload();
+        _vertexArray.Unload();
     }
 }

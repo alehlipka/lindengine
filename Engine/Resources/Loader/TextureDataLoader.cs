@@ -2,7 +2,7 @@ using Lindengine.Graphics;
 using OpenTK.Mathematics;
 using StbImageSharp;
 
-namespace Lindengine.Resources.Loaders;
+namespace Lindengine.Resources.Loader;
 
 internal static class TextureDataLoader
 {

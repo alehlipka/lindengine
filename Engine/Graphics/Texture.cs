@@ -66,4 +66,9 @@ public class Texture
     {
         GL.BindTextureUnit(_unit, _handle);
     }
+
+    public void Unload()
+    {
+        GL.DeleteTexture(_handle);
+    }
 }

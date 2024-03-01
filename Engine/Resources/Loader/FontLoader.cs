@@ -1,6 +1,6 @@
 using Lindengine.Graphics.Font;
 
-namespace Lindengine.Resources.Loaders;
+namespace Lindengine.Resources.Loader;
 
 public static class FontLoader
 {

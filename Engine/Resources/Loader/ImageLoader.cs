@@ -1,7 +1,7 @@
 using OpenTK.Windowing.Common.Input;
 using StbImageSharp;
 
-namespace Lindengine.Resources.Loaders;
+namespace Lindengine.Resources.Loader;
 
 internal static class ImageLoader
 {

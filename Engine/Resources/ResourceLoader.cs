@@ -1,7 +1,7 @@
 ﻿using Lindengine.Graphics;
 using Lindengine.Graphics.Font;
 using Lindengine.Graphics.Shader;
-using Lindengine.Resources.Loaders;
+using Lindengine.Resources.Loader;
 using OpenTK.Windowing.Common.Input;
 
 namespace Lindengine.Resources;

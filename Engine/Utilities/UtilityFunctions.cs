@@ -7,7 +7,7 @@ namespace Lindengine.Utilities;
 internal static class UtilityFunctions
 {
     private const float Zero3 = 1.0f / 3.0f;
-    private const float Zero6 = Zero3 * 2.0f;
+    private const float Zero6 = 1.0f - Zero3;
         
     /// <summary>
     /// Flip bitmap bytes vertically
