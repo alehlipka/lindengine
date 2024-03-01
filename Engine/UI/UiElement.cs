@@ -27,9 +27,9 @@ public abstract class UiElement
     private bool _isModelMatrixDirty;
     private bool _isVertexBufferDirty;
     private float _border;
-    private int _indexBufferName;
-    private int _vertexBufferName;
-    private int _vertexArrayName;
+    private readonly int _indexBufferName;
+    private readonly int _vertexBufferName;
+    private readonly int _vertexArrayName;
     private UiElement? _parent;
     private readonly List<UiElement> _children = [];
 
@@ -175,9 +175,9 @@ public abstract class UiElement
 
         UtilityFunctions.GetBorderedVertices(_size, _border, out _indices, out _vertices);
 
-        _indexBufferName = GL.GenBuffer();
-        _vertexBufferName = GL.GenBuffer();
-        _vertexArrayName = GL.GenVertexArray();
+        GL.CreateVertexArrays(1, out _vertexArrayName);
+        GL.CreateBuffers(1, out _vertexBufferName);
+        GL.CreateBuffers(1, out _indexBufferName);
 
         _isClickable = true;
     }
@@ -230,20 +230,14 @@ public abstract class UiElement
         if (_isModelMatrixDirty)
         {
             _modelMatrix = _originMatrix * _scaleMatrix * _rotationMatrix * _translationMatrix;
-            if (_parent != null)
-            {
-                _modelMatrix = _parent._modelMatrix * _modelMatrix;
-            }
+            if (_parent != null) _modelMatrix = _parent._modelMatrix * _modelMatrix;
             _isModelMatrixDirty = false;
-            
             _children.ForEach(child => child._isModelMatrixDirty = true);
         }
 
         if (_isVertexBufferDirty)
         {
-            GL.BindBuffer(BufferTarget.ArrayBuffer, _vertexBufferName);
-            GL.BufferSubData(BufferTarget.ArrayBuffer, 0, _vertices.Length * sizeof(float), _vertices);
-            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+            GL.NamedBufferSubData(_vertexBufferName, 0, _vertices.Length * sizeof(float), _vertices);
             _isVertexBufferDirty = false;
         }
         
@@ -278,21 +272,20 @@ public abstract class UiElement
     {
         int positionAttribute = _shader.GetAttribLocation("aPosition");
         int textureAttribute = _shader.GetAttribLocation("aTexture");
-        GL.BindVertexArray(_vertexArrayName);
-        GL.BindBuffer(BufferTarget.ArrayBuffer, _vertexBufferName);
-        GL.BufferData(BufferTarget.ArrayBuffer, _vertices.Length * sizeof(float), _vertices,
-            BufferUsageHint.StaticDraw);
-        GL.BindBuffer(BufferTarget.ElementArrayBuffer, _indexBufferName);
-        GL.BufferData(BufferTarget.ElementArrayBuffer, _indices.Length * sizeof(float), _indices,
-            BufferUsageHint.StaticDraw);
-        GL.EnableVertexAttribArray(positionAttribute);
-        GL.VertexAttribPointer(positionAttribute, 3, VertexAttribPointerType.Float, false, 5 * sizeof(float), 0);
-        GL.EnableVertexAttribArray(textureAttribute);
-        GL.VertexAttribPointer(textureAttribute, 2, VertexAttribPointerType.Float, false, 5 * sizeof(float),
-            3 * sizeof(float));
-        GL.BindVertexArray(0);
-        GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
-        GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
+        
+        GL.NamedBufferData(_vertexBufferName, _vertices.Length * sizeof(float), _vertices, BufferUsageHint.StaticDraw);
+        GL.NamedBufferData(_indexBufferName, _indices.Length * sizeof(uint), _indices, BufferUsageHint.StaticDraw);
+        
+        GL.EnableVertexArrayAttrib(_vertexArrayName, positionAttribute);
+        GL.VertexArrayAttribBinding(_vertexArrayName, positionAttribute, 0);
+        GL.VertexArrayAttribFormat(_vertexArrayName, positionAttribute, 3, VertexAttribType.Float, false, 0);
+        
+        GL.EnableVertexArrayAttrib(_vertexArrayName, textureAttribute);
+        GL.VertexArrayAttribBinding(_vertexArrayName, textureAttribute, 0);
+        GL.VertexArrayAttribFormat(_vertexArrayName, textureAttribute, 2, VertexAttribType.Float, false, 3 * sizeof(float));
+        
+        GL.VertexArrayVertexBuffer(_vertexArrayName, 0, _vertexBufferName, 0, 5 * sizeof(float));
+        GL.VertexArrayElementBuffer(_vertexArrayName, _indexBufferName);
     }
 
     protected virtual void OnWindowResize(Vector2i size)
@@ -318,10 +311,6 @@ public abstract class UiElement
 
     protected virtual void OnUnload()
     {
-        GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
-        GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
-        GL.BindVertexArray(0);
-
         GL.DeleteBuffer(_vertexBufferName);
         GL.DeleteBuffer(_indexBufferName);
         GL.DeleteVertexArray(_vertexArrayName);

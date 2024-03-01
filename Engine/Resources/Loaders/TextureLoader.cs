@@ -12,18 +12,16 @@ internal static class TextureLoader
     {
         Image image = ImageLoader.LoadResource(path);
         byte[] data = UtilityFunctions.GetVerticalFlippedBitmap(image.Data, new Vector2i(image.Width, image.Height));
+        
+        GL.CreateTextures(TextureTarget.Texture2D, 1, out int handle);
+        GL.TextureParameter(handle, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
+        GL.TextureParameter(handle, TextureParameterName.TextureMagFilter, (int)TextureMinFilter.Linear);
+        GL.TextureParameter(handle, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
+        GL.TextureParameter(handle, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat);
+        GL.TextureStorage2D(handle, 1, SizedInternalFormat.Rgba16, image.Width, image.Height);
+        GL.TextureSubImage2D(handle, 0, 0, 0, image.Width, image.Height, PixelFormat.Rgba, PixelType.UnsignedByte, data);
+        GL.GenerateTextureMipmap(handle);
 
-        int handle = GL.GenTexture();
-        GL.ActiveTexture(TextureUnit.Texture0);
-        GL.BindTexture(TextureTarget.Texture2D, handle);
-        GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, image.Width, image.Height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, data);
-        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
-        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
-        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
-        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat);
-        GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
-        GL.BindTexture(TextureTarget.Texture2D, 0);
-
-        return new Texture(handle, new Vector2i(image.Width, image.Height), TextureUnit.Texture0);
+        return new Texture(handle, new Vector2i(image.Width, image.Height));
     }
 }
