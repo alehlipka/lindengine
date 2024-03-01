@@ -3,27 +3,21 @@ using Lindengine.Graphics.Shader;
 using Lindengine.Output.Camera;
 using Lindengine.Utilities;
 using Lindengine.Utilities.BufferObject;
-using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 
 namespace Lindengine.UI;
 
 public abstract class UiElement
 {
-    private ElementOrigin _origin;
+    public UiElement? Parent;
+    
     private Vector2i _size;
-    private Vector3 _position;
-    private Vector3 _angle;
-    private Vector3 _scale;
     private bool _isLoaded;
-    private uint[] _indices;
-    private float[] _vertices;
     private float _border;
     private Texture _texture;
-    private UiElement? _parent;
-    private readonly ShaderProgram _shader;
     private readonly ModelMatrix _modelMatrix;
     private readonly BuffersContainer _buffersContainer;
+    private readonly ShaderProgram _shader;
     private readonly List<UiElement> _children = [];
     
     private event VoidDelegate? LoadEvent;
@@ -38,86 +32,47 @@ public abstract class UiElement
         set
         {
             _size = value;
-            _modelMatrix.Origin(_origin, _size);
-            UtilityFunctions.GetBorderedVertices(_size, _border, out _indices, out _vertices);
-            _buffersContainer.SetVertices(_vertices);
+            _modelMatrix.SetOrigin(_modelMatrix.Origin, _size);
+            UtilityFunctions.GetBorderedVertices(_size, _border, out uint[] indices, out float[] vertices);
+            _buffersContainer.SetIndices(indices);
+            _buffersContainer.SetVertices(vertices);
         }
     }
-
     public ElementOrigin Origin
     {
-        get => _origin;
-        set
-        {
-            _origin = value;
-            _modelMatrix.Origin(_origin, _size);
-        }
+        get => _modelMatrix.Origin;
+        set => _modelMatrix.SetOrigin(value, _size);
     }
-
     public Vector3 Position
     {
-        get => _position;
-        set
-        {
-            _position = value;
-            _modelMatrix.Translate(_position);
-        }
+        get => _modelMatrix.Position;
+        set => _modelMatrix.SetTranslation(value);
     }
-
     public Vector3 Angle
     {
-        get => _angle;
-        set
-        {
-            _angle = value;
-            _modelMatrix.Rotate(_angle);
-        }
+        get => _modelMatrix.Angle;
+        set => _modelMatrix.SetRotation(value);
     }
-
     public Vector3 Scale
     {
-        get => _scale;
-        set
-        {
-            _scale = value;
-            _modelMatrix.Scale(_scale);
-        }
+        get => _modelMatrix.Scale;
+        set => _modelMatrix.SetScale(value);
     }
-
     public Texture Texture
     {
         get => _texture;
         set => _texture = value;
     }
-
     public ShaderProgram Shader => _shader;
-
     public float Border
     {
         get => _border;
         set
         {
             _border = value;
-            UtilityFunctions.GetBorderedVertices(_size, _border, out _indices, out _vertices);
-            _buffersContainer.SetVertices(_vertices);
-        }
-    }
-
-    public UiElement? Parent
-    {
-        get => _parent;
-        set
-        {
-            _parent = value;
-            if (_parent != null)
-            {
-                _modelMatrix.Parent(_parent._modelMatrix.GetMatrix());
-                _parent._modelMatrix.OnChange += () => _modelMatrix.Parent(_parent._modelMatrix.GetMatrix());
-            }
-            else
-            {
-                _modelMatrix.Parent(Matrix4.Identity);
-            }
+            UtilityFunctions.GetBorderedVertices(_size, _border, out uint[] indices, out float[] vertices);
+            _buffersContainer.SetIndices(indices);
+            _buffersContainer.SetVertices(vertices);
         }
     }
 
@@ -126,36 +81,40 @@ public abstract class UiElement
     {
         _size = size;
         _border = border;
-        _origin = origin;
-        _position = position;
-        _angle = angle;
-        _scale = scale;
         _texture = texture;
         _shader = shader;
-        _parent = null;
+        Parent = null;
 
         _isLoaded = false;
-        UtilityFunctions.GetBorderedVertices(_size, _border, out _indices, out _vertices);
         _buffersContainer = new BuffersContainer();
         _modelMatrix = new ModelMatrix();
         
-        _modelMatrix.Origin(_origin, _size);
-        _modelMatrix.Translate(_position);
-        _modelMatrix.Rotate(_angle);
-        _modelMatrix.Scale(_scale);
+        _modelMatrix.SetOrigin(origin, _size);
+        _modelMatrix.SetTranslation(position);
+        _modelMatrix.SetRotation(angle);
+        _modelMatrix.SetScale(scale);
+        
+        _modelMatrix.ModelMatrixChanged += OnModelMatrixChanged;
     }
 
-    public void AddElement(UiElement element)
+    private void OnModelMatrixChanged()
     {
-        if (_children.Contains(element)) return;
-        _children.Add(element);
-        element.Parent = this;
+        _children.ForEach(child => child._modelMatrix.SetParentMatrix(_modelMatrix.GetMatrix()));
     }
 
-    public void RemoveElement(UiElement element)
+    public void AddChildren(UiElement children)
     {
-        element.Parent = null;
-        _children.Remove(element);
+        if (_children.Contains(children)) return;
+        _children.Add(children);
+        children.Parent = this;
+        children._modelMatrix.SetParentMatrix(_modelMatrix.GetMatrix());
+    }
+
+    public void RemoveChildren(UiElement children)
+    {
+        children._modelMatrix.SetParentMatrix(Matrix4.Identity);
+        children.Parent = null;
+        _children.Remove(children);
     }
 
     public void Load()
@@ -220,8 +179,9 @@ public abstract class UiElement
 
     protected virtual void OnLoad()
     {
-        _buffersContainer.SetVertices(_vertices);
-        _buffersContainer.SetIndices(_indices);
+        UtilityFunctions.GetBorderedVertices(_size, _border, out uint[] indices, out float[] vertices);
+        _buffersContainer.SetVertices(vertices);
+        _buffersContainer.SetIndices(indices);
         _buffersContainer.LinkShaderAttributes(_shader);
     }
 
@@ -240,9 +200,8 @@ public abstract class UiElement
         _shader.SetUniformData("viewMatrix", camera.ViewMatrix);
         _shader.SetUniformData("projectionMatrix", camera.ProjectionMatrix);
         _shader.SetUniformData("modelMatrix", _modelMatrix.GetMatrix());
-        _buffersContainer.Use();
         
-        GL.DrawElements(PrimitiveType.Triangles, _indices.Length, DrawElementsType.UnsignedInt, 0);
+        _buffersContainer.Draw();
     }
 
     protected virtual void OnUnload()

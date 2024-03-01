@@ -5,18 +5,27 @@ namespace Lindengine.Utilities;
 
 public class ModelMatrix
 {
-    internal event VoidDelegate? OnChange;
+    public ElementOrigin Origin => _origin;
+    public Vector3 Position => _position;
+    public Vector3 Angle => _angle;
+    public Vector3 Scale => _scale;
     
+    private ElementOrigin _origin;
+    private Vector3 _position;
+    private Vector3 _angle;
+    private Vector3 _scale;
     private Matrix4 _originMatrix = Matrix4.Identity;
     private Matrix4 _translationMatrix = Matrix4.Identity;
     private Matrix4 _rotationMatrix = Matrix4.Identity;
     private Matrix4 _scaleMatrix = Matrix4.Identity;
     private Matrix4 _parentMatrix = Matrix4.Identity;
-    private Matrix4 _modelMatrix = Matrix4.Identity;
+    
+    internal event VoidDelegate? ModelMatrixChanged;
 
-    public void Origin(ElementOrigin origin, Vector2i size)
+    public void SetOrigin(ElementOrigin origin, Vector2i size)
     {
-        _originMatrix = origin switch
+        _origin = origin;
+        _originMatrix = _origin switch
         {
             ElementOrigin.BottomLeft => Matrix4.CreateTranslation(0, 0, 0),
             ElementOrigin.BottomRight => Matrix4.CreateTranslation(-size.X, 0, 0),
@@ -26,40 +35,42 @@ public class ModelMatrix
             _ => Matrix4.Identity
         };
         
-        OnChange?.Invoke();
+        ModelMatrixChanged?.Invoke();
     }
     
-    public void Translate(Vector3 position)
+    public void SetTranslation(Vector3 position)
     {
-        _translationMatrix = Matrix4.CreateTranslation(position);
+        _position = position;
+        _translationMatrix = Matrix4.CreateTranslation(_position);
         
-        OnChange?.Invoke();
+        ModelMatrixChanged?.Invoke();
     }
 
-    public void Rotate(Vector3 angle)
+    public void SetRotation(Vector3 angle)
     {
-        _rotationMatrix = Matrix4.CreateFromQuaternion(new Quaternion(angle));
+        _angle = angle;
+        _rotationMatrix = Matrix4.CreateFromQuaternion(new Quaternion(_angle));
         
-        OnChange?.Invoke();
+        ModelMatrixChanged?.Invoke();
     }
 
-    public void Scale(Vector3 scale)
+    public void SetScale(Vector3 scale)
     {
-        _scaleMatrix = Matrix4.CreateScale(scale);
+        _scale = scale;
+        _scaleMatrix = Matrix4.CreateScale(_scale);
         
-        OnChange?.Invoke();
+        ModelMatrixChanged?.Invoke();
     }
 
-    public void Parent(Matrix4 parent)
+    public void SetParentMatrix(Matrix4 parent)
     {
         _parentMatrix = parent;
         
-        OnChange?.Invoke();
+        ModelMatrixChanged?.Invoke();
     }
 
     public Matrix4 GetMatrix()
     {
-        _modelMatrix = _parentMatrix * (_originMatrix * _scaleMatrix * _rotationMatrix * _translationMatrix);
-        return _modelMatrix;
+        return _parentMatrix * (_originMatrix * _scaleMatrix * _rotationMatrix * _translationMatrix);
     }
 }

@@ -1,4 +1,5 @@
 using Lindengine.Graphics.Shader;
+using OpenTK.Graphics.OpenGL4;
 
 namespace Lindengine.Utilities.BufferObject;
 
@@ -23,9 +24,10 @@ public class BuffersContainer
         _vertexArray.LinkAttributes(_vertexBuffer.Name, _elementBuffer.Name, shader);
     }
     
-    public void Use()
+    public void Draw()
     {
         _vertexArray.Use();
+        GL.DrawElements(PrimitiveType.Triangles, _elementBuffer.Indices.Length, DrawElementsType.UnsignedInt, 0);
     }
 
     public void Unload()
