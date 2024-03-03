@@ -7,7 +7,7 @@ using OpenTK.Mathematics;
 
 namespace Lindengine.UI;
 
-public abstract class UiElement
+public class UiElement
 {
     public UiElement? Parent;
     
@@ -76,8 +76,7 @@ public abstract class UiElement
         }
     }
 
-    protected UiElement(Vector2i size, float border, ElementOrigin origin, Vector3 position, Vector3 angle, Vector3 scale,
-        Texture texture, ShaderProgram shader)
+    public UiElement(Vector2i size, float border, Texture texture, ShaderProgram shader)
     {
         _size = size;
         _border = border;
@@ -89,10 +88,10 @@ public abstract class UiElement
         _buffersContainer = new BuffersContainer();
         _modelMatrix = new ModelMatrix();
         
-        _modelMatrix.SetOrigin(origin, _size);
-        _modelMatrix.SetTranslation(position);
-        _modelMatrix.SetRotation(angle);
-        _modelMatrix.SetScale(scale);
+        _modelMatrix.SetOrigin(ElementOrigin.BottomLeft, _size);
+        _modelMatrix.SetTranslation(Vector3.Zero);
+        _modelMatrix.SetRotation(Vector3.Zero);
+        _modelMatrix.SetScale(Vector3.One);
         
         _modelMatrix.ModelMatrixChanged += OnModelMatrixChanged;
     }
