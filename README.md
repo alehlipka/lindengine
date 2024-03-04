@@ -16,9 +16,6 @@ Multiplatform OpenGL [.Net][dotnet] 3D game framework based on [OpenTK][opentk].
 ### Developed on
 [![Manjaro Linux Logo][manjaro-logo]][manjaro]
 
-### Demo assets by Kenney
-[![Kenney][kenney-logo]][kenney]
-
 [actions]: https://github.com/alehlipka/lindengine/actions
 [license]: https://github.com/alehlipka/lindengine/blob/main/LICENSE
 [lindengine-logo]: https://raw.githubusercontent.com/alehlipka/lindengine/main/Demo/Assets/icon.png
@@ -30,5 +27,3 @@ Multiplatform OpenGL [.Net][dotnet] 3D game framework based on [OpenTK][opentk].
 [stbtruetypesharp]: https://github.com/StbSharp/StbTrueTypeSharp
 [bepuphysics]: https://github.com/bepu/bepuphysics2
 [assimpnet]: https://bitbucket.org/Starnick/assimpnet
-[kenney-logo]: https://kenney.nl/data/oga/donation.png
-[kenney]: http://donate.kenney.nl/

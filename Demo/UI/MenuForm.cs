@@ -1,5 +1,6 @@
 using Lindengine.Core;
 using Lindengine.Graphics;
+using Lindengine.Graphics.Font;
 using Lindengine.Graphics.Shader;
 using Lindengine.UI;
 using OpenTK.Mathematics;
@@ -10,29 +11,23 @@ public class MenuForm : UiElement
 {
     public MenuForm(Vector2i size, ShaderProgram shader) : base(size, shader)
     {
-        UiElement insideForm1 = new(new Vector2i(350, 275), shader)
+        Origin = ElementOrigin.Center;
+        Position = new Vector3(Size.X, Size.Y, 0) / 2;
+        Border = 16;
+        Texture = Lind.Engine.Resources.Load<Texture>(Path.Combine("Assets", "UI", "Panel", "form.jpg"));
+        Font font = Lind.Engine.Resources.Load<Font>(Path.Combine("Assets", "Fonts", "OpenSansBold.ttf"));
+        const int fontSize = 32;
+        TextBuilder textBuilder = new();
+
+        Vector2i textSize = new(Size.X - 10, fontSize);
+        UiElement title = new(textSize, shader)
         {
-            Position = new Vector3(25, 100, 0),
-            Border = 16,
-            Texture = Lind.Engine.Resources.Load<Texture>(Path.Combine("Assets", "UI", "Panels", "panel_7.png"))
-        };
-        UiElement insideForm2 = new(new Vector2i(350, 60), shader)
-        {
-            Position = new Vector3(25, 25, 0),
-            Border = 16,
-            Texture = Lind.Engine.Resources.Load<Texture>(Path.Combine("Assets", "UI", "Panels", "panel_12.png"))
-        };
-        UiElement insideInsideForm = new(new Vector2i(100, 100), shader)
-        {
+            Position = new Vector3(Size.X / 2.0f, Size.Y - 25, 0),
             Origin = ElementOrigin.Center,
-            Position = new Vector3(350, 275, 0) / 2,
-            Border = 16,
-            Texture = Lind.Engine.Resources.Load<Texture>(Path.Combine("Assets", "UI", "Panels", "panel_0.png"))
+            Texture = new Texture(textBuilder.Draw("MAIN MENU", font, 32, Color4.DarkGoldenrod, textSize, TextAlign.Center))
         };
-        insideForm1.AddChildren(insideInsideForm);
         
-        AddChildren(insideForm1);
-        AddChildren(insideForm2);
+        AddChildren(title);
     }
 
     protected override void OnWindowResize(Vector2i size)

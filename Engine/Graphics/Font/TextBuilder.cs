@@ -4,15 +4,19 @@ using static StbTrueTypeSharp.StbTrueType;
 
 namespace Lindengine.Graphics.Font;
 
-public sealed class TextBuilder(string text, Font font, int fontSize, Color4 color, Vector2i drawSize, bool dots = true)
+public sealed class TextBuilder()
 {
+    private const char NewLineCharacter = '\n';
+    private const bool Dots = true;
+    
     private stbtt_fontinfo _fontInfo = new();
     private float _scale;
     private int _bitmapCursor, _lineNumber, _ascent;
     private byte[] _bitmapBytes = [];
-    private const char NewLineCharacter = '\n';
+    private int _maxLineWidth;
+    private Vector2i _cursorShift;
 
-    public unsafe TextureData GetTextureData()
+    public unsafe TextureData Draw(string text, Font font, int fontSize, Color4 color, Vector2i drawSize, TextAlign textAlign)
     {
         _fontInfo = new stbtt_fontinfo();
         fixed (byte* ptr = font.FileBytes) stbtt_InitFont(_fontInfo, ptr, 0);
@@ -23,22 +27,45 @@ public sealed class TextBuilder(string text, Font font, int fontSize, Color4 col
         _ascent = (int)(asc * _scale);
         _lineNumber = 0;
         _bitmapBytes = new byte[drawSize.X * drawSize.Y];
-        ProcessText();
+        _cursorShift = Vector2i.Zero;
+        GetMaxLineWidth(text, drawSize);
+
+        if (textAlign == TextAlign.Center)
+        {
+            _cursorShift.X = (drawSize.X - _maxLineWidth) / 2;
+            _bitmapCursor = _cursorShift.X;
+        }
+        
+        ProcessText(text, fontSize, drawSize);
         
         return new TextureData(UtilityFunctions.MonochromeToRgba(_bitmapBytes, drawSize, color) , drawSize);
     }
 
-    private bool NewLine()
+    private void GetMaxLineWidth(string text, Vector2i drawSize)
+    {
+        foreach (string line in text.Split(NewLineCharacter))
+        {
+            int lineWidth = line.Sum(GetCharacterWidth);
+            if (_maxLineWidth < lineWidth)
+            {
+                _maxLineWidth = lineWidth;
+            }
+        }
+
+        _maxLineWidth = int.Min(drawSize.X, _maxLineWidth);
+    }
+
+    private bool NewLine(int fontSize, Vector2i drawSize)
     {
         _lineNumber++;
-        _bitmapCursor = drawSize.X * fontSize * _lineNumber;
+        _bitmapCursor = drawSize.X * fontSize * _lineNumber + _cursorShift.X;
 
         return (_lineNumber + 1) * fontSize <= drawSize.Y;
     }
 
-    private void ProcessText()
+    private void ProcessText(string text, int fontSize, Vector2i drawSize)
     {
-        int dotsWidth = dots ? GetCharacterWidth('.') * 3 : 0;
+        int dotsWidth = Dots ? GetCharacterWidth('.') * 3 : 0;
         string[] lines = text.Split(NewLineCharacter);
         foreach (string line in lines)
         {
@@ -48,24 +75,24 @@ public sealed class TextBuilder(string text, Font font, int fontSize, Color4 col
                 int charWidth = GetCharacterWidth(currentChar);
                 if (charactersWidth + charWidth + dotsWidth >= drawSize.X)
                 {
-                    if (dots)
+                    if (Dots)
                     {
-                        ProcessCharacter('.');
-                        ProcessCharacter('.');
-                        ProcessCharacter('.');
+                        ProcessCharacter('.', drawSize);
+                        ProcessCharacter('.', drawSize);
+                        ProcessCharacter('.', drawSize);
                     }
                     break;
                 }
             
-                ProcessCharacter(currentChar);
+                ProcessCharacter(currentChar, drawSize);
                 charactersWidth += charWidth;
             }
             
-            if (!NewLine()) return;
+            if (!NewLine(fontSize, drawSize)) return;
         }
     }
     
-    private unsafe void ProcessCharacter(char currentChar)
+    private unsafe void ProcessCharacter(char currentChar, Vector2i drawSize)
     {
         int ax, lsb;
         stbtt_GetCodepointHMetrics(_fontInfo, currentChar, &ax, &lsb);
