@@ -67,13 +67,29 @@ internal static class UtilityFunctions
 
     public static void GetBorderedVertices(Vector2i size, float border, out uint[] indices, out float[] vertices)
     {
-        float[] contentVertices =
-        [
-            border, border, 0.0f, Zero3, Zero3, // bottom left
-            border, size.Y - border, 0.0f, Zero3, Zero6, // top left
-            size.X - border, size.Y - border, 0.0f, Zero6, Zero6, // top right
-            size.X - border, border, 0.0f, Zero6, Zero3 // bottom right
-        ];
+        float[] contentVertices;
+        
+        if (border == 0)
+        {
+            contentVertices =
+            [
+                border, border, 0.0f, 0.0f, 0.0f, // bottom left
+                border, size.Y - border, 0.0f, 0.0f, 1.0f, // top left
+                size.X - border, size.Y - border, 0.0f, 1.0f, 1.0f, // top right
+                size.X - border, border, 0.0f, 1.0f, 0.0f // bottom right
+            ];
+        }
+        else
+        {
+            contentVertices =
+            [
+                border, border, 0.0f, Zero3, Zero3, // bottom left
+                border, size.Y - border, 0.0f, Zero3, Zero6, // top left
+                size.X - border, size.Y - border, 0.0f, Zero6, Zero6, // top right
+                size.X - border, border, 0.0f, Zero6, Zero3 // bottom right
+            ];
+        }
+        
         float[] bottomLeftBorderVertices =
         [
             0.0f, 0.0f, 0.0f, 0.0f, 0.0f, // bottom left

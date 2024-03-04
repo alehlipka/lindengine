@@ -16,6 +16,7 @@ public class DemoScene : Scene
 {
     private readonly OrthographicCamera _orthographicCamera;
     private readonly MenuForm _menuForm;
+    private readonly Background _background;
 
     public DemoScene(string name, Vector2i windowSize) : base(name, windowSize)
     {
@@ -28,18 +29,22 @@ public class DemoScene : Scene
             Origin = ElementOrigin.Center,
             Position = new Vector3(Size.X, Size.Y, 0) / 2
         };
+        Texture backgroundTexture = Lind.Engine.Resources.Load<Texture>(Path.Combine("Assets", "debug.jpg"));
+        _background = new Background(Size, 0, backgroundTexture, shader);
     }
 
     protected override void OnLoad()
     {
         _orthographicCamera.Load();
         _menuForm.Load();
+        _background.Load();
     }
 
     protected override void OnWindowResize(Vector2i size)
     {
         _orthographicCamera.WindowResize(size);
         _menuForm.Position = new Vector3(Size.X, Size.Y, 0) / 2;
+        _background.Size = size;
     }
 
     protected override void OnUpdate(double elapsedSeconds)
@@ -63,6 +68,7 @@ public class DemoScene : Scene
     protected override void OnRender(double elapsedSeconds)
     {
         _orthographicCamera.Render(elapsedSeconds);
+        _background.Render(_orthographicCamera, elapsedSeconds);
         _menuForm.Render(_orthographicCamera, elapsedSeconds);
     }
 
@@ -70,5 +76,6 @@ public class DemoScene : Scene
     {
         _orthographicCamera.Unload();
         _menuForm.Unload();
+        _background.Unload();
     }
 }
