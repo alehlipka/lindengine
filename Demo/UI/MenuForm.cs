@@ -13,7 +13,7 @@ public class MenuForm : UiElement
     {
         Origin = ElementOrigin.Center;
         Position = new Vector3(Size.X, Size.Y, 0) / 2;
-        Border = 16;
+        Border = new Vector4(120, 0, 0, 0);
         Texture = Lind.Engine.Resources.Load<Texture>(Path.Combine("Assets", "UI", "Panel", "form.jpg"));
         Font font = Lind.Engine.Resources.Load<Font>(Path.Combine("Assets", "Fonts", "OpenSansBold.ttf"));
         const int fontSize = 32;
@@ -22,7 +22,7 @@ public class MenuForm : UiElement
         Vector2i textSize = new(Size.X - 10, fontSize);
         UiElement title = new(textSize, shader)
         {
-            Position = new Vector3(Size.X / 2.0f, Size.Y - 25, 0),
+            Position = new Vector3(Size.X / 2.0f, Size.Y - 23, 0),
             Origin = ElementOrigin.Center,
             Texture = new Texture(textBuilder.Draw("MAIN MENU", font, 32, Color4.DarkGoldenrod, textSize, TextAlign.Center))
         };

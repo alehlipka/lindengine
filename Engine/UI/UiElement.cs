@@ -13,7 +13,7 @@ public class UiElement
     
     private Vector2i _size;
     private bool _isLoaded;
-    private float _border;
+    private Vector4 _border;
     private Texture? _texture;
     private readonly ModelMatrix _modelMatrix;
     private readonly BuffersContainer _buffersContainer;
@@ -64,7 +64,7 @@ public class UiElement
         set => _texture = value;
     }
     public ShaderProgram Shader => _shader;
-    public float Border
+    public Vector4 Border
     {
         get => _border;
         set
@@ -79,7 +79,7 @@ public class UiElement
     public UiElement(Vector2i size, ShaderProgram shader)
     {
         _size = size;
-        _border = 0;
+        _border = Vector4.Zero;
         _texture = null;
         _shader = shader;
         Parent = null;

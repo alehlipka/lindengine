@@ -6,9 +6,6 @@ namespace Lindengine.Utilities;
 
 internal static class UtilityFunctions
 {
-    private const float Zero3 = 1.0f / 3.0f;
-    private const float Zero6 = 1.0f - Zero3;
-        
     /// <summary>
     /// Flip bitmap bytes vertically
     /// </summary>
@@ -65,86 +62,84 @@ internal static class UtilityFunctions
         return rgbaData;
     }
 
-    public static void GetBorderedVertices(Vector2i size, float border, out uint[] indices, out float[] vertices)
+    public static void GetBorderedVertices(Vector2i size, Vector4 border, out uint[] indices, out float[] vertices)
     {
-        float[] contentVertices;
+        const float zero3 = 1.0f / 3.0f;
+        const float zero6 = zero3 * 2.0f;
+
+        float borderTop = border.X;
+        float borderRight = border.Y;
+        float borderBottom = border.Z;
+        float borderLeft = border.W;
+
+        if (borderLeft == 0) borderLeft = size.X / 3.0f;
+        if (borderRight == 0) borderRight = size.X / 3.0f;
+        if (borderTop == 0) borderTop = size.Y / 3.0f;
+        if (borderBottom == 0) borderBottom = size.Y / 3.0f;
         
-        if (border == 0)
-        {
-            contentVertices =
-            [
-                border, border, 0.0f, 0.0f, 0.0f, // bottom left
-                border, size.Y - border, 0.0f, 0.0f, 1.0f, // top left
-                size.X - border, size.Y - border, 0.0f, 1.0f, 1.0f, // top right
-                size.X - border, border, 0.0f, 1.0f, 0.0f // bottom right
-            ];
-        }
-        else
-        {
-            contentVertices =
-            [
-                border, border, 0.0f, Zero3, Zero3, // bottom left
-                border, size.Y - border, 0.0f, Zero3, Zero6, // top left
-                size.X - border, size.Y - border, 0.0f, Zero6, Zero6, // top right
-                size.X - border, border, 0.0f, Zero6, Zero3 // bottom right
-            ];
-        }
+        float[] contentVertices =
+        [
+            borderLeft, borderBottom, 0.0f, zero3, zero3, // bottom left
+            borderLeft, size.Y - borderTop, 0.0f, zero3, zero6, // top left
+            size.X - borderRight, size.Y - borderTop, 0.0f, zero6, zero6, // top right
+            size.X - borderRight, borderBottom, 0.0f, zero6, zero3 // bottom right
+        ];
         
         float[] bottomLeftBorderVertices =
         [
             0.0f, 0.0f, 0.0f, 0.0f, 0.0f, // bottom left
-            0.0f, border, 0.0f, 0.0f, Zero3, // top left
-            border, border, 0.0f, Zero3, Zero3, // top right
-            border, 0.0f, 0.0f, Zero3, 0.0f // bottom right
+            0.0f, borderBottom, 0.0f, 0.0f, zero3, // top left
+            borderLeft, borderBottom, 0.0f, zero3, zero3, // top right
+            borderLeft, 0.0f, 0.0f, zero3, 0.0f // bottom right
         ];
         float[] centerLeftBorderVertices =
         [
-            0.0f, border, 0.0f, 0.0f, Zero3, // bottom left
-            0.0f, size.Y - border, 0.0f, 0.0f, Zero6, // top left
-            border, size.Y - border, 0.0f, Zero3, Zero6, // top right
-            border, border, 0.0f, Zero3, Zero3 // bottom right
+            0.0f, borderBottom, 0.0f, 0.0f, zero3, // bottom left
+            0.0f, size.Y - borderTop, 0.0f, 0.0f, zero6, // top left
+            borderLeft, size.Y - borderTop, 0.0f, zero3, zero6, // top right
+            borderLeft, borderBottom, 0.0f, zero3, zero3 // bottom right
         ];
         float[] topLeftBorderVertices =
         [
-            0.0f, size.Y - border, 0.0f, 0.0f, Zero6, // bottom left
+            0.0f, size.Y - borderTop, 0.0f, 0.0f, zero6, // bottom left
             0.0f, size.Y, 0.0f, 0.0f, 1.0f, // top left
-            border, size.Y, 0.0f, Zero3, 1.0f, // top right
-            border, size.Y - border, 0.0f, Zero3, Zero6 // bottom right
+            borderLeft, size.Y, 0.0f, zero3, 1.0f, // top right
+            borderLeft, size.Y - borderTop, 0.0f, zero3, zero6 // bottom right
         ];
         float[] topCenterBorderVertices =
         [
-            border, size.Y - border, 0.0f, Zero3, Zero6, // bottom left
-            border, size.Y, 0.0f, Zero3, 1.0f, // top left
-            size.X - border, size.Y, 0.0f, Zero6, 1.0f, // top right
-            size.X - border, size.Y - border, 0.0f, Zero6, Zero6 // bottom right
+            borderLeft, size.Y - borderTop, 0.0f, zero3, zero6, // bottom left
+            borderLeft, size.Y, 0.0f, zero3, 1.0f, // top left
+            size.X - borderRight, size.Y, 0.0f, zero6, 1.0f, // top right
+            size.X - borderRight, size.Y - borderTop, 0.0f, zero6, zero6 // bottom right
         ];
         float[] topRightBorderVertices =
         [
-            size.X - border, size.Y - border, 0.0f, Zero6, Zero6, // bottom left
-            size.X - border, size.Y, 0.0f, Zero6, 1.0f, // top left
+            size.X - borderRight, size.Y - borderTop, 0.0f, zero6, zero6, // bottom left
+            size.X - borderRight, size.Y, 0.0f, zero6, 1.0f, // top left
             size.X, size.Y, 0.0f, 1.0f, 1.0f, // top right
-            size.X, size.Y - border, 0.0f, 1.0f, Zero6 // bottom right
+            size.X, size.Y - borderTop, 0.0f, 1.0f, zero6 // bottom right
         ];
         float[] centerRightBorderVertices =
         [
-            size.X - border, border, 0.0f, Zero6, Zero3, // bottom left
-            size.X - border, size.Y - border, 0.0f, Zero6, Zero6, // top left
-            size.X, size.Y - border, 0.0f, 1.0f, Zero6, // top right
-            size.X, border, 0.0f, 1.0f, Zero3 // bottom right
+            size.X - borderRight, borderBottom, 0.0f, zero6, zero3, // bottom left
+            size.X - borderRight, size.Y - borderTop, 0.0f, zero6, zero6, // top left
+            size.X, size.Y - borderTop, 0.0f, 1.0f, zero6, // top right
+            size.X, borderBottom, 0.0f, 1.0f, zero3 // bottom right
         ];
         float[] bottomRightBorderVertices =
         [
-            size.X - border, 0.0f, 0.0f, Zero6, 0.0f, // bottom left
-            size.X - border, border, 0.0f, Zero6, Zero3, // top left
-            size.X, border, 0.0f, 1.0f, Zero3, // top right
+            size.X - borderRight, 0.0f, 0.0f, zero6, 0.0f, // bottom left
+            size.X - borderRight, borderBottom, 0.0f, zero6, zero3, // top left
+            size.X, borderBottom, 0.0f, 1.0f, zero3, // top right
             size.X, 0.0f, 0.0f, 1.0f, 0.0f // bottom right
         ];
         float[] bottomCenterBorderVertices =
         [
-            border, 0.0f, 0.0f, Zero3, 0.0f, // bottom left
-            border, border, 0.0f, Zero3, Zero3, // top left
-            size.X - border, border, 0.0f, Zero6, Zero3, // top right
-            size.X - border, 0.0f, 0.0f, Zero6, 0.0f // bottom right
+            borderLeft, 0.0f, 0.0f, zero3, 0.0f, // bottom left
+            borderLeft, borderBottom, 0.0f, zero3, zero3, // top left
+            size.X - borderRight, borderBottom, 0.0f, zero6, zero3, // top right
+            size.X - borderRight, 0.0f, 0.0f, zero6, 0.0f // bottom right
         ];
 
         indices =
