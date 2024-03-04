@@ -46,8 +46,8 @@ public class DemoScene : Scene
     protected override void OnWindowResize(Vector2i size)
     {
         _orthographicCamera.WindowResize(size);
-        _menuForm.Position = new Vector3(Size.X, Size.Y, 0) / 2;
-        _background.Size = size;
+        _menuForm.WindowResize(size);
+        _background.WindowResize(size);
     }
 
     protected override void OnUpdate(double elapsedSeconds)

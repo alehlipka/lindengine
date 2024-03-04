@@ -34,4 +34,9 @@ public class MenuForm : UiElement
         AddChildren(insideForm1);
         AddChildren(insideForm2);
     }
+
+    protected override void OnWindowResize(Vector2i size)
+    {
+        Position = new Vector3(size) / 2;
+    }
 }

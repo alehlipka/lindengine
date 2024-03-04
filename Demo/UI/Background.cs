@@ -4,10 +4,10 @@ using OpenTK.Mathematics;
 
 namespace Demo.UI;
 
-public class Background : UiElement
+public class Background(Vector2i size, ShaderProgram shader) : UiElement(size, shader)
 {
-    public Background(Vector2i size, ShaderProgram shader) : base(size, shader)
+    protected override void OnWindowResize(Vector2i size)
     {
-        
+        Size = size;
     }
 }
