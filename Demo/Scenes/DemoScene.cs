@@ -23,14 +23,17 @@ public class DemoScene : Scene
         ShaderProgram shader = Lind.Engine.Resources.Load<ShaderProgram>(Path.Combine("Assets", "Shaders", "GUI"));
         _orthographicCamera = new OrthographicCamera();
         
-        Texture menuFormTexture = Lind.Engine.Resources.Load<Texture>(Path.Combine("Assets", "UI", "Panels", "panel_11.png"));
-        _menuForm = new MenuForm(new Vector2i(400, 400), 16, menuFormTexture, shader)
+        _menuForm = new MenuForm(new Vector2i(400, 400), shader)
         {
             Origin = ElementOrigin.Center,
-            Position = new Vector3(Size.X, Size.Y, 0) / 2
+            Position = new Vector3(Size.X, Size.Y, 0) / 2,
+            Border = 16,
+            Texture = Lind.Engine.Resources.Load<Texture>(Path.Combine("Assets", "UI", "Panels", "panel_11.png"))
         };
-        Texture backgroundTexture = Lind.Engine.Resources.Load<Texture>(Path.Combine("Assets", "debug.jpg"));
-        _background = new Background(Size, 0, backgroundTexture, shader);
+        _background = new Background(Size, shader)
+        {
+            Texture = Lind.Engine.Resources.Load<Texture>(Path.Combine("Assets", "debug.jpg"))
+        };
     }
 
     protected override void OnLoad()

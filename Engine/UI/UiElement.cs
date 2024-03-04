@@ -14,7 +14,7 @@ public class UiElement
     private Vector2i _size;
     private bool _isLoaded;
     private float _border;
-    private Texture _texture;
+    private Texture? _texture;
     private readonly ModelMatrix _modelMatrix;
     private readonly BuffersContainer _buffersContainer;
     private readonly ShaderProgram _shader;
@@ -58,7 +58,7 @@ public class UiElement
         get => _modelMatrix.Scale;
         set => _modelMatrix.SetScale(value);
     }
-    public Texture Texture
+    public Texture? Texture
     {
         get => _texture;
         set => _texture = value;
@@ -76,11 +76,11 @@ public class UiElement
         }
     }
 
-    public UiElement(Vector2i size, float border, Texture texture, ShaderProgram shader)
+    public UiElement(Vector2i size, ShaderProgram shader)
     {
         _size = size;
-        _border = border;
-        _texture = texture;
+        _border = 0;
+        _texture = null;
         _shader = shader;
         Parent = null;
 
@@ -195,7 +195,7 @@ public class UiElement
     protected virtual void OnRender(Camera camera, double elapsedSeconds)
     {
         _shader.Use();
-        _texture.Use();
+        _texture?.Use();
         _shader.SetUniformData("viewMatrix", camera.ViewMatrix);
         _shader.SetUniformData("projectionMatrix", camera.ProjectionMatrix);
         _shader.SetUniformData("modelMatrix", _modelMatrix.GetMatrix());
@@ -205,7 +205,7 @@ public class UiElement
 
     protected virtual void OnUnload()
     {
-        _texture.Unload();
+        _texture?.Unload();
         _buffersContainer.Unload();
     }
 }
