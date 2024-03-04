@@ -22,11 +22,11 @@ public class DemoScene : Scene
         ShaderProgram shader = Lind.Engine.Resources.Load<ShaderProgram>(Path.Combine("Assets", "Shaders", "GUI"));
         _orthographicCamera = new OrthographicCamera();
         
-        Texture panel4 = Lind.Engine.Resources.Load<Texture>(Path.Combine("Assets", "UI", "Panels", "squareBlue.png"));
-        _menuForm = new MenuForm(new Vector2i(400, 400), 16, panel4, shader)
+        Texture menuFormTexture = Lind.Engine.Resources.Load<Texture>(Path.Combine("Assets", "UI", "Panels", "panel_11.png"));
+        _menuForm = new MenuForm(new Vector2i(400, 400), 16, menuFormTexture, shader)
         {
-            Origin = ElementOrigin.TopRight,
-            Position = new Vector3(Size.X - 20, Size.Y - 20, 0)
+            Origin = ElementOrigin.Center,
+            Position = new Vector3(Size.X, Size.Y, 0) / 2
         };
     }
 
@@ -39,7 +39,7 @@ public class DemoScene : Scene
     protected override void OnWindowResize(Vector2i size)
     {
         _orthographicCamera.WindowResize(size);
-        _menuForm.Position = new Vector3(Size.X - 20, Size.Y - 20, 0);
+        _menuForm.Position = new Vector3(Size.X, Size.Y, 0) / 2;
     }
 
     protected override void OnUpdate(double elapsedSeconds)
