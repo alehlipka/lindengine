@@ -22,7 +22,7 @@ public class DemoScene : Scene
         ShaderProgram shader = Lind.Engine.Resources.Load<ShaderProgram>(Path.Combine("Assets", "Shaders", "GUI"));
         _orthographicCamera = new OrthographicCamera();
         
-        Texture panel4 = Lind.Engine.Resources.Load<Texture>(Path.Combine("Assets", "UI", "Panels", "panel_4.png"));
+        Texture panel4 = Lind.Engine.Resources.Load<Texture>(Path.Combine("Assets", "UI", "Panels", "squareBlue.png"));
         _menuForm = new MenuForm(new Vector2i(400, 400), 16, panel4, shader)
         {
             Origin = ElementOrigin.TopRight,
