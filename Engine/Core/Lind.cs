@@ -58,6 +58,13 @@ public sealed class Lind
         Window = new Window(gameWindowSettings, nativeWindowSettings);
     }
 
+    public void ToggleFullScreen()
+    {
+        if (Window == null) return;
+
+        Window.WindowState = Window.IsFullscreen ? WindowState.Normal : WindowState.Fullscreen;
+    }
+
     /// <summary>
     /// Run game loop
     /// </summary>

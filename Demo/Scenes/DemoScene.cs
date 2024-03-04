@@ -57,6 +57,10 @@ public class DemoScene : Scene
         {
             GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Line);
         }
+        else if (InputManager.IsKeyboardKeyPressed(Keys.F))
+        {
+            Lind.Engine.ToggleFullScreen();
+        }
     }
 
     protected override void OnRender(double elapsedSeconds)
