@@ -23,7 +23,7 @@ public class DemoScene : Scene
         ShaderProgram shader = Lind.Engine.Resources.Load<ShaderProgram>(Path.Combine("Assets", "Shaders", "GUI"));
         _orthographicCamera = new OrthographicCamera();
         
-        _menuForm = new MenuForm(new Vector2i(400, 500), shader);
+        _menuForm = new MenuForm(new Vector2i(400, 200), shader);
         _background = new Background(Size, shader);
     }
 

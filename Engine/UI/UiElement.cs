@@ -9,8 +9,6 @@ namespace Lindengine.UI;
 
 public class UiElement
 {
-    public UiElement? Parent;
-    
     private Vector2i _size;
     private bool _isLoaded;
     private Vector4 _border;
@@ -82,7 +80,6 @@ public class UiElement
         _border = Vector4.Zero;
         _texture = null;
         _shader = shader;
-        Parent = null;
 
         _isLoaded = false;
         _buffersContainer = new BuffersContainer();
@@ -105,14 +102,12 @@ public class UiElement
     {
         if (_children.Contains(children)) return;
         _children.Add(children);
-        children.Parent = this;
         children._modelMatrix.SetParentMatrix(_modelMatrix.GetMatrix());
     }
 
     public void RemoveChildren(UiElement children)
     {
         children._modelMatrix.SetParentMatrix(Matrix4.Identity);
-        children.Parent = null;
         _children.Remove(children);
     }
 
@@ -127,6 +122,11 @@ public class UiElement
         UnloadEvent += OnUnload;
 
         LoadEvent?.Invoke();
+        
+        UtilityFunctions.GetBorderedVertices(_size, _border, out uint[] indices, out float[] vertices);
+        _buffersContainer.SetVertices(vertices);
+        _buffersContainer.SetIndices(indices);
+        _buffersContainer.LinkShaderAttributes(_shader);
         
         _children.ForEach(child => child.Load());
 
@@ -157,6 +157,14 @@ public class UiElement
         
         RenderEvent?.Invoke(camera, elapsedSeconds);
         
+        _shader.Use();
+        _texture?.Use();
+        _shader.SetUniformData("viewMatrix", camera.ViewMatrix);
+        _shader.SetUniformData("projectionMatrix", camera.ProjectionMatrix);
+        _shader.SetUniformData("modelMatrix", _modelMatrix.GetMatrix());
+        
+        _buffersContainer.Draw();
+        
         _children.ForEach(child => child.Render(camera, elapsedSeconds));
     }
 
@@ -171,41 +179,17 @@ public class UiElement
         UnloadEvent?.Invoke();
         UnloadEvent -= OnUnload;
         
+        _texture?.Unload();
+        _buffersContainer.Unload();
+        
         _children.ForEach(child => child.Unload());
 
         _isLoaded = false;
     }
 
-    protected virtual void OnLoad()
-    {
-        UtilityFunctions.GetBorderedVertices(_size, _border, out uint[] indices, out float[] vertices);
-        _buffersContainer.SetVertices(vertices);
-        _buffersContainer.SetIndices(indices);
-        _buffersContainer.LinkShaderAttributes(_shader);
-    }
-
-    protected virtual void OnWindowResize(Vector2i size)
-    {
-    }
-
-    protected virtual void OnUpdate(double elapsedSeconds)
-    {
-    }
-
-    protected virtual void OnRender(Camera camera, double elapsedSeconds)
-    {
-        _shader.Use();
-        _texture?.Use();
-        _shader.SetUniformData("viewMatrix", camera.ViewMatrix);
-        _shader.SetUniformData("projectionMatrix", camera.ProjectionMatrix);
-        _shader.SetUniformData("modelMatrix", _modelMatrix.GetMatrix());
-        
-        _buffersContainer.Draw();
-    }
-
-    protected virtual void OnUnload()
-    {
-        _texture?.Unload();
-        _buffersContainer.Unload();
-    }
+    protected virtual void OnLoad() { }
+    protected virtual void OnWindowResize(Vector2i size) { }
+    protected virtual void OnUpdate(double elapsedSeconds) { }
+    protected virtual void OnRender(Camera camera, double elapsedSeconds) { }
+    protected virtual void OnUnload() { }
 }

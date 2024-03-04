@@ -28,6 +28,7 @@ public sealed class TextBuilder()
         _lineNumber = 0;
         _bitmapBytes = new byte[drawSize.X * drawSize.Y];
         _cursorShift = Vector2i.Zero;
+        _maxLineWidth = 0;
         GetMaxLineWidth(text, drawSize);
 
         if (textAlign == TextAlign.Center)
