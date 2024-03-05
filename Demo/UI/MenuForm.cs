@@ -51,7 +51,7 @@ public class MenuForm : UiElement
 
     protected override void OnUpdate(double elapsedSeconds)
     {
-        _zRot += MathHelper.DegreesToRadians(10.0f * (float)elapsedSeconds);
+        _zRot += MathHelper.DegreesToRadians(5.0f * (float)elapsedSeconds);
         Angle = new Vector3(0, 0, _zRot);
     }
 

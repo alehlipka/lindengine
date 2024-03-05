@@ -25,7 +25,7 @@ public class DemoScene : Scene
         
         _menuForm = new MenuForm(new Vector2i(300, 200), shader);
         _background = new Background(Size, shader);
-        _pointer = new Pointer(new Vector2i(23, 31), shader);
+        _pointer = new Pointer(new Vector2i(15, 21), shader);
     }
 
     protected override void OnLoad()
@@ -69,15 +69,10 @@ public class DemoScene : Scene
         }
         else if (InputManager.IsKeyboardKeyPressed(Keys.Z))
         {
-            _background.IsDebug = true;
-            _menuForm.IsDebug = true;
-            _pointer.IsDebug = true;
-        }
-        else if (InputManager.IsKeyboardKeyPressed(Keys.X))
-        {
-            _background.IsDebug = false;
-            _menuForm.IsDebug = false;
-            _pointer.IsDebug = false;
+            bool isDebug = !_background.IsDebug;
+            _background.IsDebug = isDebug;
+            _menuForm.IsDebug = isDebug;
+            _pointer.IsDebug = isDebug;
         }
     }
 

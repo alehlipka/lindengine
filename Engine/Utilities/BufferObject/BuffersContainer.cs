@@ -24,10 +24,10 @@ public class BuffersContainer
         _vertexArray.LinkAttributes(_vertexBuffer.Name, _elementBuffer.Name, shader);
     }
     
-    public void Draw()
+    public void Draw(PrimitiveType primitiveType = PrimitiveType.Triangles)
     {
         _vertexArray.Use();
-        GL.DrawElements(PrimitiveType.Triangles, _elementBuffer.Indices.Length, DrawElementsType.UnsignedInt, 0);
+        GL.DrawElements(primitiveType, _elementBuffer.Indices.Length, DrawElementsType.UnsignedInt, 0);
     }
 
     public void Unload()
