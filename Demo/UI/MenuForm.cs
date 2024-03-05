@@ -9,7 +9,7 @@ namespace Demo.UI;
 
 public class MenuForm : UiElement
 {
-    private float _zRot = 0;
+    private float _zRot;
     
     public MenuForm(Vector2i size, ShaderProgram shader) : base(size, shader)
     {
@@ -43,7 +43,7 @@ public class MenuForm : UiElement
         {
             Position = new Vector3(button.Size.X / 2.0f, button.Size.Y / 2.0f, 0),
             Origin = ElementOrigin.Center,
-            Texture = new Texture(textBuilder.Draw("Exit", font, 22, Color4.DarkGray, textSize, TextAlign.Center))
+            Texture = new Texture(textBuilder.Draw("Exit", font, fontSize, Color4.DarkGray, textSize, TextAlign.Center))
         };
         button.AddChildren(buttonTitle);
         
@@ -53,7 +53,7 @@ public class MenuForm : UiElement
 
     protected override void OnUpdate(double elapsedSeconds)
     {
-        _zRot += MathHelper.DegreesToRadians(5.0f * (float)elapsedSeconds);
+        _zRot += MathHelper.DegreesToRadians(25.0f * (float)elapsedSeconds);
         Angle = new Vector3(0, 0, _zRot);
     }
 

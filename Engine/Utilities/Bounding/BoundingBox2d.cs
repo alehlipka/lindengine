@@ -54,4 +54,10 @@ public class BoundingBox2d
         _buffersContainer.LinkShaderAttributes(shader);
         _buffersContainer.Draw(PrimitiveType.LineLoop);
     }
+
+    public void Unload()
+    {
+        _boundingTexture.Unload();
+        _buffersContainer.Unload();
+    }
 }

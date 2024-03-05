@@ -17,6 +17,7 @@ public class DemoScene : Scene
     private readonly MenuForm _menuForm;
     private readonly Background _background;
     private readonly Pointer _pointer;
+    private readonly InfoText _infoText;
 
     public DemoScene(string name, Vector2i windowSize) : base(name, windowSize)
     {
@@ -26,6 +27,7 @@ public class DemoScene : Scene
         _menuForm = new MenuForm(new Vector2i(300, 200), shader);
         _background = new Background(Size, shader);
         _pointer = new Pointer(new Vector2i(23, 31), shader);
+        _infoText = new InfoText(Size, shader);
     }
 
     protected override void OnLoad()
@@ -36,6 +38,7 @@ public class DemoScene : Scene
         _menuForm.Load();
         _background.Load();
         _pointer.Load();
+        _infoText.Load();
     }
 
     protected override void OnWindowResize(Vector2i size)
@@ -44,12 +47,14 @@ public class DemoScene : Scene
         _menuForm.WindowResize(size);
         _background.WindowResize(size);
         _pointer.WindowResize(size);
+        _infoText.WindowResize(size);
     }
 
     protected override void OnUpdate(double elapsedSeconds)
     {
         _menuForm.Update(elapsedSeconds);
         _pointer.Update(elapsedSeconds);
+        _infoText.Update(elapsedSeconds);
 
         if (InputManager.IsKeyboardKeyPressed(Keys.Escape))
         {
@@ -81,6 +86,7 @@ public class DemoScene : Scene
         _orthographicCamera.Render(elapsedSeconds);
         GL.Disable(EnableCap.DepthTest);
         _background.Render(_orthographicCamera, elapsedSeconds);
+        _infoText.Render(_orthographicCamera, elapsedSeconds);
         _menuForm.Render(_orthographicCamera, elapsedSeconds);
         _pointer.Render(_orthographicCamera, elapsedSeconds);
         GL.Enable(EnableCap.DepthTest);
@@ -92,5 +98,6 @@ public class DemoScene : Scene
         _menuForm.Unload();
         _background.Unload();
         _pointer.Unload();
+        _infoText.Unload();
     }
 }

@@ -226,6 +226,7 @@ public class UiElement
         
         _texture?.Unload();
         _buffersContainer.Unload();
+        _boundingBox.Unload();
         
         _children.ForEach(child => child.Unload());
 
