@@ -1,8 +1,10 @@
-﻿using Lindengine.Graphics;
+﻿using Lindengine.Core;
+using Lindengine.Graphics;
 using Lindengine.Graphics.Shader;
 using Lindengine.Output.Camera;
 using Lindengine.Utilities;
 using Lindengine.Utilities.BufferObject;
+using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 
 namespace Lindengine.UI;
@@ -11,8 +13,10 @@ public class UiElement
 {
     private Vector2i _size;
     private bool _isLoaded;
+    private bool _isDebug;
     private Vector4 _border;
     private Texture? _texture;
+    private readonly Texture? _boundingTexture;
     private readonly ModelMatrix _modelMatrix;
     private readonly BuffersContainer _buffersContainer;
     private readonly ShaderProgram _shader;
@@ -31,7 +35,16 @@ public class UiElement
         {
             _size = value;
             _modelMatrix.SetOrigin(_modelMatrix.Origin, _size);
-            UtilityFunctions.GetBorderedVertices(_size, _border, out uint[] indices, out float[] vertices);
+            uint[] indices;
+            float[] vertices;
+            if (_border == Vector4.Zero)
+            {
+                UtilityFunctions.GetVertices(_size, out indices, out vertices);
+            }
+            else
+            {
+                UtilityFunctions.GetBorderedVertices(_size, _border, out indices, out vertices);                
+            }
             _buffersContainer.SetIndices(indices);
             _buffersContainer.SetVertices(vertices);
         }
@@ -68,9 +81,27 @@ public class UiElement
         set
         {
             _border = value;
-            UtilityFunctions.GetBorderedVertices(_size, _border, out uint[] indices, out float[] vertices);
+            uint[] indices;
+            float[] vertices;
+            if (_border == Vector4.Zero)
+            {
+                UtilityFunctions.GetVertices(_size, out indices, out vertices);
+            }
+            else
+            {
+                UtilityFunctions.GetBorderedVertices(_size, _border, out indices, out vertices);                
+            }
             _buffersContainer.SetIndices(indices);
             _buffersContainer.SetVertices(vertices);
+        }
+    }
+    public bool IsDebug
+    {
+        get => _isDebug;
+        set
+        {
+            _isDebug = value;
+            _children.ForEach(child => child.IsDebug = _isDebug);
         }
     }
 
@@ -79,6 +110,7 @@ public class UiElement
         _size = size;
         _border = Vector4.Zero;
         _texture = null;
+        _boundingTexture = Lind.Engine.Resources.Load<Texture>(Path.Combine("Assets", "green.jpg"));
         _shader = shader;
 
         _isLoaded = false;
@@ -123,7 +155,16 @@ public class UiElement
 
         LoadEvent?.Invoke();
         
-        UtilityFunctions.GetBorderedVertices(_size, _border, out uint[] indices, out float[] vertices);
+        uint[] indices;
+        float[] vertices;
+        if (_border == Vector4.Zero)
+        {
+            UtilityFunctions.GetVertices(_size, out indices, out vertices);
+        }
+        else
+        {
+            UtilityFunctions.GetBorderedVertices(_size, _border, out indices, out vertices);                
+        }
         _buffersContainer.SetVertices(vertices);
         _buffersContainer.SetIndices(indices);
         _buffersContainer.LinkShaderAttributes(_shader);
@@ -164,6 +205,14 @@ public class UiElement
         _shader.SetUniformData("modelMatrix", _modelMatrix.GetMatrix());
         
         _buffersContainer.Draw();
+
+        if (_isDebug)
+        {
+            GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Line);
+            _boundingTexture?.Use();
+            _buffersContainer.Draw();
+            GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
+        }
         
         _children.ForEach(child => child.Render(camera, elapsedSeconds));
     }

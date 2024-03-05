@@ -9,6 +9,8 @@ namespace Demo.UI;
 
 public class MenuForm : UiElement
 {
+    private float _zRot = 0;
+    
     public MenuForm(Vector2i size, ShaderProgram shader) : base(size, shader)
     {
         Origin = ElementOrigin.Center;
@@ -37,7 +39,7 @@ public class MenuForm : UiElement
         textSize = new Vector2i(205, 22);
         UiElement buttonTitle = new(textSize, shader)
         {
-            Position = new Vector3(104.0f, 15.0f, 0),
+            Position = new Vector3(button.Size.X / 2.0f, button.Size.Y / 2.0f, 0),
             Origin = ElementOrigin.Center,
             Texture = new Texture(textBuilder.Draw("Exit", font, 22, Color4.DarkGray, textSize, TextAlign.Center))
         };
@@ -45,6 +47,12 @@ public class MenuForm : UiElement
         
         AddChildren(title);
         AddChildren(button);
+    }
+
+    protected override void OnUpdate(double elapsedSeconds)
+    {
+        _zRot += 20.0f * (float)elapsedSeconds;
+        Angle = new Vector3(0, 0, MathHelper.DegreesToRadians(_zRot));
     }
 
     protected override void OnWindowResize(Vector2i size)

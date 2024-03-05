@@ -62,6 +62,19 @@ internal static class UtilityFunctions
         return rgbaData;
     }
 
+    public static void GetVertices(Vector2i size, out uint[] indices, out float[] vertices)
+    {
+        indices = [0, 3, 2, 0, 2, 1];
+
+        vertices =
+        [
+            0.0f, 0.0f, 0.0f, 0.0f, 0.0f, // bottom left
+            0.0f, size.Y, 0.0f, 0.0f, 1.0f, // top left
+            size.X, size.Y, 0.0f, 1.0f, 1.0f, // top right
+            size.X, 0.0f, 0.0f, 1.0f, 0.0f // bottom right
+        ];
+    }
+
     public static void GetBorderedVertices(Vector2i size, Vector4 border, out uint[] indices, out float[] vertices)
     {
         const float zero3 = 1.0f / 3.0f;

@@ -71,6 +71,6 @@ public class ModelMatrix
 
     public Matrix4 GetMatrix()
     {
-        return _parentMatrix * (_originMatrix * _scaleMatrix * _rotationMatrix * _translationMatrix);
+        return _originMatrix * _scaleMatrix * _rotationMatrix * _translationMatrix * _parentMatrix;
     }
 }

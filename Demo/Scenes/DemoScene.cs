@@ -1,11 +1,9 @@
 ﻿using Demo.UI;
 using Lindengine.Core;
-using Lindengine.Graphics;
 using Lindengine.Graphics.Shader;
 using Lindengine.Input;
 using Lindengine.Output.Camera;
 using Lindengine.Scenes;
-using Lindengine.UI;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.GraphicsLibraryFramework;
@@ -23,7 +21,7 @@ public class DemoScene : Scene
         ShaderProgram shader = Lind.Engine.Resources.Load<ShaderProgram>(Path.Combine("Assets", "Shaders", "GUI"));
         _orthographicCamera = new OrthographicCamera();
         
-        _menuForm = new MenuForm(new Vector2i(400, 200), shader);
+        _menuForm = new MenuForm(new Vector2i(300, 200), shader);
         _background = new Background(Size, shader);
     }
 
@@ -60,6 +58,16 @@ public class DemoScene : Scene
         else if (InputManager.IsKeyboardKeyPressed(Keys.F))
         {
             Lind.Engine.ToggleFullScreen();
+        }
+        else if (InputManager.IsKeyboardKeyPressed(Keys.Z))
+        {
+            _background.IsDebug = true;
+            _menuForm.IsDebug = true;
+        }
+        else if (InputManager.IsKeyboardKeyPressed(Keys.X))
+        {
+            _background.IsDebug = false;
+            _menuForm.IsDebug = false;
         }
     }
 
