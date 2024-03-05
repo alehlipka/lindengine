@@ -208,10 +208,12 @@ public class UiElement
 
         if (_isDebug)
         {
+            GL.Disable(EnableCap.CullFace);
             GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Line);
             _boundingTexture?.Use();
             _buffersContainer.Draw();
             GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
+            GL.Enable(EnableCap.CullFace);
         }
         
         _children.ForEach(child => child.Render(camera, elapsedSeconds));

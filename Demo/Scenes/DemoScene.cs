@@ -74,8 +74,10 @@ public class DemoScene : Scene
     protected override void OnRender(double elapsedSeconds)
     {
         _orthographicCamera.Render(elapsedSeconds);
+        GL.Disable(EnableCap.DepthTest);
         _background.Render(_orthographicCamera, elapsedSeconds);
         _menuForm.Render(_orthographicCamera, elapsedSeconds);
+        GL.Enable(EnableCap.DepthTest);
     }
 
     protected override void OnUnload()

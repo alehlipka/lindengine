@@ -11,6 +11,7 @@ internal class Window(GameWindowSettings gameWindowSettings, NativeWindowSetting
 {
     protected override void OnLoad()
     {
+        GL.Enable(EnableCap.DepthTest);
         GL.Enable(EnableCap.CullFace);
         GL.Enable(EnableCap.Multisample);
         GL.Enable(EnableCap.Blend);
