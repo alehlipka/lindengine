@@ -40,7 +40,7 @@ public sealed class Lind
         {
             Title = title,
             ClientSize = new Vector2i(size.X, size.Y),
-            Vsync = VSyncMode.Off,
+            Vsync = VSyncMode.On,
             WindowBorder = WindowBorder.Resizable,
             IsEventDriven = false,
             API = ContextAPI.OpenGL,

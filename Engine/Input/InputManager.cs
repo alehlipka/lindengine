@@ -1,5 +1,6 @@
 ﻿using Lindengine.Core;
 using OpenTK.Mathematics;
+using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Common.Input;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 
@@ -50,6 +51,14 @@ public static class InputManager
     {
         return Lind.Engine.Window?.KeyboardState
                ?? throw new NullReferenceException("Window is not ready yet");
+    }
+
+    public static void SetCursorState(CursorState state)
+    {
+        if (Lind.Engine.Window != null)
+        {
+            Lind.Engine.Window.CursorState = state;
+        }
     }
 
     public static Vector2 MousePosition()

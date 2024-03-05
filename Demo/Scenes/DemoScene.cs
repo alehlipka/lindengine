@@ -6,6 +6,7 @@ using Lindengine.Output.Camera;
 using Lindengine.Scenes;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
+using OpenTK.Windowing.Common;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 
 namespace Demo.Scenes;
@@ -15,6 +16,7 @@ public class DemoScene : Scene
     private readonly OrthographicCamera _orthographicCamera;
     private readonly MenuForm _menuForm;
     private readonly Background _background;
+    private readonly Pointer _pointer;
 
     public DemoScene(string name, Vector2i windowSize) : base(name, windowSize)
     {
@@ -23,13 +25,17 @@ public class DemoScene : Scene
         
         _menuForm = new MenuForm(new Vector2i(300, 200), shader);
         _background = new Background(Size, shader);
+        _pointer = new Pointer(new Vector2i(23, 31), shader);
     }
 
     protected override void OnLoad()
     {
+        InputManager.SetCursorState(CursorState.Hidden);
+        
         _orthographicCamera.Load();
         _menuForm.Load();
         _background.Load();
+        _pointer.Load();
     }
 
     protected override void OnWindowResize(Vector2i size)
@@ -37,11 +43,13 @@ public class DemoScene : Scene
         _orthographicCamera.WindowResize(size);
         _menuForm.WindowResize(size);
         _background.WindowResize(size);
+        _pointer.WindowResize(size);
     }
 
     protected override void OnUpdate(double elapsedSeconds)
     {
         _menuForm.Update(elapsedSeconds);
+        _pointer.Update(elapsedSeconds);
 
         if (InputManager.IsKeyboardKeyPressed(Keys.Escape))
         {
@@ -63,11 +71,13 @@ public class DemoScene : Scene
         {
             _background.IsDebug = true;
             _menuForm.IsDebug = true;
+            _pointer.IsDebug = true;
         }
         else if (InputManager.IsKeyboardKeyPressed(Keys.X))
         {
             _background.IsDebug = false;
             _menuForm.IsDebug = false;
+            _pointer.IsDebug = false;
         }
     }
 
@@ -77,6 +87,7 @@ public class DemoScene : Scene
         GL.Disable(EnableCap.DepthTest);
         _background.Render(_orthographicCamera, elapsedSeconds);
         _menuForm.Render(_orthographicCamera, elapsedSeconds);
+        _pointer.Render(_orthographicCamera, elapsedSeconds);
         GL.Enable(EnableCap.DepthTest);
     }
 
@@ -85,5 +96,6 @@ public class DemoScene : Scene
         _orthographicCamera.Unload();
         _menuForm.Unload();
         _background.Unload();
+        _pointer.Unload();
     }
 }
