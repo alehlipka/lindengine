@@ -25,7 +25,7 @@ public class DemoScene : Scene
         
         _menuForm = new MenuForm(new Vector2i(300, 200), shader);
         _background = new Background(Size, shader);
-        _pointer = new Pointer(new Vector2i(15, 21), shader);
+        _pointer = new Pointer(new Vector2i(23, 31), shader);
     }
 
     protected override void OnLoad()

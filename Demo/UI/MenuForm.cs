@@ -17,6 +17,7 @@ public class MenuForm : UiElement
         Position = new Vector3(Size.X, Size.Y, 0) / 2;
         Border = new Vector4(120, 0, 0, 0);
         Texture = Lind.Engine.Resources.Load<Texture>(Path.Combine("Assets", "UI", "Panel", "form.jpg"));
+        IsClickable = true;
         Font font = Lind.Engine.Resources.Load<Font>(Path.Combine("Assets", "Fonts", "OpenSansBold.ttf"));
         const int fontSize = 22;
         TextBuilder textBuilder = new();
@@ -33,6 +34,7 @@ public class MenuForm : UiElement
         {
             Position = new Vector3(Size.X / 2.0f, 23, 0),
             Origin = ElementOrigin.Center,
+            IsClickable = true,
             Texture = Lind.Engine.Resources.Load<Texture>(Path.Combine("Assets", "UI", "Panel", "button.png"))
         };
         

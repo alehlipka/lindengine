@@ -1,24 +1,25 @@
-﻿using Lindengine.Core;
-using Lindengine.Graphics;
+﻿using Lindengine.Graphics;
 using Lindengine.Graphics.Shader;
 using Lindengine.Output.Camera;
 using Lindengine.Utilities;
+using Lindengine.Utilities.Bounding;
 using Lindengine.Utilities.BufferObject;
-using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 
 namespace Lindengine.UI;
 
 public class UiElement
 {
+    public bool IsClickable;
+    
     private Vector2i _size;
     private bool _isLoaded;
     private bool _isDebug;
     private Vector4 _border;
     private Texture? _texture;
-    private readonly Texture? _boundingTexture;
     private readonly ModelMatrix _modelMatrix;
     private readonly BuffersContainer _buffersContainer;
+    private readonly BoundingBox2d _boundingBox;
     private readonly ShaderProgram _shader;
     private readonly List<UiElement> _children = [];
     
@@ -110,12 +111,12 @@ public class UiElement
         _size = size;
         _border = Vector4.Zero;
         _texture = null;
-        _boundingTexture = Lind.Engine.Resources.Load<Texture>(Path.Combine("Assets", "green.jpg"));
         _shader = shader;
 
         _isLoaded = false;
         _buffersContainer = new BuffersContainer();
         _modelMatrix = new ModelMatrix();
+        _boundingBox = new BoundingBox2d();
         
         _modelMatrix.SetOrigin(ElementOrigin.BottomLeft, _size);
         _modelMatrix.SetTranslation(Vector3.Zero);
@@ -127,6 +128,7 @@ public class UiElement
 
     private void OnModelMatrixChanged()
     {
+        _boundingBox.Calculate(_modelMatrix.GetMatrix(), _size);
         _children.ForEach(child => child._modelMatrix.SetParentMatrix(_modelMatrix.GetMatrix()));
     }
 
@@ -205,16 +207,8 @@ public class UiElement
         _shader.SetUniformData("modelMatrix", _modelMatrix.GetMatrix());
         
         _buffersContainer.Draw();
-
-        if (_isDebug)
-        {
-            GL.Disable(EnableCap.CullFace);
-            GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Line);
-            _boundingTexture?.Use();
-            _buffersContainer.Draw();
-            GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
-            GL.Enable(EnableCap.CullFace);
-        }
+        
+        if (_isDebug && IsClickable) _boundingBox.Render(_shader);
         
         _children.ForEach(child => child.Render(camera, elapsedSeconds));
     }

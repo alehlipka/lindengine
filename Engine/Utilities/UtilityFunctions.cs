@@ -61,6 +61,19 @@ internal static class UtilityFunctions
 
         return rgbaData;
     }
+    
+    public static void GetBoundingVertices(Vector3 min, Vector3 max, out uint[] indices, out float[] vertices)
+    {
+        indices = [0, 3, 2, 0, 2, 1];
+
+        vertices =
+        [
+            min.X, min.Y, 0.0f, 0.0f, 0.0f, // bottom left
+            min.X, max.Y, 0.0f, 0.0f, 1.0f, // top left
+            max.X, max.Y, 0.0f, 1.0f, 1.0f, // top right
+            max.X, min.Y, 0.0f, 1.0f, 0.0f // bottom right
+        ];
+    }
 
     public static void GetVertices(Vector2i size, out uint[] indices, out float[] vertices)
     {

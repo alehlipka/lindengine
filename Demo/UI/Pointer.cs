@@ -12,6 +12,7 @@ public class Pointer : UiElement
 {
     public Pointer(Vector2i size, ShaderProgram shader) : base(size, shader)
     {
+        Scale = new Vector3(0.6f, 0.6f, 1);
         Origin = ElementOrigin.TopLeft;
         Vector2i mousePosition = InputManager.MousePositionBottomLeft();
         Position = new Vector3(mousePosition);
