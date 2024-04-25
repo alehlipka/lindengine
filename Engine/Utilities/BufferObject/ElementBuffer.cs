@@ -16,11 +16,11 @@ internal class ElementBuffer
     {
         if (indices.Length != Indices.Length)
         {
-            GL.NamedBufferData(Name, indices.Length * sizeof(float), indices, BufferUsageHint.StaticDraw);
+            GL.NamedBufferData(Name, indices.Length * sizeof(uint), indices, BufferUsageHint.StaticDraw);
         }
         else
         {
-            GL.NamedBufferSubData(Name, 0, indices.Length * sizeof(float), indices);
+            GL.NamedBufferSubData(Name, 0, indices.Length * sizeof(uint), indices);
         }
         
         Indices = indices;
