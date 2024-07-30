@@ -1,7 +1,8 @@
+using Lindengine.Framework.Debug;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 
-namespace lindengine.framework.Windowing;
+namespace Lindengine.Framework.Windowing;
 
 public class Window : GameWindow
 {
@@ -13,6 +14,6 @@ public class Window : GameWindow
             Vsync = isVSyncEnabled ? VSyncMode.On : VSyncMode.Off
         })
     {
-        
+        GLDebugger.Initialize();
     }
 }

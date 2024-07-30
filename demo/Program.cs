@@ -1,6 +1,6 @@
-﻿using lindengine.framework.Windowing;
+﻿using Lindengine.Framework.Windowing;
 
-namespace lindengine.demo;
+namespace Lindengine.Demo;
 
 class Program
 {
