@@ -12,18 +12,23 @@ internal static class GLDebugger
         GL.Enable(EnableCap.DebugOutput);
         GLDebugProc debugProc = DebugCallback;
         GL.DebugMessageCallback(debugProc, nint.Zero);
-        
+
+        Console.ForegroundColor = ConsoleColor.Green;
         Console.WriteLine("OpenGL debug message callback initialized");
+        Console.ResetColor();
     }
 
     private static void DebugCallback(DebugSource source, DebugType type, uint id, DebugSeverity severity, int length,
         nint message, nint userParam)
     {
         string messageString = Marshal.PtrToStringAnsi(message, length);
-        Console.WriteLine("OpenGL Debug Info");
-        Console.WriteLine($"Source: {source}");
-        Console.WriteLine($"Type: {type}");
-        Console.WriteLine($"Severity: {severity}");
+        if (type == DebugType.DebugTypeError || severity == DebugSeverity.DebugSeverityHigh)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+        }
+
+        Console.WriteLine($"[{source}] [{type}] [{severity}]");
         Console.WriteLine(messageString);
+        Console.ResetColor();
     }
 }
