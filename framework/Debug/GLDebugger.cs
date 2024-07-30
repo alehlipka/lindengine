@@ -4,6 +4,7 @@ using OpenTK.Graphics.OpenGL;
 
 namespace Lindengine.Framework.Debug;
 
+// ReSharper disable once InconsistentNaming
 internal static class GLDebugger
 {
     [Conditional("DEBUG")]
@@ -22,10 +23,14 @@ internal static class GLDebugger
         nint message, nint userParam)
     {
         string messageString = Marshal.PtrToStringAnsi(message, length);
-        if (type == DebugType.DebugTypeError || severity == DebugSeverity.DebugSeverityHigh)
+        ConsoleColor defaultColor = Console.ForegroundColor;
+        Console.ForegroundColor = type switch
         {
-            Console.ForegroundColor = ConsoleColor.Red;
-        }
+            DebugType.DebugTypeError => ConsoleColor.Red,
+            DebugType.DebugTypePerformance => ConsoleColor.Yellow,
+            DebugType.DebugTypePortability => ConsoleColor.Blue,
+            _ => defaultColor
+        };
 
         Console.WriteLine($"[{source}] [{type}] [{severity}]");
         Console.WriteLine(messageString);

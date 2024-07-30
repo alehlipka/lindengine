@@ -8,7 +8,9 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="ImGui.NET" Version="1.90.9.1" />
       <PackageReference Include="OpenTK" Version="5.0.0-pre.10" />
+      <PackageReference Include="StbImageSharp" Version="2.27.14" />
     </ItemGroup>
 
 </Project>
