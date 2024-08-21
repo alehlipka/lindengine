@@ -13,41 +13,51 @@ public class Window : GameWindow
         {
             APIVersion = new Version(4, 6),
             Title = title,
-            Vsync = isVSyncEnabled ? VSyncMode.On : VSyncMode.Off
+            Vsync = isVSyncEnabled ? VSyncMode.On : VSyncMode.Off,
+            NumberOfSamples = 4
         })
     {
+        GL.Enable(EnableCap.CullFace);
+        GL.Enable(EnableCap.Multisample);
+        GL.Enable(EnableCap.Blend);
+        GL.FrontFace(FrontFaceDirection.Ccw);
+        GL.CullFace(TriangleFace.Back);
+        GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
+        
         GLDebugger.Initialize();
-        
-        int VAO = GL.CreateVertexArray();
-        GL.BindVertexArray(VAO);
 
-        string vertexShaderCode = @"
-        #version 460 core
-        out vec3 color;
-        const vec2 pos[3] = vec2[3] (
-            vec2(-0.6, -0.4),
-            vec2(0.6, -0.4),
-            vec2(0.0, 0.6)
-        );
-        const vec3 col[3] = vec3[3] (
-            vec3(1.0, 0.0, 0.0),
-            vec3(0.0, 1.0, 0.0),
-            vec3(0.0, 0.0, 1.0)
-        );
-        void main() {
-            gl_Position = vec4(pos[gl_VertexID], 0.0, 1.0);
-            color = col[gl_VertexID];
-        }
-        ";
-        
-        string fragmentShaderCode = @"
-        #version 460 core
-        in vec3 color;
-        out vec4 out_FragColor;
-        void main() {
-            out_FragColor = vec4(color, 1.0);
-        }
-        ";
+        int vao = GL.CreateVertexArray();
+        GL.BindVertexArray(vao);
+
+        const string vertexShaderCode =
+            """
+            #version 460 core
+            out vec3 color;
+            const vec2 pos[3] = vec2[3] (
+                vec2(-0.6, -0.4),
+                vec2(0.6, -0.4),
+                vec2(0.0, 0.6)
+            );
+            const vec3 col[3] = vec3[3] (
+                vec3(1.0, 0.0, 0.0),
+                vec3(0.0, 1.0, 0.0),
+                vec3(0.0, 0.0, 1.0)
+            );
+            void main() {
+                gl_Position = vec4(pos[gl_VertexID], 0.0, 1.0);
+                color = col[gl_VertexID];
+            }
+            """;
+
+        const string fragmentShaderCode =
+            """
+            #version 460 core
+            in vec3 color;
+            out vec4 out_FragColor;
+            void main() {
+              out_FragColor = vec4(color, 1.0);
+            }
+            """;
 
         int vertexShader = GL.CreateShader(ShaderType.VertexShader);
         GL.ShaderSource(vertexShader, vertexShaderCode);
