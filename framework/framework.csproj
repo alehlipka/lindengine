@@ -9,6 +9,7 @@
 
     <ItemGroup>
       <PackageReference Include="ImGui.NET" Version="1.90.9.1" />
+      <PackageReference Include="Ninject" Version="3.3.6" />
       <PackageReference Include="OpenTK" Version="5.0.0-pre.11" />
       <PackageReference Include="StbImageSharp" Version="2.27.14" />
     </ItemGroup>

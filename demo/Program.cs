@@ -1,11 +1,14 @@
-﻿using Lindengine.Framework.Windowing;
+﻿using Lindengine.Framework;
 
 namespace Lindengine.Demo;
 
 class Program
 {
-    static void Main(string[] args)
+    private static void Main(string[] args)
     {
-        new Window().Run();
+        Lind.Engine
+            .AddScene("demo_scene", new DemoScene())
+            .SelectScene("demo_scene")
+            .Run();
     }
 }

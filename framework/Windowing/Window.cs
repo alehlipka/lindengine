@@ -6,15 +6,15 @@ using OpenTK.Windowing.Desktop;
 
 namespace Lindengine.Framework.Windowing;
 
-public class Window : GameWindow
+internal class Window : GameWindow
 {
-    public Window(string title = "Lindengine Demo", bool isVSyncEnabled = false)
+    public Window()
         : base(GameWindowSettings.Default, new NativeWindowSettings()
         {
+            Title = "Lindengine Demo",
             APIVersion = new Version(4, 6),
-            Title = title,
-            Vsync = isVSyncEnabled ? VSyncMode.On : VSyncMode.Off,
-            NumberOfSamples = 4
+            Vsync = VSyncMode.On,
+            NumberOfSamples = 6
         })
     {
         GL.Enable(EnableCap.CullFace);
